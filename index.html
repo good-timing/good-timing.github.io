@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ace by Good Timing — Your AI Chief of Staff</title>
+  <meta name="description" content="Ace prepares you for every meeting, remembers what matters about every person, and surfaces it at the right moment.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #0C0B14;
+      --bg-mid: #1a1535;
+      --bg-card: rgba(26, 21, 53, 0.6);
+      --accent: #7F77DD;
+      --accent-light: #AFA9EC;
+      --accent-glow: rgba(127, 119, 221, 0.15);
+      --border: rgba(127, 119, 221, 0.2);
+      --border-hover: rgba(127, 119, 221, 0.4);
+      --text-primary: #F0EFF4;
+      --text-secondary: #9895A8;
+      --text-dim: #6B6780;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-heading: Georgia, 'Times New Roman', serif;
+      --max-width: 1080px;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* --- Nav --- */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 20px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(12, 11, 20, 0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(127, 119, 221, 0.08);
+    }
+
+    .nav-brand {
+      font-family: var(--font-heading);
+      font-size: 1.15rem;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+    .nav-brand em {
+      color: var(--accent-light);
+      font-style: italic;
+    }
+    .nav-brand span {
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 24px;
+      border-radius: 10px;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+    .btn-outline:hover {
+      border-color: var(--border-hover);
+      background: var(--accent-glow);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: var(--accent-light);
+      color: var(--bg-deep);
+    }
+
+    /* --- Sections --- */
+    section {
+      padding: 120px 40px;
+      max-width: var(--max-width);
+      margin: 0 auto;
+    }
+
+    .section-label {
+      display: inline-block;
+      width: 48px;
+      height: 3px;
+      background: var(--accent);
+      border-radius: 2px;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      font-family: var(--font-heading);
+      font-size: clamp(2.5rem, 5vw, 3.8rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 24px;
+    }
+
+    h2 {
+      font-family: var(--font-heading);
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+      margin-bottom: 20px;
+    }
+
+    .subhead {
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+      max-width: 620px;
+      line-height: 1.7;
+    }
+
+    /* --- Hero --- */
+    .hero {
+      text-align: center;
+      padding-top: 160px;
+      padding-bottom: 100px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: radial-gradient(ellipse at 50% 0%, rgba(127, 119, 221, 0.08) 0%, transparent 70%);
+    }
+
+    .app-icon {
+      width: 96px;
+      height: 96px;
+      border-radius: 22px;
+      margin-bottom: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .app-icon svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .hero h1 {
+      max-width: 700px;
+    }
+
+    .hero .subhead {
+      margin: 0 auto 40px;
+    }
+
+    .waitlist-form {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .waitlist-form input {
+      flex: 1;
+      padding: 14px 20px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .waitlist-form input::placeholder {
+      color: var(--text-dim);
+    }
+    .waitlist-form input:focus {
+      border-color: var(--accent);
+    }
+
+    .waitlist-form .btn-primary {
+      white-space: nowrap;
+      padding: 14px 28px;
+    }
+
+    .form-message {
+      font-size: 0.9rem;
+      min-height: 1.4em;
+      margin-bottom: 8px;
+    }
+    .form-message.success { color: #6BCB77; }
+    .form-message.error { color: #E76F6F; }
+
+    .app-store-note {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      font-style: italic;
+    }
+
+    /* --- Problem --- */
+    .problem {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: linear-gradient(180deg, transparent 0%, rgba(127, 119, 221, 0.04) 50%, transparent 100%);
+    }
+
+    .problem .subhead {
+      margin: 0 auto;
+    }
+
+    /* --- Feature Sections --- */
+    .feature {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .feature.reverse .feature-text { order: 2; }
+    .feature.reverse .feature-visual { order: 1; }
+
+    .feature-text .subhead {
+      margin-top: 16px;
+    }
+
+    /* --- Brief Mockup --- */
+    .brief-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      backdrop-filter: blur(12px);
+    }
+
+    .brief-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brief-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #fff;
+    }
+
+    .brief-name {
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+
+    .brief-role {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      margin-top: 2px;
+    }
+
+    .brief-section {
+      margin-bottom: 18px;
+    }
+
+    .brief-section-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent-light);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .brief-section p {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    .brief-tag {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      background: var(--accent-glow);
+      color: var(--accent-light);
+      border: 1px solid var(--border);
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+
+    /* --- Memory Visual --- */
+    .memory-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .memory-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 22px;
+      backdrop-filter: blur(12px);
+    }
+
+    .memory-person {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--accent-light);
+      margin-bottom: 6px;
+    }
+
+    .memory-detail {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+    }
+
+    /* --- Chat Demo --- */
+    .chat-demo {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-width: 520px;
+    }
+
+    .chat-bubble {
+      padding: 16px 20px;
+      border-radius: 14px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      border: 1px solid var(--border);
+      position: relative;
+    }
+
+    .chat-bubble.user {
+      background: rgba(127, 119, 221, 0.1);
+      align-self: flex-end;
+      border-color: rgba(127, 119, 221, 0.25);
+      max-width: 90%;
+    }
+
+    .chat-bubble.ace {
+      background: var(--bg-card);
+      align-self: flex-start;
+      max-width: 90%;
+    }
+
+    .chat-sender {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+      color: var(--text-dim);
+    }
+
+    .chat-bubble.user .chat-sender {
+      text-align: right;
+      color: var(--accent-light);
+    }
+
+    /* --- Footer --- */
+    .footer {
+      text-align: center;
+      padding-bottom: 60px;
+      background: linear-gradient(180deg, transparent 0%, rgba(127, 119, 221, 0.06) 100%);
+    }
+
+    .footer .waitlist-form {
+      margin: 0 auto 20px;
+    }
+
+    .footer-note {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      max-width: 500px;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+    }
+
+    .footer-legal {
+      color: var(--text-dim);
+      font-size: 0.82rem;
+      line-height: 1.6;
+      max-width: 500px;
+      margin: 0 auto;
+      padding-top: 40px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* --- Animations --- */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* --- Responsive --- */
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; }
+      section { padding: 80px 20px; }
+      .hero { padding-top: 120px; padding-bottom: 60px; }
+
+      .feature {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+      .feature.reverse .feature-text { order: 1; }
+      .feature.reverse .feature-visual { order: 2; }
+
+      .waitlist-form {
+        flex-direction: column;
+      }
+      .waitlist-form .btn-primary {
+        width: 100%;
+      }
+
+      .chat-demo {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav>
+    <a href="#" class="nav-brand"><em>Ace</em> <span>by Good Timing</span></a>
+    <a href="#waitlist-footer" class="btn btn-outline">Join waitlist</a>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <img class="app-icon" src="ace-icon.svg" alt="Ace app icon" width="96" height="96">
+
+    <h1>Ace knows what you need before you do</h1>
+
+    <p class="subhead">
+      Your AI chief of staff. Ace prepares you for meetings, remembers personal details
+      and commitments that matter, and surfaces them at the right moment — because you
+      asked it to, just like you'd ask a great assistant.
+    </p>
+
+    <form class="waitlist-form" id="hero-form">
+      <input type="email" placeholder="you@company.com" required autocomplete="email">
+      <button type="submit" class="btn btn-primary">Get early access</button>
+    </form>
+    <div class="form-message" id="hero-message"></div>
+
+    <p class="app-store-note">Coming soon to the App Store</p>
+  </section>
+
+  <!-- Problem -->
+  <section class="problem fade-in">
+    <div class="section-label"></div>
+    <h2>Never walk into a meeting cold again</h2>
+    <p class="subhead">
+      You're back to back all day. You can't remember what you promised, what someone
+      told you last time, or why this meeting matters. Ace keeps track of it all and
+      brings it back right before you meet — so you always show up prepared.
+    </p>
+  </section>
+
+  <!-- Feature 1: Briefed before every meeting -->
+  <section class="feature fade-in">
+    <div class="feature-text">
+      <div class="section-label"></div>
+      <h2>Briefed before every meeting</h2>
+      <p class="subhead">
+        Before every meeting, Ace sends you a brief with who's attending, what you
+        discussed last time, personal details worth remembering, and anything outstanding
+        — so you walk in fully prepared.
+      </p>
+    </div>
+    <div class="feature-visual">
+      <div class="brief-card">
+        <div class="brief-header">
+          <div class="brief-avatar">JP</div>
+          <div>
+            <div class="brief-name">Jordan Park</div>
+            <div class="brief-role">VP of Product, Meridian</div>
+          </div>
+        </div>
+        <div class="brief-section">
+          <div class="brief-section-title">Last Meeting</div>
+          <p>Discussed Q3 roadmap alignment. Jordan mentioned they're evaluating new vendors for their analytics stack.</p>
+        </div>
+        <div class="brief-section">
+          <div class="brief-section-title">Personal Details</div>
+          <p>Kids go to Willows — same school as yours. Just got back from a trip to Japan.</p>
+        </div>
+        <div class="brief-section">
+          <div class="brief-section-title">Outstanding</div>
+          <div>
+            <span class="brief-tag">Proposal follow-up</span>
+            <span class="brief-tag">Intro to CTO</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feature 2: Memory for every relationship -->
+  <section class="feature reverse fade-in">
+    <div class="feature-text">
+      <div class="section-label"></div>
+      <h2>A memory for every relationship</h2>
+      <p class="subhead">
+        Ace remembers what people tell you — the personal details, the commitments,
+        the context that makes relationships work. Next time you meet them, it all
+        comes back automatically in your brief.
+      </p>
+    </div>
+    <div class="feature-visual">
+      <div class="memory-cards">
+        <div class="memory-item">
+          <div class="memory-person">Sarah Chen</div>
+          <div class="memory-detail">Daughter just started at Stanford. Prefers async follow-ups over calls.</div>
+        </div>
+        <div class="memory-item">
+          <div class="memory-person">Marcus Rivera</div>
+          <div class="memory-detail">Training for the Boston Marathon. Mentioned budget approval is due March 15.</div>
+        </div>
+        <div class="memory-item">
+          <div class="memory-person">Priya Anand</div>
+          <div class="memory-detail">Moving the team to a new office in April. Asked for an intro to your design lead.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feature 3: Talk to it -->
+  <section class="feature fade-in">
+    <div class="feature-text">
+      <div class="section-label"></div>
+      <h2>Talk to it like your exec assistant</h2>
+      <p class="subhead">
+        Configure everything in natural language. No settings menus, no toggles —
+        just tell Ace what you need and it handles the rest.
+      </p>
+    </div>
+    <div class="feature-visual">
+      <div class="chat-demo">
+        <div class="chat-bubble user">
+          <div class="chat-sender">You</div>
+          Only buzz my phone for briefs when the meeting includes my boss or customers.
+        </div>
+        <div class="chat-bubble ace">
+          <div class="chat-sender">Ace</div>
+          Got it — I'll only send push notifications for meetings with your manager or anyone tagged as a customer.
+        </div>
+        <div class="chat-bubble user">
+          <div class="chat-sender">You</div>
+          Skip the prep for recurring all-hands and standups.
+        </div>
+        <div class="chat-bubble user">
+          <div class="chat-sender">You</div>
+          Remind me to follow up with Jordan if I don't hear back by Wednesday.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <section class="footer fade-in" id="waitlist-footer">
+    <h2>Get early access to Ace</h2>
+    <form class="waitlist-form" id="footer-form">
+      <input type="email" placeholder="you@company.com" required autocomplete="email">
+      <button type="submit" class="btn btn-primary">Get early access</button>
+    </form>
+    <div class="form-message" id="footer-message"></div>
+
+    <p class="footer-note">
+      Ace is launching on iPhone with Google Calendar. More platforms and skills coming soon.
+    </p>
+
+    <div class="footer-legal">
+      Ace is built on Good Timing — the platform that decides when the world reaches you.<br>
+      &copy; 2026 Good Timing, Inc.
+    </div>
+  </section>
+
+  <script>
+    // Fade-in on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // Waitlist form handler
+    const API_BASE = window.location.hostname === 'localhost'
+      ? 'http://localhost:8080'
+      : 'https://api.goodtiming.ai';
+
+    function handleWaitlistSubmit(form, messageEl) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = form.querySelector('input[type="email"]').value.trim();
+        messageEl.textContent = '';
+        messageEl.className = 'form-message';
+
+        if (!email) return;
+
+        try {
+          const res = await fetch(`${API_BASE}/waitlist`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email }),
+          });
+
+          if (res.ok) {
+            messageEl.textContent = "You're on the list! We'll be in touch.";
+            messageEl.classList.add('success');
+            form.querySelector('input').value = '';
+          } else {
+            const data = await res.json().catch(() => ({}));
+            messageEl.textContent = data.detail || 'Something went wrong. Try again.';
+            messageEl.classList.add('error');
+          }
+        } catch {
+          messageEl.textContent = 'Could not connect. Please try again later.';
+          messageEl.classList.add('error');
+        }
+      });
+    }
+
+    handleWaitlistSubmit(document.getElementById('hero-form'), document.getElementById('hero-message'));
+    handleWaitlistSubmit(document.getElementById('footer-form'), document.getElementById('footer-message'));
+  </script>
+
+</body>
+</html>
