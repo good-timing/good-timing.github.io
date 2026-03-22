@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ace by Good Timing — Your AI Chief of Staff</title>
-  <meta name="description" content="Ace prepares you for every meeting, remembers what matters about every person, and surfaces it at the right moment.">
+  <meta name="description"
+    content="Ace prepares you for every meeting, remembers what matters about every person, and surfaces it at the right moment.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -26,9 +28,17 @@
       --max-width: 1080px;
     }
 
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-    html { scroll-behavior: smooth; }
+    html {
+      scroll-behavior: smooth;
+    }
 
     body {
       font-family: var(--font-body);
@@ -61,10 +71,12 @@
       color: var(--text-primary);
       text-decoration: none;
     }
+
     .nav-brand em {
       color: var(--accent-light);
       font-style: italic;
     }
+
     .nav-brand span {
       color: var(--text-secondary);
       font-weight: 400;
@@ -90,6 +102,7 @@
       color: var(--text-primary);
       border: 1px solid var(--border);
     }
+
     .btn-outline:hover {
       border-color: var(--border-hover);
       background: var(--accent-glow);
@@ -99,6 +112,7 @@
       background: var(--accent);
       color: #fff;
     }
+
     .btn-primary:hover {
       background: var(--accent-light);
       color: var(--bg-deep);
@@ -198,9 +212,11 @@
       outline: none;
       transition: border-color 0.2s;
     }
+
     .waitlist-form input::placeholder {
       color: var(--text-dim);
     }
+
     .waitlist-form input:focus {
       border-color: var(--accent);
     }
@@ -215,8 +231,14 @@
       min-height: 1.4em;
       margin-bottom: 8px;
     }
-    .form-message.success { color: #6BCB77; }
-    .form-message.error { color: #E76F6F; }
+
+    .form-message.success {
+      color: #6BCB77;
+    }
+
+    .form-message.error {
+      color: #E76F6F;
+    }
 
     .app-store-note {
       color: var(--text-dim);
@@ -245,8 +267,13 @@
       align-items: center;
     }
 
-    .feature.reverse .feature-text { order: 2; }
-    .feature.reverse .feature-visual { order: 1; }
+    .feature.reverse .feature-text {
+      order: 2;
+    }
+
+    .feature.reverse .feature-visual {
+      order: 1;
+    }
 
     .feature-text .subhead {
       margin-top: 16px;
@@ -431,6 +458,7 @@
       transform: translateY(24px);
       transition: opacity 0.6s ease, transform 0.6s ease;
     }
+
     .fade-in.visible {
       opacity: 1;
       transform: translateY(0);
@@ -438,20 +466,36 @@
 
     /* --- Responsive --- */
     @media (max-width: 768px) {
-      nav { padding: 16px 20px; }
-      section { padding: 80px 20px; }
-      .hero { padding-top: 120px; padding-bottom: 60px; }
+      nav {
+        padding: 16px 20px;
+      }
+
+      section {
+        padding: 80px 20px;
+      }
+
+      .hero {
+        padding-top: 120px;
+        padding-bottom: 60px;
+      }
 
       .feature {
         grid-template-columns: 1fr;
         gap: 40px;
       }
-      .feature.reverse .feature-text { order: 1; }
-      .feature.reverse .feature-visual { order: 2; }
+
+      .feature.reverse .feature-text {
+        order: 1;
+      }
+
+      .feature.reverse .feature-visual {
+        order: 2;
+      }
 
       .waitlist-form {
         flex-direction: column;
       }
+
       .waitlist-form .btn-primary {
         width: 100%;
       }
@@ -462,6 +506,7 @@
     }
   </style>
 </head>
+
 <body>
 
   <!-- Nav -->
@@ -497,7 +542,7 @@
     <h2>Never walk into a meeting cold again</h2>
     <p class="subhead">
       You're back to back all day. You can't remember what you promised, what someone
-      told you last time, or why this meeting matters. Ace keeps track of it all and
+      told you last time, or the context you need for this meeting. Ace keeps track of it all and
       brings it back right before you meet — so you always show up prepared.
     </p>
   </section>
@@ -508,9 +553,8 @@
       <div class="section-label"></div>
       <h2>Briefed before every meeting</h2>
       <p class="subhead">
-        Before every meeting, Ace sends you a brief with who's attending, what you
-        discussed last time, personal details worth remembering, and anything outstanding
-        — so you walk in fully prepared.
+        Before meetings, Ace sends you briefs with research on who's attending, key personal details and work
+        committments from last time, and anything outstanding — so you walk in fully prepared.
       </p>
     </div>
     <div class="feature-visual">
@@ -524,18 +568,16 @@
         </div>
         <div class="brief-section">
           <div class="brief-section-title">Last Meeting</div>
-          <p>Discussed Q3 roadmap alignment. Jordan mentioned they're evaluating new vendors for their analytics stack.</p>
+          <p>Discussed Q3 roadmap alignment. Jordan mentioned they're evaluating new vendors for their analytics stack.
+          </p>
         </div>
         <div class="brief-section">
           <div class="brief-section-title">Personal Details</div>
           <p>Kids go to Willows — same school as yours. Just got back from a trip to Japan.</p>
         </div>
         <div class="brief-section">
-          <div class="brief-section-title">Outstanding</div>
-          <div>
-            <span class="brief-tag">Proposal follow-up</span>
-            <span class="brief-tag">Intro to CTO</span>
-          </div>
+          <div class="brief-section-title">Meridian</div>
+          <p>Series B fintech startup focused on cross-border payments. Exploring AI-driven analytics to reduce fraud.</p>
         </div>
       </div>
     </div>
@@ -556,7 +598,8 @@
       <div class="memory-cards">
         <div class="memory-item">
           <div class="memory-person">Sarah Chen</div>
-          <div class="memory-detail">Daughter just started at Stanford. Prefers async follow-ups over calls.</div>
+          <div class="memory-detail">Promised to have the Q3 hiring plan drafted by Friday. Daughter just started at
+            Stanford.</div>
         </div>
         <div class="memory-item">
           <div class="memory-person">Marcus Rivera</div>
@@ -564,7 +607,8 @@
         </div>
         <div class="memory-item">
           <div class="memory-person">Priya Anand</div>
-          <div class="memory-detail">Moving the team to a new office in April. Asked for an intro to your design lead.</div>
+          <div class="memory-detail">Moving the team to a new office in April. Asked for an intro to your design lead.
+          </div>
         </div>
       </div>
     </div>
@@ -592,11 +636,11 @@
         </div>
         <div class="chat-bubble user">
           <div class="chat-sender">You</div>
-          Skip the prep for recurring all-hands and standups.
+          What did Jordan say Meridian's biggest challenge is right now?
         </div>
-        <div class="chat-bubble user">
-          <div class="chat-sender">You</div>
-          Remind me to follow up with Jordan if I don't hear back by Wednesday.
+        <div class="chat-bubble ace">
+          <div class="chat-sender">Ace</div>
+          He mentioned they are struggling to keep fraud rates low while expanding to new regions, which is why they're exploring new AI-driven analytics vendors.
         </div>
       </div>
     </div>
@@ -675,4 +719,5 @@
   </script>
 
 </body>
+
 </html>
