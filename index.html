@@ -7,6 +7,7 @@
   <title>Ace by Good Timing — Your AI Chief of Staff</title>
   <meta name="description"
     content="Ace prepares you for every meeting, remembers what matters about every person, and surfaces it at the right moment.">
+  <link rel="icon" type="image/svg+xml" href="ace-icon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -577,7 +578,8 @@
         </div>
         <div class="brief-section">
           <div class="brief-section-title">Meridian</div>
-          <p>Series B fintech startup focused on cross-border payments. Exploring AI-driven analytics to reduce fraud.</p>
+          <p>Series B fintech startup focused on cross-border payments. Exploring AI-driven analytics to reduce fraud.
+          </p>
         </div>
       </div>
     </div>
@@ -640,7 +642,8 @@
         </div>
         <div class="chat-bubble ace">
           <div class="chat-sender">Ace</div>
-          He mentioned they are struggling to keep fraud rates low while expanding to new regions, which is why they're exploring new AI-driven analytics vendors.
+          He mentioned they are struggling to keep fraud rates low while expanding to new regions, which is why they're
+          exploring new AI-driven analytics vendors.
         </div>
       </div>
     </div>
@@ -677,10 +680,8 @@
 
     document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-    // Waitlist form handler
-    const API_BASE = window.location.hostname === 'localhost'
-      ? 'http://localhost:8080'
-      : 'https://api.goodtiming.ai';
+    // Waitlist form handler — posts to Google Sheets via Apps Script
+    const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyFp7RmjjPpfKG7H32yFtiYUs6RcBYLF3Bdi_4u0wYLPz0obNZLtSUoL3iYmeROiuUg/exec';
 
     function handleWaitlistSubmit(form, messageEl) {
       form.addEventListener('submit', async (e) => {
@@ -692,23 +693,19 @@
         if (!email) return;
 
         try {
-          const res = await fetch(`${API_BASE}/waitlist`, {
+          await fetch(SHEETS_URL, {
             method: 'POST',
+            mode: 'no-cors',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email }),
           });
 
-          if (res.ok) {
-            messageEl.textContent = "You're on the list! We'll be in touch.";
-            messageEl.classList.add('success');
-            form.querySelector('input').value = '';
-          } else {
-            const data = await res.json().catch(() => ({}));
-            messageEl.textContent = data.detail || 'Something went wrong. Try again.';
-            messageEl.classList.add('error');
-          }
+          // no-cors means we can't read the response, but the request goes through
+          messageEl.textContent = "You're on the list! We'll be in touch.";
+          messageEl.classList.add('success');
+          form.querySelector('input').value = '';
         } catch {
-          messageEl.textContent = 'Could not connect. Please try again later.';
+          messageEl.textContent = 'Something went wrong. Please try again.';
           messageEl.classList.add('error');
         }
       });
