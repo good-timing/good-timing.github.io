@@ -687,26 +687,32 @@
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = form.querySelector('input[type="email"]').value.trim();
+        const btn = form.querySelector('button[type="submit"]');
         messageEl.textContent = '';
         messageEl.className = 'form-message';
 
         if (!email) return;
+
+        btn.disabled = true;
+        btn.textContent = 'Submitting...';
 
         try {
           await fetch(SHEETS_URL, {
             method: 'POST',
             mode: 'no-cors',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email }),
+            body: JSON.stringify({ email, source: location.hostname }),
           });
 
-          // no-cors means we can't read the response, but the request goes through
           messageEl.textContent = "You're on the list! We'll be in touch.";
           messageEl.classList.add('success');
           form.querySelector('input').value = '';
         } catch {
           messageEl.textContent = 'Something went wrong. Please try again.';
           messageEl.classList.add('error');
+        } finally {
+          btn.disabled = false;
+          btn.textContent = 'Get early access';
         }
       });
     }
