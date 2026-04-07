@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cookie Settings - Ace by Good Timing</title>
+  <link rel="icon" type="image/svg+xml" href="ace-icon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #0C0B14;
+      --accent: #7F77DD;
+      --accent-light: #AFA9EC;
+      --border: rgba(127, 119, 221, 0.2);
+      --text-primary: #F0EFF4;
+      --text-secondary: #9895A8;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-heading: Georgia, 'Times New Roman', serif;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    nav {
+      padding: 20px 40px;
+      border-bottom: 1px solid rgba(127, 119, 221, 0.08);
+    }
+
+    nav a {
+      font-family: var(--font-heading);
+      font-size: 1.15rem;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    nav a em { color: var(--accent-light); font-style: italic; }
+    nav a span { color: var(--text-secondary); font-weight: 400; }
+
+    main {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 80px 40px 120px;
+    }
+
+    h1 {
+      font-family: var(--font-heading);
+      font-size: 2.2rem;
+      margin-bottom: 12px;
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-bottom: 48px;
+    }
+
+    h2 {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      margin-top: 48px;
+      margin-bottom: 12px;
+    }
+
+    h3 {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-top: 28px;
+      margin-bottom: 8px;
+    }
+
+    p, ul { color: var(--text-secondary); margin-bottom: 16px; }
+    ul { padding-left: 24px; }
+    li { margin-bottom: 6px; }
+    a { color: var(--accent-light); }
+    strong { color: var(--text-primary); }
+
+    .cookie-type {
+      background: rgba(127, 119, 221, 0.05);
+      border: 1px solid rgba(127, 119, 221, 0.12);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+    }
+
+    .cookie-type h3 {
+      margin-top: 0;
+      margin-bottom: 6px;
+    }
+
+    .cookie-type p {
+      margin-bottom: 0;
+      font-size: 0.92rem;
+    }
+
+    .browser-links {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .browser-link {
+      display: block;
+      padding: 12px 16px;
+      background: rgba(127, 119, 221, 0.07);
+      border: 1px solid rgba(127, 119, 221, 0.15);
+      border-radius: 8px;
+      color: var(--accent-light);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: background 0.15s;
+    }
+
+    .browser-link:hover {
+      background: rgba(127, 119, 221, 0.14);
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-secondary);
+      font-size: 0.82rem;
+      border-top: 1px solid var(--border);
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    footer a { color: var(--text-secondary); }
+
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; }
+      main { padding: 60px 20px 80px; }
+      .browser-links { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <a href="/"><em>Ace</em> <span>by Good Timing</span></a>
+  </nav>
+
+  <main>
+    <h1>Cookie Settings</h1>
+    <p class="subtitle">Good Timing uses cookies to operate the site and improve your experience. This page explains what cookies we use and how to manage or remove them in your browser. For full details, see our <a href="/privacy">Privacy Policy</a>.</p>
+
+    <h2>Cookies We Use</h2>
+    <p>We use four categories of cookies:</p>
+
+    <div class="cookie-type">
+      <h3>Essential</h3>
+      <p>Required for the site to function — for example, keeping you logged in. These cannot be disabled without breaking core features.</p>
+    </div>
+
+    <div class="cookie-type">
+      <h3>Functional</h3>
+      <p>Remember your preferences and settings (such as language or region) so you don't have to re-enter them each visit.</p>
+    </div>
+
+    <div class="cookie-type">
+      <h3>Performance &amp; Analytics</h3>
+      <p>Help us understand how visitors use the site — which pages are visited, how long people stay, and where errors occur. We use Google Analytics for this. See the opt-out option below.</p>
+    </div>
+
+    <div class="cookie-type">
+      <h3>Retargeting &amp; Advertising</h3>
+      <p>Used to show relevant advertisements based on your browsing activity. These are set by our advertising partners.</p>
+    </div>
+
+    <h2>Manage Cookies in Your Browser</h2>
+    <p>The simplest way to control cookies is through your browser settings. Use the links below to go directly to the cookie and privacy settings for your browser:</p>
+
+    <div class="browser-links">
+      <a class="browser-link" href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener">Chrome</a>
+      <a class="browser-link" href="https://support.apple.com/guide/safari/manage-cookies-sfri11471" target="_blank" rel="noopener">Safari</a>
+      <a class="browser-link" href="https://support.mozilla.org/en-US/kb/enhanced-tracking-protection-firefox-desktop" target="_blank" rel="noopener">Firefox</a>
+      <a class="browser-link" href="https://support.microsoft.com/en-us/windows/manage-cookies-in-microsoft-edge-168dab11-0753-043d-7c16-ede5947fc64d" target="_blank" rel="noopener">Edge</a>
+    </div>
+
+    <p>Note that disabling cookies may affect the functionality of the Services — some features may not work correctly if essential or functional cookies are blocked.</p>
+
+    <h2>Opt Out of Google Analytics</h2>
+    <p>To prevent Google Analytics from collecting data about your visits across all websites, you can install the official browser add-on provided by Google:</p>
+    <ul>
+      <li><a href="https://tools.google.com/dlpage/gaoptout/" target="_blank" rel="noopener">Google Analytics Opt-out Browser Add-on</a></li>
+    </ul>
+
+    <h2>Do Not Track</h2>
+    <p>Some browsers offer a "Do Not Track" signal that tells websites you'd prefer not to be tracked. Our Services do not currently respond to Do Not Track signals. To learn more about Do Not Track, visit <a href="http://www.allaboutdnt.com" target="_blank" rel="noopener">www.allaboutdnt.com</a>.</p>
+
+    <h2>More Information</h2>
+    <p>For a general guide to cookies and how to manage them, visit <a href="http://www.allaboutcookies.org/" target="_blank" rel="noopener">www.allaboutcookies.org</a>.</p>
+    <p>If you have questions, contact us at <a href="mailto:team@goodtiming.ai">team@goodtiming.ai</a>.</p>
+  </main>
+
+  <footer>
+    &copy; 2026 Good Timing, Inc. All rights reserved. &nbsp;&middot;&nbsp;
+    <a href="/privacy">Privacy Policy</a> &nbsp;&middot;&nbsp;
+    <a href="/terms">Terms of Use</a> &nbsp;&middot;&nbsp;
+    <a href="/cookies">Cookie Settings</a>
+  </footer>
+</body>
+
+</html>

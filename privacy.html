@@ -58,7 +58,7 @@
       margin-bottom: 12px;
     }
 
-    .last-updated {
+    .effective-date {
       color: var(--text-secondary);
       font-size: 0.9rem;
       margin-bottom: 48px;
@@ -67,19 +67,105 @@
     h2 {
       font-family: var(--font-heading);
       font-size: 1.4rem;
-      margin-top: 40px;
+      margin-top: 48px;
       margin-bottom: 12px;
     }
 
-    p, ul {
+    h3 {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 600;
+      font-style: italic;
+      color: var(--text-primary);
+      margin-top: 32px;
+      margin-bottom: 10px;
+    }
+
+    p, ul, ol {
       color: var(--text-secondary);
       margin-bottom: 16px;
     }
 
     ul { padding-left: 24px; }
-    li { margin-bottom: 8px; }
+    ol { padding-left: 24px; }
+    li { margin-bottom: 6px; }
+    li > ul, li > ol { margin-top: 6px; margin-bottom: 0; }
 
     a { color: var(--accent-light); }
+
+    strong { color: var(--text-primary); }
+
+    .toc {
+      background: rgba(127, 119, 221, 0.06);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px 28px;
+      margin: 40px 0;
+    }
+
+    .toc-title {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+    }
+
+    .toc ul {
+      list-style: none;
+      padding-left: 0;
+      margin-bottom: 0;
+    }
+
+    .toc ul ul {
+      padding-left: 20px;
+      margin-top: 4px;
+    }
+
+    .toc li { margin-bottom: 5px; }
+
+    .toc a {
+      color: var(--accent-light);
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+
+    .toc a:hover { text-decoration: underline; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 24px;
+      font-size: 0.875rem;
+    }
+
+    th {
+      background: rgba(127, 119, 221, 0.12);
+      color: var(--text-primary);
+      font-weight: 600;
+      text-align: left;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    td {
+      padding: 10px 12px;
+      border: 1px solid rgba(127, 119, 221, 0.12);
+      vertical-align: top;
+      color: var(--text-secondary);
+    }
+
+    td ul {
+      padding-left: 18px;
+      margin-bottom: 0;
+    }
+
+    td strong { color: var(--text-primary); }
+
+    tr:nth-child(even) td {
+      background: rgba(127, 119, 221, 0.03);
+    }
 
     footer {
       text-align: center;
@@ -91,9 +177,13 @@
       margin: 0 auto;
     }
 
+    footer a { color: var(--text-secondary); }
+
     @media (max-width: 768px) {
       nav { padding: 16px 20px; }
       main { padding: 60px 20px 80px; }
+      table { font-size: 0.8rem; }
+      th, td { padding: 8px; }
     }
   </style>
 </head>
@@ -105,13 +195,354 @@
 
   <main>
     <h1>Privacy Policy</h1>
-    <p class="last-updated">Last updated: March 24, 2026</p>
+    <p class="effective-date">Effective date: April 7, 2026</p>
 
-    <p>Privacy policy content coming soon. For questions, contact <a href="mailto:privacy@goodtiming.ai">privacy@goodtiming.ai</a>.</p>
+    <p>Thank you for visiting <a href="https://goodtiming.ai/">https://goodtiming.ai/</a> (the "Site") owned and operated by Good Timing, Inc. Good Timing, Inc. ("Good Timing," "we," "us," or "our") provides a software platform that helps users configure notifications with natural language. This allows them to automatically prepare for, schedule, join, and follow up on meetings and other events across their calendars and communication tools as well as maintain relationships with their work contacts. Our Services include an AI-powered assistant, called Ace, that can, at your direction, access your calendar and certain connected accounts, analyze meeting and communications data, and help you perform tasks such as preparing for meetings, scheduling, rescheduling, joining calls, taking notes, generating summaries or action items, setting reminders, and remembering facts about your work contacts that it brings up at the right time.</p>
+
+    <p>When you use our Services, including when you interact with Ace, we collect and use Personal Data as described in this Privacy Policy to operate, secure, and improve our Services and to provide you with the features you request. <strong>By using or accessing our Site in any manner, you acknowledge that you accept the practices and policies outlined below, and you hereby consent that we will collect, use and disclose your information as described in this Privacy Policy.</strong> Remember that your use of Good Timing's Services is at all times subject to our <a href="/terms">Terms of Use</a>, which incorporates this Privacy Policy. Any terms we use in this Policy without defining them have the definitions given to them in the Terms of Use.</p>
+
+    <p>You may print a copy of this Privacy Policy by clicking <a href="javascript:window.print()">here</a>.</p>
+
+    <p>As we continually work to improve our Services, we may need to change this Privacy Policy from time to time. We will alert you of material changes by placing a notice on the Good Timing website, by sending you an email and/or by some other means. Please note that if you've opted not to receive legal notice emails from us (or you haven't provided us with your email address), those legal notices will still govern your use of the Services, and you are still responsible for reading and understanding them. If you use the Services after any changes to the Privacy Policy have been posted, that means you agree to all of the changes.</p>
+
+    <div class="toc">
+      <p class="toc-title">Privacy Policy Table of Contents</p>
+      <ul>
+        <li><a href="#what-this-policy-covers">What this Privacy Policy Covers</a></li>
+        <li><a href="#personal-data">Personal Data</a>
+          <ul>
+            <li><a href="#categories-of-personal-data">Categories of Personal Data We Collect</a></li>
+            <li><a href="#commercial-purposes">Our Commercial or Business Purposes for Collecting Personal Data</a></li>
+            <li><a href="#other-purposes">Other Permitted Purposes for Processing Personal Data</a></li>
+            <li><a href="#sources">Categories of Sources of Personal Data</a></li>
+          </ul>
+        </li>
+        <li><a href="#how-we-disclose">How We Disclose Your Personal Data</a></li>
+        <li><a href="#tracking-tools">Tracking Tools, Advertising and Opt-Out</a></li>
+        <li><a href="#data-security">Data Security</a></li>
+        <li><a href="#children">Personal Data of Children</a></li>
+        <li><a href="#state-law">State Law Privacy Rights</a></li>
+        <li><a href="#contact">Contact Information</a></li>
+      </ul>
+    </div>
+
+    <h2 id="what-this-policy-covers">What this Privacy Policy Covers</h2>
+    <p>This Privacy Policy covers how we treat Personal Data that we gather when you access or use our Services. "Personal Data" means any information that identifies or relates to a particular individual and also includes information referred to as "personally identifiable information" or "personal information" or "sensitive personal information" under applicable data privacy laws, rules or regulations. This Privacy Policy does not cover the practices of companies we don't own or control or people we don't manage.</p>
+
+    <h2 id="personal-data">Personal Data</h2>
+
+    <h3 id="categories-of-personal-data">Categories of Personal Data We Collect</h3>
+    <p>This chart details the categories of Personal Data that we collect and have collected over the past 12 months:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Category of Personal Data (and Examples)</th>
+          <th>Business or Commercial Purpose(s) for Collection</th>
+          <th>Categories of Third Parties With Whom We Disclose this Personal Data</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Profile or Contact Data</strong> such as first and last name, email, phone number, and unique identifiers.</td>
+          <td>
+            <ul>
+              <li>Opening and managing your account</li>
+              <li>Corresponding with You</li>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <li>Service Providers</li>
+              <li>Parties You authorize, access, or authenticate</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>User Input and Interaction Data</strong> such as the text, prompts, questions, feedback, or other content you type or paste into our Services, as well as related interaction logs (for example, when you submit a prompt and how our systems respond).</td>
+          <td>
+            <ul>
+              <li>Providing, customizing and improving the Services, including using your inputs to generate responses and perform other requested actions.</li>
+              <li>Operating, maintaining, and improving the performance, security, and quality of any features that use artificial intelligence or machine learning.</li>
+              <li>If you opt in, using your inputs (in de-identified form where feasible) to test, train, and improve our models and algorithms and to correct errors.</li>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <li>Service Providers</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Call and Meeting Conversation Data</strong> such as the audio, video, chat, and screen-sharing content from calls or videoconferences you participate in through our Services, and related metadata (for example, date, time, duration, participants, and meeting title).</td>
+          <td>
+            <ul>
+              <li>Providing, customizing and improving the Services.</li>
+              <li>Creating transcripts, summaries, action items, and other outputs (including those generated using artificial intelligence or machine learning) at your direction.</li>
+              <li>If you opt in, using de-identified or aggregated conversation data to test, train, and improve our models and algorithms.</li>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <li>Service Providers</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Commercial Data</strong> such as product or service purchase and inferences regarding user behavior.</td>
+          <td>
+            <ul>
+              <li>Providing, customizing and improving the Services</li>
+              <li>Marketing the Services</li>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <li>Service Providers</li>
+              <li>Advertising Partners</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Device/IP Data</strong> such as IP address, device ID, and type of device, operating system, or browser used to access the Services.</td>
+          <td>
+            <ul>
+              <li>Monitoring, testing, and improving the security, integrity, and availability of our Services.</li>
+              <li>Analyzing how you interact and engage with the Services</li>
+              <li>Marketing the Services</li>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <li>Service Providers</li>
+              <li>Advertising Partners</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Web Analytics</strong> such as web page interactions, referring webpage or source through which you accessed the Services, browsing or search history, and statistics associated with the interaction between device or browser and the Services.</td>
+          <td>
+            <ul>
+              <li>Monitoring, testing, and improving the security, integrity, and availability of our Services.</li>
+              <li>Analyzing how you interact and engage with the Services.</li>
+              <li>Marketing the Services</li>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <li>Service Providers</li>
+              <li>Advertising Partners</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Account Credentials</strong> such as your username and password with third-party services or platforms.</td>
+          <td>
+            <ul>
+              <li>Monitoring, testing, and improving the security, integrity, and availability of our Services.</li>
+              <li>Analyzing how you interact and engage with the Services.</li>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <li>Service Providers</li>
+              <li>Parties You authorize, access, or authenticate, such as the third-party services or platform to which your Account Credentials apply</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Location Data</strong> such as zip code and IP-address and GPS-based location information.</td>
+          <td>
+            <ul>
+              <li>Monitoring, testing, and improving the security, integrity, and availability of our Services.</li>
+              <li>Analyzing how you interact and engage with the Services</li>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <li>Service Providers</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Other Identifying Information that You Voluntarily Choose to Provide</strong> such as emails, letters, texts, or other communications you send us.</td>
+          <td>
+            <ul>
+              <li>Providing, Customizing and Improving the Services</li>
+              <li>Marketing the Services</li>
+              <li>Corresponding with You</li>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <li>Service Providers</li>
+              <li>Parties You authorize, access, or authenticate</li>
+            </ul>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="commercial-purposes">Our Commercial or Business Purposes for Collecting Personal Data</h3>
+    <ul>
+      <li><strong>Providing, Customizing and Improving the Services</strong>
+        <ul>
+          <li>Creating and managing your account or other user profiles.</li>
+          <li>Processing orders or other transactions; billing.</li>
+          <li>Providing you with the products, services or information you request.</li>
+          <li>Meeting or fulfilling the reason you provided the information to us.</li>
+          <li>Providing support and assistance for the Services.</li>
+          <li>Improving the Services, including testing, research, internal analytics and product development. Personalizing the Services, website content and communications based on your preferences.</li>
+          <li>Doing fraud protection, security and debugging.</li>
+        </ul>
+      </li>
+      <li><strong>Marketing the Services</strong>
+        <ul>
+          <li>Marketing and selling the Services.</li>
+          <li>Showing you advertisements, including interest-based, online behavioral or targeted advertising.</li>
+        </ul>
+      </li>
+      <li><strong>Corresponding with You</strong>
+        <ul>
+          <li>Responding to correspondence that we receive from you, contacting you when necessary or requested, and sending you information about the Company or the Services.</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h3 id="other-purposes">Other Permitted Purposes for Processing Personal Data</h3>
+    <p>In addition, each of the above referenced categories of Personal Data may be collected, used, and disclosed with the government, including law enforcement, or other parties to meet certain legal requirements and enforcing legal terms including: fulfilling our legal obligations under applicable law, regulation, court order or other legal process, such as preventing, detecting and investigating security incidents and potentially illegal or prohibited activities; protecting the rights, property or safety of you, Good Timing or another party; enforcing any agreements with you; responding to claims that any posting or other content violates third-party rights; and resolving disputes.</p>
+    <p>We will not collect additional categories of Personal Data or use the Personal Data we collected for materially different, unrelated or incompatible purposes without providing you notice or obtaining your consent.</p>
+
+    <h3>Use of Google User Data</h3>
+    <p>When you connect your Google account to the Services, we use Google OAuth to request only the Google data and permissions that are necessary to provide the features you choose to use (for example, accessing your calendar to help schedule and manage meetings). We access and use Google user data solely to provide, maintain, and improve user-facing features that are clearly described in the Services and that you control. We do not sell Google user data, we do not use Google user data for advertising or marketing, and we do not share Google user data with third parties except as needed to operate the Services, comply with law, or protect you, us, or others, as described in this Privacy Policy. Our use and transfer of information received from Google APIs to any other app will adhere to the Google API Services User Data Policy (including the Limited Use requirements).</p>
+
+    <h3 id="sources">Categories of Sources of Personal Data</h3>
+    <p>We collect Personal Data about you from the following categories of sources:</p>
+    <ul>
+      <li><strong>You</strong>
+        <ul>
+          <li>When you provide such information directly to us.
+            <ul>
+              <li>When you create an account or use our interactive tools and Services, including our Site and our app.</li>
+              <li>When you authorize us to access your communications data or other third-party accounts.</li>
+              <li>When you voluntarily provide information in free-form text boxes through the Services or through responses to surveys or questionnaires.</li>
+              <li>When you send us an email or otherwise contact us.</li>
+            </ul>
+          </li>
+          <li>When you use the Services and such information is collected automatically.
+            <ul>
+              <li>Through Cookies (defined in the "<a href="#tracking-tools">Tracking Tools, Advertising and Opt-Out</a>" section below).</li>
+              <li>If you download our mobile application or use a location-enabled browser, we may receive information about your location and mobile device, as applicable.</li>
+              <li>If you download and install certain applications we make available we may receive and collect information transmitted from your computing device for the purpose of providing you the relevant Services, such as information regarding when you are logged on and available to receive updates or alert notices.</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><strong>Third Parties</strong>
+        <ul>
+          <li>Vendors
+            <ul>
+              <li>We may use analytics providers to analyze how you interact and engage with the Services, or third parties may help us provide you with customer support.</li>
+            </ul>
+          </li>
+          <li>Third-Party Credentials
+            <ul>
+              <li>If you provide your third-party account credentials, such as your email or social network account credentials, to us or otherwise sign in to the Services through a third-party site or service, content and/or information in those accounts will be transmitted into your account with us.</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+
+    <h2 id="how-we-disclose">How We Disclose Your Personal Data</h2>
+    <p>We disclose your Personal Data to the categories of service providers and other parties listed in this section. Depending on state laws that may be applicable to you, some of these disclosures may constitute a "sale" of your Personal Data. For more information, please refer to the state-specific sections below.</p>
+    <ul>
+      <li><strong>Service Providers.</strong> These parties help us provide the Services or perform business functions on our behalf. They include:
+        <ul>
+          <li>Hosting, technology and communication providers.</li>
+          <li>Security and fraud prevention consultants.</li>
+          <li>Support and customer service vendors.</li>
+          <li>Analytics providers regarding web traffic or usage of the Services.</li>
+        </ul>
+      </li>
+      <li><strong>Advertising Partners.</strong> These parties help us market our services and provide you with other offers that may be of interest to you. They include:
+        <ul>
+          <li>Ad networks.</li>
+          <li>Marketing providers.</li>
+        </ul>
+      </li>
+      <li><strong>Parties You Authorize, Access or Authenticate</strong>
+        <ul>
+          <li>Account credentialed services.</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h3>Legal Obligations</h3>
+    <p>We may disclose any Personal Data that we collect with third parties in conjunction with any of the activities set forth under "<a href="#other-purposes">Other Permitted Purposes for Processing Personal Data</a>" section above.</p>
+
+    <h3>Business Transfers</h3>
+    <p>All of your Personal Data that we collect may be transferred to a third party if we undergo a merger, acquisition, bankruptcy or other transaction in which that third party assumes control of our business (in whole or in part).</p>
+
+    <h3>Data that is Not Personal Data</h3>
+    <p>We may create aggregated, de-identified or anonymized data from the Personal Data we collect, including by removing information that makes the data personally identifiable to a particular user. We may use such aggregated, de-identified or anonymized data and disclose it with third parties for our lawful business purposes, including to analyze, build and improve the Services and promote our business, provided that we will not disclose such data in a manner that could identify you.</p>
+
+    <h2 id="tracking-tools">Tracking Tools, Advertising, and Opt-Out</h2>
+    <p>The Services use cookies and similar technologies such as pixel tags, web beacons, clear GIFs and JavaScript (collectively, "Cookies") to enable our servers to recognize your web browser, tell us how and when you visit and use our Services, analyze trends, learn about our user base and operate and improve our Services. Cookies are small pieces of data – usually text files – placed on your computer, tablet, phone or similar device when you use that device to access our Services. We may also supplement the information we collect from you with information received from third parties, including third parties that have placed their own Cookies on your device(s).</p>
+    <p>Please note that because of our use of Cookies, the Services do not support "Do Not Track" requests sent from a browser at this time.</p>
+    <p>We use the following types of Cookies:</p>
+    <ul>
+      <li><strong>Essential Cookies.</strong> Essential Cookies are required for providing you with features or services that you have requested. For example, certain Cookies enable you to log into secure areas of our Services. Disabling these Cookies may make certain features and services unavailable.</li>
+      <li><strong>Functional Cookies.</strong> Functional Cookies are used to record your choices and settings regarding our Services, maintain your preferences over time and recognize you when you return to our Services. These Cookies help us to personalize our content for you, greet you by name and remember your preferences (for example, your choice of language or region).</li>
+      <li><strong>Performance/Analytical Cookies.</strong> Performance/Analytical Cookies allow us to understand how visitors use our Services. They do this by collecting information about the number of visitors to the Services, what pages visitors view on our Services and how long visitors are viewing pages on the Services. Performance/Analytical Cookies also help us measure the performance of our advertising campaigns in order to help us improve our campaigns and the Services' content for those who engage with our advertising. For example, Google LLC ("Google") uses cookies in connection with its Google Analytics services. Google's ability to use and disclose information collected by Google Analytics about your visits to the Services is subject to the Google Analytics Terms of Use and the Google Privacy Policy. You have the option to opt-out of Google's use of Cookies by visiting the Google advertising opt-out page at <a href="http://www.google.com/privacy_ads.html" target="_blank" rel="noopener">www.google.com/privacy_ads.html</a> or the Google Analytics Opt-out Browser Add-on at <a href="https://tools.google.com/dlpage/gaoptout/" target="_blank" rel="noopener">https://tools.google.com/dlpage/gaoptout/</a>.</li>
+      <li><strong>Retargeting/Advertising Cookies.</strong> Retargeting/Advertising Cookies collect data about your online activity and identify your interests so that we can provide advertising that we believe is relevant to you. For more information about this, please see the section below titled "Information about Interest-Based Advertisements."</li>
+    </ul>
+    <p>You can decide whether or not to accept Cookies through your internet browser's settings. Most browsers have an option for turning off the Cookie feature, which will prevent your browser from accepting new Cookies, as well as (depending on the sophistication of your browser software) allow you to decide on acceptance of each new Cookie in a variety of ways. You can also delete all Cookies that are already on your device. If you do this, however, you may have to manually adjust some preferences every time you visit our website and some of the Services and functionalities may not work.</p>
+    <p>To explore what Cookie settings are available to you or to modify your preferences with respect to Cookies, you can access your Cookie management settings by clicking <a href="/cookies">here</a>. To find out more information about Cookies generally, including information about how to manage and delete Cookies, please visit <a href="http://www.allaboutcookies.org/" target="_blank" rel="noopener">http://www.allaboutcookies.org/</a>.</p>
+
+    <h3>Session Replay Technology</h3>
+    <p>We may use session replay technology in order to identify and resolve customer issues, to monitor and analyze how you use our Services, to better understand user behavior, and to improve our Services. By continuing to use the Services, you consent to the use of session replay technology. If you would like to change your settings with respect to session replay technology, you can access your Cookie management settings by clicking <a href="/cookies">here</a>.</p>
+
+    <h3>Information about Interest-Based Advertisements</h3>
+    <p>We work with third-party ad networks, including third-party ad servers, ad agencies, ad technology vendors and research firms, to serve advertisements on our behalf. These advertisements may be targeted to users who fit certain general profile categories or display certain preferences or behaviors ("Interest-Based Ads"). Information for Interest-Based Ads (including Personal Data) may be provided to us by you, or derived from the usage patterns of particular users on the Services and/or services of third parties. Such information may be gathered through tracking users' activities across time and unaffiliated properties, including when you leave the Services. To accomplish this, we or our service providers may deliver Cookies, including a file (known as a "web beacon") from an ad network to you through the Services. Web beacons allow ad networks to provide anonymized, aggregated auditing, research and reporting for us and for advertisers. Web beacons also enable ad networks to serve targeted advertisements to you when you visit other websites. Web beacons allow ad networks to view, edit or set their own Cookies on your browser, just as if you had requested a web page from their site.</p>
+
+    <h2 id="data-security">Data Security</h2>
+    <p>We seek to protect your Personal Data from unauthorized access, use and disclosure using appropriate physical, technical, organizational and administrative security measures based on the type of Personal Data and how we are processing that data. You should also help protect your data by appropriately selecting and protecting your password and/or other sign-on mechanism; limiting access to your computer or device and browser; and signing off after you have finished accessing your account. Although we work to protect the security of your account and other data that we hold in our records, please be aware that no method of transmitting data over the internet or storing data is completely secure.</p>
+
+    <h2>Data Retention</h2>
+    <p>We retain Personal Data about you for as long as necessary to provide you with our Services or to perform our business or commercial purposes for collecting your Personal Data. When establishing a retention period for specific categories of data, we consider who we collected the data from, our need for the Personal Data, why we collected the Personal Data, and the sensitivity of the Personal Data. In some cases we retain Personal Data for longer, if doing so is necessary to comply with our legal obligations, resolve disputes or collect fees owed, or is otherwise permitted or required by applicable law, rule or regulation. We may further retain information in an anonymous or aggregated form where that information would not identify you personally.</p>
+    <p>For example:</p>
+    <ul>
+      <li>We retain your profile information and credentials for as long as you have an account with us.</li>
+      <li>We retain your device/IP data for as long as we need it to ensure that our systems are working appropriately, effectively and efficiently.</li>
+    </ul>
+
+    <h2 id="children">Personal Data of Children</h2>
+    <p>As noted in the <a href="/terms">Terms of Use</a>, we do not knowingly collect or solicit Personal Data from children under 13 years of age; if you are a child under the age of 13, please do not attempt to register for or otherwise use the Services or send us any Personal Data. If we learn we have collected Personal Data from a child under 13 years of age, we will delete that information as quickly as possible. If you believe that a child 13 years of age may have provided Personal Data to us, please contact us at <a href="mailto:team@goodtiming.ai">team@goodtiming.ai</a>.</p>
+
+    <h2 id="state-law">State Law Privacy Rights</h2>
+
+    <h3>California Resident Rights</h3>
+    <p>Under California Civil Code Sections 1798.83-1798.84, California residents are entitled to contact us to prevent disclosure of Personal Data to third parties for such third parties' direct marketing purposes; in order to submit such a request, please contact us at <a href="mailto:team@goodtiming.ai">team@goodtiming.ai</a>.</p>
+    <p>Your browser may offer you a "Do Not Track" option, which allows you to signal to operators of website and web applications and services that you do not wish such operators to track certain of your online activities over time and across different website. Our Services do not support Do Not Track requests at this time. To find out more about "Do Not Track," you can visit <a href="http://www.allaboutdnt.com" target="_blank" rel="noopener">www.allaboutdnt.com</a>.</p>
+
+    <h3>Nevada Resident Rights</h3>
+    <p>Please note that we do not currently sell your Personal Data as sales are defined in Nevada Revised Statutes Chapter 603A.</p>
+
+    <h2 id="contact">Contact Information</h2>
+    <p>If you have any questions or comments about this Privacy Policy, the ways in which we collect and use your Personal Data or your choices and rights regarding such collection and use, please do not hesitate to contact us at:</p>
+    <ul>
+      <li>(650) 569-1325</li>
+      <li><a href="https://goodtiming.ai/">https://goodtiming.ai/</a></li>
+      <li><a href="mailto:team@goodtiming.ai">team@goodtiming.ai</a></li>
+    </ul>
   </main>
 
   <footer>
-    &copy; 2026 Good Timing, Inc. All rights reserved.
+    &copy; 2026 Good Timing, Inc. All rights reserved. &nbsp;&middot;&nbsp;
+    <a href="/privacy">Privacy Policy</a> &nbsp;&middot;&nbsp;
+    <a href="/terms">Terms of Use</a> &nbsp;&middot;&nbsp;
+    <a href="/cookies">Cookie Settings</a>
   </footer>
 </body>
 
