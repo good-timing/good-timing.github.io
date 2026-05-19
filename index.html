@@ -617,11 +617,14 @@
 
     <div class="diagram-wrap">
       <svg viewBox="0 0 880 380" xmlns="http://www.w3.org/2000/svg" role="img"
-        aria-label="Agent-to-agent support loop: customer's agent passes a structured signal through Baton to the vendor's support team, which returns a response back through Baton.">
+        aria-label="Agent-to-agent support loop: customer's agent passes a structured signal through Baton to the vendor's support AI, which returns a response back through Baton to the customer's agent.">
 
         <defs>
           <marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
             <path d="M 0 0 L 10 5 L 0 10 z" fill="#F5A623" />
+          </marker>
+          <marker id="arrow-dim" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#62656D" />
           </marker>
           <linearGradient id="arc-grad-1" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stop-color="#F5A623" stop-opacity="0.5" />
@@ -633,26 +636,36 @@
           </linearGradient>
         </defs>
 
+        <!-- Left person (Customer) -->
+        <text x="150" y="16" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#62656D" letter-spacing="0.12em">CUSTOMER</text>
+        <circle cx="150" cy="36" r="9" fill="rgba(255,255,255,0.03)" stroke="#62656D" stroke-width="1.3"/>
+        <path d="M 136 60 C 136 48 164 48 164 60" fill="none" stroke="#62656D" stroke-width="1.3"/>
+        <line x1="150" y1="63" x2="150" y2="146" stroke="#62656D" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow-dim)"/>
+
+        <!-- Right person (Your team) -->
+        <text x="730" y="16" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#95989F" letter-spacing="0.12em">YOUR TEAM</text>
+        <circle cx="730" cy="36" r="9" fill="rgba(245,166,35,0.05)" stroke="#95989F" stroke-width="1.3"/>
+        <path d="M 716 60 C 716 48 744 48 744 60" fill="none" stroke="#95989F" stroke-width="1.3"/>
+        <line x1="730" y1="63" x2="730" y2="146" stroke="#95989F" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow-dim)"/>
+
         <!-- Customer's agent (left) -->
         <g transform="translate(40,150)">
           <rect width="220" height="100" rx="14" fill="rgba(255,255,255,0.025)" stroke="rgba(255,255,255,0.14)" stroke-width="1.2"/>
-          <text x="110" y="42" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#95989F" letter-spacing="0.1em">CUSTOMER SIDE</text>
-          <text x="110" y="68" text-anchor="middle" font-family="Inter, sans-serif" font-size="17" font-weight="600" fill="#ECEEF2">Customer's agent</text>
-          <text x="110" y="88" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#62656D">Claude · ChatGPT · Codex · …</text>
+          <text x="110" y="47" text-anchor="middle" font-family="Inter, sans-serif" font-size="17" font-weight="600" fill="#ECEEF2">Customer's agent</text>
+          <text x="110" y="67" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#F5A623">Claude · ChatGPT · Codex</text>
         </g>
 
-        <!-- Vendor support (right) -->
+        <!-- Your support AI (right) -->
         <g transform="translate(620,150)">
           <rect width="220" height="100" rx="14" fill="rgba(245,166,35,0.05)" stroke="rgba(245,166,35,0.32)" stroke-width="1.2"/>
-          <text x="110" y="42" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#95989F" letter-spacing="0.1em">YOUR SIDE</text>
-          <text x="110" y="68" text-anchor="middle" font-family="Inter, sans-serif" font-size="17" font-weight="600" fill="#ECEEF2">Your support team</text>
-          <text x="110" y="88" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#F5A623">+ your support AI</text>
+          <text x="110" y="47" text-anchor="middle" font-family="Inter, sans-serif" font-size="17" font-weight="600" fill="#ECEEF2">Your support AI</text>
+          <text x="110" y="67" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#F5A623">Claude · ChatGPT · Codex</text>
         </g>
 
         <!-- Top arc: signal flow left → right -->
         <path d="M 260 178 C 360 70, 540 70, 620 178"
               fill="none" stroke="url(#arc-grad-1)" stroke-width="2"
-              stroke-dasharray="0" marker-end="url(#arrow-amber)"/>
+              marker-end="url(#arrow-amber)"/>
         <text x="440" y="50" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#95989F" letter-spacing="0.16em">SIGNAL</text>
         <text x="440" y="82" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#ECEEF2">intent · tool call · expected · observed · config</text>
 
