@@ -559,11 +559,11 @@
       <span class="nav-brand-mark" aria-hidden="true"></span>
       <span>Baton <span class="nav-brand-sub">by Good Timing</span></span>
     </a>
-    <a href="#early-access" class="btn btn-outline">Request early access</a>
+    <a href="#early-access" class="btn btn-primary">Talk to a founder</a>
   </nav>
 
   <!-- Hero -->
-  <section class="hero">
+  <section class="hero" id="early-access">
     <div class="hero-tagline">
       <span class="status-dot" aria-hidden="true"></span>
       Support infrastructure for the agent era
@@ -578,6 +578,10 @@
     <p class="lede" style="margin-top: 18px;">
       Your team gets a structured report instead of <em>"something broke"</em>. First response
       is a fix, not a question.
+    </p>
+    <p class="lede" style="margin-top: 18px;">
+      We're working with a small set of design partners shipping agent-connected products.
+      If that's you, we'd like to talk.
     </p>
 
     <form class="email-form" id="hero-form">
@@ -831,21 +835,6 @@
     </p>
   </section>
 
-  <!-- Final CTA -->
-  <section class="cta-final fade-in" id="early-access">
-    <h2>Request early access.</h2>
-    <p class="lede">
-      We're working with a small set of design partners shipping agent-connected products.
-      If that's you, we'd like to talk.
-    </p>
-    <form class="email-form" id="footer-form">
-      <input type="email" placeholder="you@company.com" required autocomplete="email">
-      <button type="submit" class="btn btn-primary">Talk to a founder</button>
-    </form>
-    <div class="form-message" id="footer-message"></div>
-    <p class="form-note">A founder will respond directly. Usually within a day.</p>
-  </section>
-
   <!-- Footer -->
   <footer>
     <div class="footer-row">
@@ -913,7 +902,6 @@
     }
 
     handleSubmit(document.getElementById('hero-form'), document.getElementById('hero-message'));
-    handleSubmit(document.getElementById('footer-form'), document.getElementById('footer-message'));
   </script>
 
 </body>
