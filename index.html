@@ -577,11 +577,20 @@
 
     /* --- Responsive --- */
     @media (max-width: 820px) {
-      nav { padding: 14px 20px; }
+      nav { padding: 14px 16px; }
 
-      section { padding: 70px 20px; }
+      /* Hide "by Good Timing" on small screens so nav doesn't wrap */
+      .nav-brand-sub { display: none; }
 
-      .hero { padding-top: 120px; }
+      section { padding: 60px 20px; }
+
+      .hero { padding-top: 110px; }
+
+      /* Eyebrow: smaller font so it stays one line */
+      .hero-tagline {
+        font-size: 0.72rem;
+        letter-spacing: 0.1em;
+      }
 
       .two-col {
         grid-template-columns: 1fr;
@@ -591,7 +600,16 @@
       .email-form { flex-direction: column; }
       .email-form .btn-primary { width: 100%; }
 
-      .vision { padding: 70px 20px; }
+      /* Step and capture cards: single column on mobile */
+      .steps-row-top,
+      .steps-row-bottom,
+      .capture-row-top,
+      .capture-row-bottom {
+        grid-template-columns: 1fr !important;
+        width: 100% !important;
+      }
+
+      .vision { padding: 60px 20px; }
       .cta-final { padding: 80px 20px 60px; }
       footer { padding: 30px 20px 40px; }
 
