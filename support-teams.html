@@ -4,15 +4,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Baton — Product analytics for MCP servers</title>
+  <title>Baton | Support infrastructure for the agent era</title>
   <meta name="description"
-    content="All 200s in your MCP logs doesn't mean your customers are happy. Baton captures the whole attempt — intent, exact call, expected outcome, observed outcome, config — so you can finally see where your MCP server is quietly failing people.">
-  <meta property="og:title" content="Baton — Product analytics for MCP servers">
+    content="Don't make customers switch agents to get support. Baton captures intent, API calls, and broken config, so your first response is a fix, not a question.">
+  <meta property="og:title" content="Baton | Support infrastructure for the agent era">
   <meta property="og:description"
-    content="Most agent failures never throw an error. Baton captures the whole attempt and shows you where your MCP server is quietly failing people.">
+    content="Your customers already use your product in their favorite agent. When it breaks, their agent writes a better support ticket than your customer or your support chatbot ever could.">
   <meta property="og:type" content="website">
   <meta name="theme-color" content="#0b0c10">
-  <link rel="icon" type="image/svg+xml" href="/baton-icon.svg">
+  <link rel="icon" type="image/svg+xml" href="baton-icon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -84,7 +84,7 @@
 
     .nav-brand-mark {
       width: 24px; height: 24px;
-      background: url('/baton-icon.svg') center/contain no-repeat;
+      background: url('baton-icon.svg') center/contain no-repeat;
       display: inline-block;
       flex-shrink: 0;
     }
@@ -284,7 +284,7 @@
       flex-direction: column;
       align-items: flex-start;
       gap: 6px;
-      padding: 20px 0;
+      padding: 20px 0 0;
     }
 
     .hero-cta-block + .hero-cta-block {
@@ -624,11 +624,12 @@
 <body>
 
   <nav>
-    <a href="#" class="nav-brand">
+    <a href="/" class="nav-brand">
       <span class="nav-brand-mark" aria-hidden="true"></span>
       <span>Baton <span class="nav-brand-sub">by Good Timing</span></span>
     </a>
     <div class="nav-right">
+      <a href="/" style="color: var(--text-secondary); text-decoration: none; font-size: 0.92rem;">For Engineering</a>
       <a href="https://github.com/good-timing/baton" class="nav-github" aria-label="View Baton SDK on GitHub" target="_blank" rel="noopener">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
           <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.54-3.88-1.54-.52-1.34-1.28-1.69-1.28-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.3-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18.92-.26 1.91-.39 2.89-.39.98 0 1.97.13 2.89.39 2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.76.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.4-5.25 5.69.41.36.78 1.07.78 2.17v3.22c0 .31.21.67.8.56C20.71 21.39 24 17.08 24 12 24 5.65 18.85.5 12.5.5h-.5z"/>
@@ -642,72 +643,151 @@
   <section class="hero">
     <div class="hero-tagline">
       <span class="status-dot" aria-hidden="true"></span>
-      Product analytics for the agent era
+      Baton for support teams
     </div>
-    <h1>All 200s in your MCP logs doesn't mean your customers are happy.</h1>
+    <h1>Don't make your customers switch agents to get support.</h1>
 
     <p class="lede">
-      Most agent failures never throw an error. The call returns 200 with the wrong result, or
-      the agent wanted something your tools can't do and quietly gave up. You never hear about it.
-      Baton captures the whole attempt: the intent, the exact call, what the agent expected, and
-      what it got. Now you can finally see where your MCP server is quietly failing people.
+      They already use your product in their favorite agent, which knows their intent, the
+      exact API calls, the expected and observed outcomes, and the config.
+      <span style="color: var(--accent); font-weight: 500;">Their agent will write a better
+      ticket than your customer or your support chatbot ever could.</span> That way your
+      first response is a fix, not a question.
     </p>
 
     <div class="hero-ctas">
       <div class="hero-cta-block">
-        <a href="https://github.com/good-timing/baton" target="_blank" rel="noopener" class="btn btn-outline btn-github">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="flex-shrink:0"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0 1 12 6.836a9.59 9.59 0 0 1 2.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
-          Try the open-source SDK
-        </a>
-        <p class="cta-sublabel">Free · No auth · No strings. Works today.</p>
-      </div>
-      <div class="hero-cta-block">
-        <form class="email-form" id="hero-form">
-          <input type="email" placeholder="you@company.com" required autocomplete="email">
-          <button type="submit" class="btn btn-primary">Request early access to hosted Baton</button>
-        </form>
-        <div class="form-message" id="hero-message"></div>
-        <p class="cta-sublabel">Early access to the hosted Console — we'll reach out personally.</p>
+        <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+          <a href="https://calendly.com/dave-goodtiming/30min" target="_blank" rel="noopener" class="btn btn-primary">Book 30 min with a founder →</a>
+          <a href="/" class="btn btn-outline">Try it on my MCP server →</a>
+        </div>
+        <p class="cta-sublabel" style="margin-top:10px;">Or request early access by email: <a href="mailto:dave@goodtiming.ai" style="color: var(--text-secondary); text-decoration: underline;">dave@goodtiming.ai</a></p>
       </div>
     </div>
   </section>
 
-  <!-- How it works -->
-  <section class="diagram-section fade-in" style="text-align: center;">
-    <h2 style="max-width: none;">From a raw agent call to a signal you can act on.</h2>
-    <p class="body" style="margin: 0 auto;">
-      Baton sits in your MCP server's tool surface. It captures what the agent was trying to do,
-      compares it to what actually came back, and clusters the result into analytics you can act on.
+  <!-- Problem -->
+  <section class="fade-in">
+    <h2>Your customer is frustrated.<br>Your support team is flying blind.</h2>
+    <p class="body">
+      When a customer's AI agent hits a problem with your product, your team starts asking for
+      logs, screenshots, reproduction steps. The customer doesn't know how to answer because their
+      agent did it, not them. Tickets go back and forth for days. Relationships get damaged.
+    </p>
+    <p class="body">
+      The root cause: <strong>your support team has no context about what the end user actually wanted,
+      what the customer's agent was trying to do, or what state it was in when things broke.</strong>
+      That context only exists on the customer's side, inside an agent runtime your team
+      can't see.
+    </p>
+  </section>
+
+  <!-- How it works + diagram -->
+  <section class="diagram-section fade-in">
+    <h2>Catch the context the moment it breaks.</h2>
+    <p class="body">
+      Baton sits in your product's agent-facing surface. It captures the five things only the
+      customer's agent has, all in one context — and hands them to your support team as a
+      structured report.
     </p>
 
-    <div class="steps" style="text-align: left;">
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 880 380" xmlns="http://www.w3.org/2000/svg" role="img"
+        aria-label="Agent-to-agent support loop: customer's agent passes a structured signal through Baton to the vendor's support AI, which returns a response back through Baton to the customer's agent.">
+
+        <defs>
+          <marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#F5A623" />
+          </marker>
+          <marker id="arrow-dim" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#62656D" />
+          </marker>
+          <linearGradient id="arc-grad-1" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#F5A623" stop-opacity="0.5" />
+            <stop offset="100%" stop-color="#F5A623" stop-opacity="1" />
+          </linearGradient>
+          <linearGradient id="arc-grad-2" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#F5A623" stop-opacity="1" />
+            <stop offset="100%" stop-color="#F5A623" stop-opacity="0.5" />
+          </linearGradient>
+        </defs>
+
+        <!-- Left person (Customer) -->
+        <text x="150" y="16" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#62656D" letter-spacing="0.12em">CUSTOMER</text>
+        <circle cx="150" cy="36" r="9" fill="rgba(255,255,255,0.03)" stroke="#62656D" stroke-width="1.3"/>
+        <path d="M 136 60 C 136 48 164 48 164 60" fill="none" stroke="#62656D" stroke-width="1.3"/>
+        <line x1="150" y1="63" x2="150" y2="146" stroke="#62656D" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow-dim)"/>
+
+        <!-- Right person (Your team) -->
+        <text x="730" y="16" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#95989F" letter-spacing="0.12em">YOUR TEAM</text>
+        <circle cx="730" cy="36" r="9" fill="rgba(245,166,35,0.05)" stroke="#95989F" stroke-width="1.3"/>
+        <path d="M 716 60 C 716 48 744 48 744 60" fill="none" stroke="#95989F" stroke-width="1.3"/>
+        <line x1="730" y1="63" x2="730" y2="146" stroke="#95989F" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow-dim)"/>
+
+        <!-- Customer's agent (left) -->
+        <g transform="translate(40,150)">
+          <rect width="220" height="100" rx="14" fill="rgba(255,255,255,0.025)" stroke="rgba(255,255,255,0.14)" stroke-width="1.2"/>
+          <text x="110" y="47" text-anchor="middle" font-family="Inter, sans-serif" font-size="17" font-weight="600" fill="#ECEEF2">Customer's agent</text>
+          <text x="110" y="67" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#F5A623">Claude · ChatGPT · Codex</text>
+        </g>
+
+        <!-- Your support AI (right) -->
+        <g transform="translate(620,150)">
+          <rect width="220" height="100" rx="14" fill="rgba(245,166,35,0.05)" stroke="rgba(245,166,35,0.32)" stroke-width="1.2"/>
+          <text x="110" y="47" text-anchor="middle" font-family="Inter, sans-serif" font-size="17" font-weight="600" fill="#ECEEF2">Your support AI</text>
+          <text x="110" y="67" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#F5A623">Claude · ChatGPT · Codex</text>
+        </g>
+
+        <!-- Top arc: signal flow left → right -->
+        <path d="M 260 178 C 360 70, 540 70, 620 178"
+              fill="none" stroke="url(#arc-grad-1)" stroke-width="2"
+              marker-end="url(#arrow-amber)"/>
+        <text x="440" y="50" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#95989F" letter-spacing="0.16em">SIGNAL</text>
+        <text x="440" y="82" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#ECEEF2">intent · tool call · expected · observed · config</text>
+
+        <!-- Bottom arc: response flow right → left -->
+        <path d="M 620 222 C 540 330, 360 330, 260 222"
+              fill="none" stroke="url(#arc-grad-2)" stroke-width="2"
+              marker-end="url(#arrow-amber)"/>
+        <text x="440" y="358" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#95989F" letter-spacing="0.16em">RESPONSE</text>
+        <text x="440" y="328" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#ECEEF2">fix · retry instructions · doc · feature filed</text>
+
+        <!-- Center BATON pill -->
+        <g transform="translate(370,180)">
+          <rect width="140" height="40" rx="20" fill="rgba(245,166,35,0.10)" stroke="rgba(245,166,35,0.55)" stroke-width="1.4"/>
+          <text x="70" y="26" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" font-weight="700" letter-spacing="0.22em" fill="#F5A623">BATON</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="steps">
       <div class="steps-row steps-row-top">
         <div class="step">
           <div class="step-num">01</div>
-          <h3>An agent calls your server</h3>
-          <p>Via MCP, an agent SDK, or any tool integration. Real customer traffic, real intent.</p>
+          <h3>Agent calls your product</h3>
+          <p>Via MCP, an agent SDK, or any tool integration the agent uses to reach you.</p>
         </div>
         <div class="step">
           <div class="step-num">02</div>
-          <h3>Baton captures the whole attempt</h3>
-          <p>Not just the call. What the agent was trying to do, what it expected back, what it actually got, and the config it ran against.</p>
+          <h3>Something breaks</h3>
+          <p>A failure, a wrong output, a feature gap. The agent knows the details; the human only knows it didn't work.</p>
         </div>
         <div class="step">
           <div class="step-num">03</div>
-          <h3>Baton sees the gap</h3>
-          <p>The delta between expected and observed — including the silent failures your logs record as success, and the requests your tools couldn't satisfy at all.</p>
+          <h3>Baton captures everything</h3>
+          <p>Intent, exact tool call, expected outcome, observed outcome, and the configuration that broke.</p>
         </div>
       </div>
       <div class="steps-row steps-row-bottom">
         <div class="step">
           <div class="step-num">04</div>
-          <h3>You get the signal, clustered</h3>
-          <p>Recurring intents, top failure modes, missing capabilities — grouped, ranked, and attributed to the surface they came from.</p>
+          <h3>Your support AI reads the report</h3>
+          <p>Diagnoses, proposes a fix, drafts a response. No customer back-and-forth required.</p>
         </div>
         <div class="step">
           <div class="step-num">05</div>
-          <h3>You decide what to build, fix, or document</h3>
-          <p>The analytics tell you where your MCP server is winning, where it's leaking, and what customers keep asking for that you don't yet offer.</p>
+          <h3>Response goes back agent-to-agent</h3>
+          <p>The customer's agent picks up the fix. Humans are in the loop, but not in the way.</p>
         </div>
       </div>
     </div>
@@ -715,109 +795,96 @@
 
   <!-- What gets captured -->
   <section class="capture-section fade-in" style="text-align: center;">
-    <h2 style="max-width: none;">Sentry sees the error. LangSmith sees the trace. Neither sees these five things.</h2>
+    <h2 style="max-width: none;">The five things only the agent has, captured in one context.</h2>
+    <p class="body" style="margin: 0 auto;">
+      Sentry sees the error. Pendo sees the click. Zendesk sees the ticket. None of them see
+      what the agent was trying to do, or how it was set up to try. Baton captures the whole
+      attempt, not just the failure.
+    </p>
 
     <div class="capture-grid" style="text-align: left;">
       <div class="capture-row capture-row-top">
         <div class="capture-card">
           <div class="label">Intent</div>
-          <h3>What people actually want from your server</h3>
-          <p>The agent's goal, in plain language, before the call. This is your demand signal: the top things customers try to do, ranked by frequency, not by what your tools happen to be named.</p>
+          <h3>What the user was trying to accomplish</h3>
+          <p>The agent's interpretation of the goal, in plain language. Not an event name. A sentence.</p>
         </div>
         <div class="capture-card">
           <div class="label">Tool call</div>
-          <h3>What gets used, and how</h3>
-          <p>Which tools, which parameters, which retry patterns. Real usage shape, including the calls that get hammered and the ones nobody touches.</p>
+          <h3>The exact request that broke</h3>
+          <p>Tool name, parameters, timing, retry pattern. The payload that hit your product.</p>
         </div>
         <div class="capture-card">
           <div class="label">Expected</div>
           <h3>What the agent thought would happen</h3>
-          <p>Captured before the call, not reconstructed after. This is the reference point everything else is measured against.</p>
+          <p>The outcome the agent was planning around, captured before the call, not reconstructed after.</p>
         </div>
       </div>
       <div class="capture-row capture-row-bottom">
         <div class="capture-card">
           <div class="label">Observed</div>
           <h3>What actually happened</h3>
-          <p>Error class, response body, duration. The gap between expected and observed is your silent failure rate: the interactions that returned 200 and still went nowhere.</p>
+          <p>Error class, response body, and duration. The exact delta between what was expected and what came back.</p>
         </div>
         <div class="capture-card">
           <div class="label">Config</div>
-          <h3>Why it works for some customers and not others</h3>
-          <p>Permissions, settings, integration state at the moment of the call. The difference between the accounts your server delights and the ones it quietly breaks for.</p>
+          <h3>How the agent was set up when it broke</h3>
+          <p>The configuration the call was made against: permissions, settings, integration state, at the moment of failure.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- What you can answer -->
+  <!-- Security & Governance -->
   <section class="fade-in">
-    <h2>The questions you couldn't answer until now.</h2>
+    <h2>You control the signal. You own the audit trail.</h2>
 
     <ul class="why-list">
-      <li><strong>Are agents getting what they came for?</strong> Your true success rate, not the 200s your logs count as wins.</li>
-      <li><strong>What do customers want my server to do?</strong> The top intents in plain language, including the ones my tools can't satisfy yet.</li>
-      <li><strong>Where is it silently failing?</strong> The share of calls that succeed on paper and fail in practice, and exactly which tools and configs they cluster on.</li>
-      <li><strong>What should I build next?</strong> The feature gaps customers' agents keep hitting, ranked by how often they cost you a completed task.</li>
-      <li><strong>Am I getting ROI on this server?</strong> Whether the MCP surface you stood up is delivering value or burning trust.</li>
+      <li><strong>You define the signal schema.</strong> Each context category — intent, tool call, expected, observed, config — contains individual fields. You choose exactly which ones get transmitted. What you don't ask for, your customers can't send.</li>
+      <li><strong>Every report is logged and inspectable.</strong> Full audit trail of what each customer agent sent, when, and in response to which interaction. Your security and compliance teams can see the data flowing through Baton at any time.</li>
+      <li><strong>Customers know what they're sending.</strong> The Baton SDK surfaces the report to the customer's agent before transmission. No hidden payloads — both sides see the same structured context.</li>
+      <li><strong>Scoped by product surface.</strong> Baton captures context only at the integration points you instrument. It has no access to your customer's broader agent runtime or any other part of their stack.</li>
     </ul>
   </section>
 
-  <!-- Callout -->
-  <section class="vision fade-in" style="max-width: none; padding-left: 0; padding-right: 0;">
-    <div class="vision-inner" style="padding: 0 32px;">
-      <div class="label">The roadmap your competitors can't see</div>
-      <h2>The most valuable thing your MCP server can tell you is what it can't do.</h2>
-      <p class="body">
-        When an agent wants something your tools can't express, that request normally vanishes: no
-        error, no log, no ticket. Baton captures it. Every "the agent tried to do X and there was
-        no tool for it" is a roadmap item your competitors can't see, written by the customer who
-        needed it.
-      </p>
-    </div>
-  </section>
-
-  <!-- Control / own your data -->
+  <!-- Integrations -->
   <section class="fade-in">
-    <h2>You define the signal. You own the data.</h2>
-
-    <ul class="why-list">
-      <li><strong>You define the schema.</strong> You choose exactly which fields are captured and transmitted. What you don't ask for, nothing sends.</li>
-      <li><strong>Emit anywhere.</strong> Ship to the Baton Console, any OpenTelemetry sink, or your own S3. The data is yours and it can stay inside your perimeter.</li>
-      <li><strong>PII scrubbed at the source.</strong> Redaction happens in the SDK, before anything leaves the customer's runtime.</li>
-      <li><strong>Scoped to what you instrument.</strong> Baton sees only the surfaces you wire up: nothing else in the customer's stack, nothing else in yours.</li>
-    </ul>
-  </section>
-
-  <!-- Install -->
-  <section class="fade-in">
-    <h2>One integration. Live today.</h2>
+    <h2>Routes to the support stack you already run.</h2>
     <p class="body">
-      Baton wraps your existing MCP tools with middleware; your tools stay exactly as they are.
-      Install the open-source SDK, point it at a sink, and you're collecting. No rebuild, no
-      re-architecture, no waiting on a vendor.
+      Baton is a delivery layer, not a workspace. Structured signal arrives where your team
+      already works — with full context, ready for triage.
     </p>
     <div class="integrations">
-      <a href="https://github.com/good-timing/baton" target="_blank" rel="noopener" class="btn btn-outline btn-github">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="flex-shrink:0"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0 1 12 6.836a9.59 9.59 0 0 1 2.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
-        Try the open-source SDK
-      </a>
+      <span class="integration-tag">Pylon</span>
+      <span class="integration-tag">Slack</span>
+      <span class="integration-tag">Zendesk</span>
+      <span class="integration-tag dim">+ your queue</span>
     </div>
+  </section>
+
+  <!-- Close the loop -->
+  <section class="fade-in">
+    <h2>Close the loop inside your customer's agent.</h2>
+    <p class="body">
+      When your team resolves a ticket, Baton generates a resume link — a structured callback
+      your customer's agent can use to pick up exactly where it left off. The correct parameters,
+      the updated configuration, the retry instruction. No human has to copy-paste anything.
+      The agent receives the fix the same way it sent the failure report: automatically.
+    </p>
+    <p class="body">
+      <strong>Support doesn't just close the ticket. It closes the loop.</strong>
+    </p>
   </section>
 
   <!-- Final CTA -->
   <section class="cta-final fade-in" id="early-access">
-    <h2>See what your MCP server is really doing.</h2>
+    <h2>Request early access.</h2>
     <p class="lede">
-      We're working with a small set of teams who've shipped agent-connected products and want to
-      understand them. If that's you, we'd like to talk.
+      We're working with a small set of design partners shipping agent-connected products.
+      If that's you, we'd like to talk.
     </p>
-    <form class="email-form" id="footer-form">
-      <input type="email" placeholder="you@company.com" required autocomplete="email">
-      <button type="submit" class="btn btn-primary">Request early access to hosted Baton</button>
-    </form>
-    <div class="form-message" id="footer-message"></div>
-    <p class="form-note">A founder will respond directly. Usually within a day.</p>
+    <a href="https://calendly.com/dave-goodtiming/30min" target="_blank" rel="noopener" class="btn btn-primary">Book 30 min with a founder →</a>
+    <p class="form-note">Prefer email? <a href="mailto:dave@goodtiming.ai" style="color: var(--text-secondary); text-decoration: underline;">dave@goodtiming.ai</a></p>
   </section>
 
   <!-- Footer -->
@@ -848,47 +915,6 @@
 
     document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-    // Waitlist form handler — posts to Google Sheets via Apps Script
-    const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyFp7RmjjPpfKG7H32yFtiYUs6RcBYLF3Bdi_4u0wYLPz0obNZLtSUoL3iYmeROiuUg/exec';
-
-    function handleSubmit(form, messageEl) {
-      const btn = form.querySelector('button[type="submit"]');
-      const originalLabel = btn.textContent;
-
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = form.querySelector('input[type="email"]').value.trim();
-        messageEl.textContent = '';
-        messageEl.className = 'form-message';
-
-        if (!email) return;
-
-        btn.disabled = true;
-        btn.textContent = 'Submitting…';
-
-        try {
-          await fetch(SHEETS_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, source: 'baton-analytics/' + location.hostname }),
-          });
-
-          messageEl.textContent = "Thanks — we'll be in touch shortly.";
-          messageEl.classList.add('success');
-          form.querySelector('input').value = '';
-        } catch {
-          messageEl.textContent = 'Something went wrong. Try emailing hello@goodtiming.ai.';
-          messageEl.classList.add('error');
-        } finally {
-          btn.disabled = false;
-          btn.textContent = originalLabel;
-        }
-      });
-    }
-
-    handleSubmit(document.getElementById('hero-form'), document.getElementById('hero-message'));
-    handleSubmit(document.getElementById('footer-form'), document.getElementById('footer-message'));
   </script>
 
 </body>
