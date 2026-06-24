@@ -4,12 +4,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Baton — Actionable product analytics for MCP servers</title>
+  <title>Baton — Product analytics for the agent era</title>
   <meta name="description"
-    content="Baton captures the friction from your MCP API, ranks what customers actually want, and lets you respond to them if you want to.">
-  <meta property="og:title" content="Baton — Actionable product analytics for MCP servers">
+    content="Baton captures the friction from your agent-facing product — MCP server, API, or Skill — ranks what customers actually want, and lets you respond to them if you want to.">
+  <meta property="og:title" content="Baton — Product analytics for the agent era">
   <meta property="og:description"
-    content="Baton captures the friction from your MCP API, ranks what customers actually want, and lets you respond to them if you want to.">
+    content="Baton captures the friction from your agent-facing product — MCP server, API, or Skill — ranks what customers actually want, and lets you respond to them if you want to.">
   <meta property="og:type" content="website">
   <meta name="theme-color" content="#0b0c10">
   <link rel="icon" type="image/svg+xml" href="/baton-icon.svg">
@@ -80,7 +80,7 @@
     section { max-width: var(--max-width); margin: 0 auto; padding: 90px 32px; }
 
     h1, h2, h3 { font-family: var(--font-body); font-weight: 600; letter-spacing: -0.025em; color: var(--text-primary); }
-    h1 { font-size: clamp(2.1rem, 4.8vw, 3.5rem); line-height: 1.08; max-width: 20ch; }
+    h1 { font-size: clamp(1.95rem, 4vw, 3rem); line-height: 1.1; max-width: 26ch; }
     h2 { font-size: clamp(1.7rem, 3vw, 2.3rem); line-height: 1.15; margin-bottom: 18px; max-width: 30ch; }
     h3 { font-size: 1.08rem; font-weight: 600; line-height: 1.4; margin-bottom: 8px; }
 
@@ -256,8 +256,8 @@
 
   <!-- HERO -->
   <section class="hero">
-    <div class="eyebrow"><span class="status-dot" aria-hidden="true"></span> Actionable product analytics for MCP servers</div>
-    <h1>Your customers are telling your MCP server what they want. Can you hear them?</h1>
+    <div class="eyebrow"><span class="status-dot" aria-hidden="true"></span> Product analytics for the agent era</div>
+    <h1>Your customers are telling their agent what they want from your product. Can you hear them?</h1>
     <p class="lede">
       Every agent call is a request in plain language, but when your API can't meet their needs, you see a 200
       instead of an error. The request vanishes with no ticket and no trace. Baton captures the friction from
@@ -322,6 +322,10 @@
       changes for your customers. It injects one tool, <code style="font-family:var(--font-mono);color:var(--accent-soft)">annotate</code>,
       that records intent before each call and flags the gap after — the four things only the agent has: intent,
       the call, what it expected, what it got. Free and open source.
+    </p>
+    <p class="body">
+      No MCP server? If your customers reach you through agent-generated code — a Skill calling your REST API — the
+      SDK's <strong>Library API</strong> wraps those calls instead. Same signal, same sinks, nothing to rebuild.
     </p>
     <p class="body">
       Not the server author? The proxy picks up where the scan left off: prepend <code style="font-family:var(--font-mono);color:var(--accent-soft)">baton-proxy --</code>
@@ -456,8 +460,8 @@
       <div class="faq-a">No. Tracing tells you a call happened and how long it took. Baton captures what the customer was trying to do, where your API fell short, and the fix. It runs alongside Sentry and LangSmith and sees the layer they don't: intent.</div>
     </div>
     <div class="faq-item">
-      <div class="faq-q">Do I have to rebuild my MCP server?</div>
-      <div class="faq-a">No. The proxy wraps your existing server with no code changes. If you'd rather build it in, the SDK is about five lines. Either way your tools stay exactly as they are.</div>
+      <div class="faq-q">Do I have to rebuild anything?</div>
+      <div class="faq-a">No. If you have an MCP server, the proxy wraps it with no code changes, or the SDK builds in with about five lines — your tools stay exactly as they are. If you don't have an MCP server and your customers reach you through agent-generated code (a Skill calling your API), the SDK's Library API instruments those calls instead. Either way, nothing about your product changes.</div>
     </div>
     <div class="faq-item">
       <div class="faq-q">Will the scan change anything on my server?</div>
@@ -479,7 +483,7 @@
 
   <!-- FINAL CTA -->
   <section class="cta-final fade-in" id="early-access">
-    <h2>See what your customers wish your MCP server did.</h2>
+    <h2>See what your customers wish your agent-facing product did.</h2>
     <p class="lede">Start free: run the scan on your own server. When you're ready to turn the signal into a system, talk to us about the Console.</p>
     <div class="cmd">
       <code>uvx baton-proxy scan --config &lt;server-name&gt;</code>
