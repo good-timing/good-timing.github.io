@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Docs — Baton</title>
+  <meta name="description" content="Reference docs for baton-proxy and baton-sdk.">
+  <link rel="icon" type="image/svg+xml" href="/baton-icon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #0b0c10;
+      --bg-mid: #13151c;
+      --bg-card: rgba(255,255,255,0.025);
+      --accent: #F5A623;
+      --accent-soft: #FFC36B;
+      --accent-glow: rgba(245,166,35,0.10);
+      --border: rgba(255,255,255,0.08);
+      --border-strong: rgba(255,255,255,0.14);
+      --border-accent: rgba(245,166,35,0.28);
+      --text-primary: #ECEEF2;
+      --text-secondary: #95989F;
+      --text-dim: #62656D;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+    body { font-family: var(--font-body); background: var(--bg-deep); color: var(--text-primary); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 18px 32px; display: flex; align-items: center; justify-content: space-between;
+      background: rgba(11,12,16,0.82); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-brand { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 1.05rem; color: var(--text-primary); }
+    .nav-brand-mark { width: 24px; height: 24px; background: url('/baton-icon.svg') center/contain no-repeat; flex-shrink: 0; }
+    .nav-brand-sub { color: #7E818A; font-weight: 400; margin-left: 3px; }
+    .nav-right { display: flex; align-items: center; gap: 18px; }
+    .nav-github { color: var(--text-dim); display: inline-flex; align-items: center; transition: color 0.15s; }
+    .nav-github:hover { color: var(--text-primary); }
+    .btn { display: inline-flex; align-items: center; padding: 9px 18px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all 0.18s; border: 1px solid var(--border-strong); color: var(--text-primary); background: transparent; text-decoration: none; }
+    .btn:hover { border-color: var(--accent); color: var(--accent); }
+    .docs-wrap { display: flex; max-width: 1100px; margin: 0 auto; padding: 0 32px; gap: 48px; }
+    .docs-header { padding: 96px 0 0; border-bottom: 1px solid var(--border); }
+    .docs-header-inner { max-width: 1100px; margin: 0 auto; padding: 32px 32px 0; }
+    .docs-eyebrow { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+    .docs-title { font-size: 2rem; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 20px; }
+    .docs-tabs { display: flex; gap: 4px; }
+    .tab-btn { padding: 8px 20px; border-radius: 8px 8px 0 0; font-size: 0.9rem; font-weight: 500; color: var(--text-dim); background: transparent; border: 1px solid transparent; border-bottom: none; cursor: pointer; transition: all 0.15s; font-family: var(--font-body); }
+    .tab-btn:hover { color: var(--text-primary); }
+    .tab-btn.active { color: var(--accent); border-color: var(--border); border-bottom-color: var(--bg-deep); background: var(--bg-deep); }
+    .docs-sidebar { width: 180px; flex-shrink: 0; padding: 36px 0; }
+    .docs-sidebar nav { position: sticky; top: 90px; }
+    .sidebar-group { margin-bottom: 24px; }
+    .sidebar-label { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 8px; }
+    .sidebar-link { display: block; font-size: 0.84rem; color: var(--text-dim); padding: 3px 0; transition: color 0.12s; }
+    .sidebar-link:hover { color: var(--text-primary); }
+    .sidebar-link.active { color: var(--accent); }
+    .docs-content { flex: 1; min-width: 0; padding: 36px 0 80px; }
+    .docs-content h2 { font-size: 1.3rem; font-weight: 600; letter-spacing: -0.02em; color: var(--text-primary); margin: 3rem 0 0.85rem; padding-top: 0.5rem; scroll-margin-top: 90px; }
+    .docs-content h2:first-child { margin-top: 0; }
+    .docs-content h3 { font-size: 0.97rem; font-weight: 600; color: var(--text-primary); margin: 1.8rem 0 0.5rem; }
+    .docs-content p { color: var(--text-secondary); font-size: 0.94rem; line-height: 1.72; margin-bottom: 0.75rem; }
+    .docs-content ul { margin: 0.5rem 0 1rem 1.2rem; }
+    .docs-content li { color: var(--text-secondary); font-size: 0.94rem; line-height: 1.65; margin-bottom: 0.35rem; }
+    code { font-family: var(--font-mono); font-size: 0.85em; color: var(--accent-soft); background: rgba(245,166,35,0.08); padding: 1px 5px; border-radius: 4px; }
+    pre { background: #0e1014; border: 1px solid var(--border-strong); border-radius: 10px; padding: 18px 20px; font-family: var(--font-mono); font-size: 0.82rem; color: #ECEEF2; overflow-x: auto; margin: 0.75rem 0 1.25rem; line-height: 1.6; position: relative; }
+    pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+    .copy-btn { position: absolute; top: 10px; right: 12px; font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-dim); background: transparent; border: 1px solid var(--border); border-radius: 5px; padding: 2px 8px; cursor: pointer; transition: all 0.15s; }
+    .copy-btn:hover { color: var(--accent); border-color: var(--border-accent); }
+    .docs-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; margin: 0.75rem 0 1.5rem; }
+    .docs-table th { text-align: left; font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); padding: 0 16px 8px 0; border-bottom: 1px solid var(--border-strong); }
+    .docs-table td { padding: 10px 16px 10px 0; border-bottom: 1px solid var(--border); color: var(--text-secondary); vertical-align: top; }
+    .docs-table td:first-child { font-family: var(--font-mono); font-size: 0.78rem; color: var(--accent-soft); white-space: nowrap; }
+    .docs-table tr:last-child td { border-bottom: none; }
+    .card { border: 1px solid var(--border); border-radius: 12px; background: var(--bg-card); padding: 18px 20px; margin-bottom: 12px; }
+    .card h3 { margin-top: 0; margin-bottom: 6px; }
+    .note { border: 1px solid rgba(245,166,35,0.22); border-radius: 9px; background: rgba(245,166,35,0.05); padding: 12px 16px; margin: 1rem 0; font-size: 0.88rem; color: var(--accent-soft); }
+    .note strong { color: var(--accent); }
+    .diagram { border: 1px solid var(--border); border-radius: 12px; background: var(--bg-mid); padding: 20px; margin: 1rem 0 1.5rem; overflow-x: auto; }
+    .diagram pre { background: none; border: none; padding: 0; margin: 0; font-size: 0.78rem; color: var(--text-secondary); }
+    .diagram pre code { background: none; color: var(--text-secondary); font-size: inherit; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0.5rem 0 1.25rem; }
+    .chip { font-family: var(--font-mono); font-size: 0.76rem; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--border-strong); color: var(--text-secondary); }
+    footer { padding: 36px 32px 48px; border-top: 1px solid var(--border); max-width: 1100px; margin: 0 auto; }
+    .footer-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; color: var(--text-dim); font-size: 0.85rem; }
+    .footer-brand { color: var(--text-secondary); }
+    .footer-brand strong { color: var(--text-primary); font-weight: 600; }
+    .footer-links a { color: var(--text-dim); margin-left: 18px; }
+    .footer-links a:hover { color: var(--text-primary); }
+    @media (max-width: 760px) {
+      nav { padding: 14px 16px; }
+      .nav-brand-sub { display: none; }
+      .docs-wrap { flex-direction: column; padding: 0 16px; gap: 0; }
+      .docs-sidebar { display: none; }
+      .docs-header-inner { padding: 24px 16px 0; }
+      footer { padding: 28px 16px 40px; }
+      .footer-links a { margin-left: 0; margin-right: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-brand">
+    <span class="nav-brand-mark" aria-hidden="true"></span>
+    <span>Baton <span class="nav-brand-sub">by Good Timing</span></span>
+  </a>
+  <div class="nav-right">
+    <a href="https://github.com/good-timing/baton-proxy" class="nav-github" aria-label="GitHub" target="_blank" rel="noopener">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.54-3.88-1.54-.52-1.34-1.28-1.69-1.28-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.3-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18.92-.26 1.91-.39 2.89-.39.98 0 1.97.13 2.89.39 2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.76.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.4-5.25 5.69.41.36.78 1.07.78 2.17v3.22c0 .31.21.67.8.56C20.71 21.39 24 17.08 24 12 24 5.65 18.85.5 12.5.5h-.5z"/></svg>
+    </a>
+    <a href="/#early-access" class="btn">Talk to us</a>
+  </div>
+</nav>
+
+<div class="docs-header">
+  <div class="docs-header-inner">
+    <p class="docs-eyebrow">Reference</p>
+    <h1 class="docs-title">Docs</h1>
+    <div class="docs-tabs">
+      <button class="tab-btn active" data-tab="proxy">Proxy</button>
+      <button class="tab-btn" data-tab="sdk">SDK</button>
+    </div>
+  </div>
+</div>
+
+<div class="docs-wrap">
+  <aside class="docs-sidebar">
+    <nav id="sidebar-proxy">
+      <div class="sidebar-group">
+        <p class="sidebar-label">baton-proxy</p>
+        <a href="#overview" class="sidebar-link">Overview</a>
+        <a href="#install" class="sidebar-link">Install</a>
+        <a href="#quick-start" class="sidebar-link">Quick start</a>
+        <a href="#configuration" class="sidebar-link">Configuration</a>
+        <a href="#injected-tools" class="sidebar-link">Injected tools</a>
+        <a href="#scan" class="sidebar-link">scan</a>
+        <a href="#trust" class="sidebar-link">Trust &amp; security</a>
+      </div>
+    </nav>
+    <nav id="sidebar-sdk" hidden>
+      <div class="sidebar-group">
+        <p class="sidebar-label">baton-sdk</p>
+        <a href="#sdk-overview" class="sidebar-link">Overview</a>
+        <a href="#sdk-install" class="sidebar-link">Install</a>
+        <a href="#mcp-integration" class="sidebar-link">MCP integration</a>
+        <a href="#sinks" class="sidebar-link">Sinks</a>
+        <a href="#library-api" class="sidebar-link">Library API</a>
+        <a href="#choosing" class="sidebar-link">Choosing paths</a>
+        <a href="#pii" class="sidebar-link">PII scrubbing</a>
+      </div>
+    </nav>
+  </aside>
+
+  <main class="docs-content">
+
+    <div id="tab-proxy">
+      <h2 id="overview">Overview</h2>
+      <p>baton-proxy wraps any stdio MCP server and captures friction events. From Claude&#39;s perspective it <em>is</em> the MCP server; the real server is its child process. All MCP traffic passes through unchanged.</p>
+      <div class="diagram"><pre>&#x250C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2510;      &#x250C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2510;      &#x250C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2510;
+&#x2502;  Claude  &#x2502; &#x25C4;&#x2500;&#x2500;&#x25BA; &#x2502;  baton-proxy  &#x2502; &#x25C4;&#x2500;&#x2500;&#x25BA; &#x2502; your MCP server &#x2502;
+&#x2514;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2518;      &#x2514;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x252C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2518;      &#x2514;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2518;
+                           &#x2502;
+              &#x250C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x253C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2510;
+       &#x250C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2510; &#x250C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2510; &#x250C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2510;
+       &#x2502; stderr  &#x2502; &#x2502;  file   &#x2502; &#x2502; Baton Console&#x2502;
+       &#x2514;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2518; &#x2514;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2518; &#x2514;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2518;</pre></div>
+      <p>Per real tool call, three event types are emitted matching the <a href="https://github.com/good-timing/baton/blob/main/docs/SPEC.md" style="color:var(--accent)">Baton wire format</a>:</p>
+      <table class="docs-table">
+        <thead><tr><th>Event</th><th>Payload fields</th></tr></thead>
+        <tbody>
+          <tr><td>tool_call_start</td><td>tool_name, params</td></tr>
+          <tr><td>tool_call_end</td><td>tool_name, result, duration_ms</td></tr>
+          <tr><td>tool_call_error</td><td>tool_name, error_type, error_body, duration_ms</td></tr>
+        </tbody>
+      </table>
+      <h2 id="install">Install</h2>
+      <p><code>pipx</code> is recommended — it puts <code>baton-proxy</code> on your PATH so Claude&#39;s config can invoke it directly.</p>
+      <pre>pipx install baton-proxy</pre>
+      <p style="color:var(--text-dim);font-size:0.88rem">Plain <code>pip install baton-proxy</code> works if you manage your own Python env.</p>
+      <h2 id="quick-start">Quick start</h2>
+      <p>Replace your MCP server entry in Claude&#39;s config. The only change is wrapping your existing command:</p>
+      <pre>// Before
+{ "command": "npx", "args": ["@vendor/mcp-server"] }
+
+// After — events go to stderr + /tmp/baton-proxy.jsonl
+{ "command": "baton-proxy", "args": ["--", "npx", "@vendor/mcp-server"] }</pre>
+      <p>Restart Claude and drive a few tool calls. Then see what happened:</p>
+      <pre>// In conversation — ask Claude:
+"Show me the friction report for this session."
+
+// Or inspect raw:
+cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
+      <p>To ship events to a Console, add four env vars:</p>
+      <pre>{
+  "command": "baton-proxy",
+  "args": ["--", "npx", "@vendor/mcp-server"],
+  "env": {
+    "BATON_EVENT_SINK":    "https://console.example.com",
+    "BATON_TENANT_ID":     "your-tenant",
+    "BATON_API_KEY":       "bk_live_...",
+    "BATON_CONSENT_TOKEN": "customer-consented"
+  }
+}</pre>
+      <h2 id="configuration">Configuration</h2>
+      <p>All knobs are environment variables. Every one has a default — no config file needed.</p>
+      <table class="docs-table">
+        <thead><tr><th>Variable</th><th>Default</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td>BATON_EVENT_SINK</td><td style="font-family:var(--font-mono);font-size:0.76rem;white-space:nowrap">stderr:,file:///tmp/baton-proxy.jsonl</td><td>Where events go. Comma-separated for fan-out. <code>https://…</code> POSTs to <code>{url}/v0/events</code>, <code>file:///path</code> appends JSONL, <code>stderr:</code> writes to stderr.</td></tr>
+          <tr><td>BATON_TENANT_ID</td><td><code>local</code></td><td>Tenant identifier sent on every event.</td></tr>
+          <tr><td>BATON_CONSENT_TOKEN</td><td><code>local</code></td><td>Per-process consent token. Must be replaced before using an <code>https://</code> sink.</td></tr>
+          <tr><td>BATON_API_KEY</td><td>unset</td><td>Bearer token. Required when sink is <code>https://</code>.</td></tr>
+          <tr><td>BATON_VENDOR_ID</td><td>unset</td><td>Labels the install for the operator.</td></tr>
+          <tr><td>BATON_PROXY_LOG_FILE</td><td>unset</td><td>Path to tee proxy logs to.</td></tr>
+        </tbody>
+      </table>
+      <h3>The three rungs</h3>
+      <table class="docs-table">
+        <thead><tr><th>Rung</th><th>Sink</th><th>Env additions</th></tr></thead>
+        <tbody>
+          <tr><td>1. Default</td><td>stderr + /tmp/baton-proxy.jsonl</td><td style="color:var(--text-dim)">none</td></tr>
+          <tr><td>2. Custom local</td><td>Your path</td><td><code>BATON_EVENT_SINK=file:///your/path.jsonl</code></td></tr>
+          <tr><td>3. Ship to Console</td><td>Hosted</td><td><code>BATON_EVENT_SINK</code> + <code>BATON_API_KEY</code> + <code>BATON_TENANT_ID</code> + <code>BATON_CONSENT_TOKEN</code></td></tr>
+        </tbody>
+      </table>
+      <div class="note"><strong>Startup guard:</strong> the proxy refuses to start when an <code>https://</code> sink is configured but <code>BATON_API_KEY</code> is unset, or <code>BATON_CONSENT_TOKEN</code> is still <code>"local"</code>.</div>
+      <h2 id="injected-tools">Injected tools</h2>
+      <p>The proxy appends two tools to the upstream server&#39;s tool list during the MCP handshake. The upstream server never sees them.</p>
+      <div class="card"><h3><code>baton_annotate</code></h3><p>Called by Claude (unprompted) when it hits friction. Emits an annotation event with <code>signal_type</code>, <code>intent</code>, <code>suggested_improvement</code>, and optional context. Available in all sink modes.</p></div>
+      <div class="card"><h3><code>baton_session_report</code></h3><p>Called when the customer asks <em>"Show me the friction report for this session."</em> Returns a markdown summary of the session. <strong>Local sink only</strong> — not injected when an <code>https://</code> sink is configured.</p></div>
+      <h2 id="scan">scan</h2>
+      <p>Preview friction on a server you already have configured — no permanent install, no change to your Claude config.</p>
+      <pre>uvx baton-proxy scan --config github</pre>
+      <p><code>scan</code> reads the named entry from <code>~/.claude.json</code>, reuses its credentials, drives a headless agent, and writes <code>./baton-report.md</code>. Everything stays local.</p>
+      <table class="docs-table">
+        <thead><tr><th>Flag</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>--config &lt;name&gt;</td><td>Entry name in <code>~/.claude.json</code> (required).</td></tr>
+          <tr><td>--config-file &lt;path&gt;</td><td>Use a specific config file.</td></tr>
+          <tr><td>--timeout &lt;seconds&gt;</td><td>Bound the run (default: 300s).</td></tr>
+          <tr><td>--out &lt;path&gt;</td><td>Report output path (default: <code>./baton-report.md</code>).</td></tr>
+        </tbody>
+      </table>
+      <h2 id="trust">Trust &amp; security</h2>
+      <ul>
+        <li><strong style="color:var(--text-primary)">Open source, Apache 2.0.</strong> <a href="https://github.com/good-timing/baton-proxy" style="color:var(--accent)">github.com/good-timing/baton-proxy</a></li>
+        <li><strong style="color:var(--text-primary)">Fail-open.</strong> A Console outage never breaks the MCP pipe. Emission is enqueued on a background thread.</li>
+        <li><strong style="color:var(--text-primary)">Outbound-only.</strong> The proxy never accepts inbound connections.</li>
+        <li><strong style="color:var(--text-primary)">No external dependencies.</strong> Pure stdlib — no pydantic, no httpx.</li>
+        <li><strong style="color:var(--text-primary)">Credential isolation.</strong> <code>BATON_*</code> vars are filtered from the upstream subprocess env.</li>
+      </ul>
+    </div>
+
+    <div id="tab-sdk" hidden>
+      <h2 id="sdk-overview">Overview</h2>
+      <p>baton-sdk is native instrumentation for vendors who control their MCP server source. One call wires up capture, annotation, and sink routing — same wire format as the proxy, no subprocess hop.</p>
+      <div class="card"><h3>MCP middleware path</h3><p>Your MCP server calls <code>install_baton(mcp, …)</code>. Five lines. Captures every tool call at the transport boundary and injects the annotation tool. Best for vendors with MCP servers as their primary surface.</p></div>
+      <div class="card"><h3>Library API path</h3><p>Agent-generated code wraps vendor API calls with <code>client.trace(…)</code>. Same event envelope, same sinks — different emission boundary. Best for vendors using Skills as their primary distribution.</p></div>
+      <h2 id="sdk-install">Install</h2>
+      <table class="docs-table">
+        <thead><tr><th>Command</th><th>Includes</th></tr></thead>
+        <tbody>
+          <tr><td>pip install baton-sdk</td><td>Core — Library API and sinks only.</td></tr>
+          <tr><td>pip install baton-sdk[mcp]</td><td>+ adapter for the official <code>mcp</code> SDK.</td></tr>
+          <tr><td>pip install baton-sdk[fastmcp]</td><td>+ adapter for standalone <code>fastmcp</code> by jlowin.</td></tr>
+          <tr><td>pip install baton-sdk[all]</td><td>Everything above.</td></tr>
+        </tbody>
+      </table>
+      <h2 id="mcp-integration">MCP integration</h2>
+      <table class="docs-table">
+        <thead><tr><th>Your FastMCP import</th><th>Adapter</th><th>Extra</th></tr></thead>
+        <tbody>
+          <tr><td>from mcp.server.fastmcp import FastMCP</td><td>baton.integrations.mcp</td><td>baton-sdk[mcp]</td></tr>
+          <tr><td>from fastmcp import FastMCP</td><td>baton.integrations.fastmcp</td><td>baton-sdk[fastmcp]</td></tr>
+        </tbody>
+      </table>
+      <h3>Official <code>mcp</code> SDK</h3>
+      <pre>import os
+from mcp.server.fastmcp import FastMCP
+from baton.integrations.mcp import install_baton, VendorConfig
+from baton.sinks import HttpSink
+
+mcp = FastMCP("your-vendor-mcp")
+install_baton(mcp, VendorConfig(
+    vendor_id="your-vendor",
+    vendor_display_name="Your Vendor",
+    consent_token=os.environ["BATON_CONSENT_TOKEN"],
+    sink=HttpSink(
+        url=os.environ["BATON_INGEST_URL"],
+        api_key=os.environ["BATON_API_KEY"],
+    ),
+))
+
+@mcp.tool()
+async def your_tool(...): ...</pre>
+      <h3>Standalone <code>fastmcp</code></h3>
+      <pre>import os
+from fastmcp import FastMCP
+from baton.integrations.fastmcp import install_baton, VendorConfig
+from baton.sinks import HttpSink
+
+mcp = FastMCP("your-vendor-mcp")
+install_baton(mcp, VendorConfig(
+    vendor_id="your-vendor",
+    vendor_display_name="Your Vendor",
+    consent_token=os.environ["BATON_CONSENT_TOKEN"],
+    sink=HttpSink(
+        url=os.environ["BATON_INGEST_URL"],
+        api_key=os.environ["BATON_API_KEY"],
+    ),
+))
+
+@mcp.tool()
+async def your_tool(...): ...</pre>
+      <h2 id="sinks">Sinks</h2>
+      <table class="docs-table">
+        <thead><tr><th>Sink</th><th>Use case</th></tr></thead>
+        <tbody>
+          <tr><td>StdoutSink()</td><td>Zero config. Events to stderr as JSON Lines. Default if <code>sink=</code> is omitted.</td></tr>
+          <tr><td>FileSink("./events.jsonl")</td><td>Capture to a local file.</td></tr>
+          <tr><td>HttpSink(url=…, api_key=…)</td><td>POST to any HTTP collector. Bounded buffer + retry + circuit breaker.</td></tr>
+          <tr><td>MultiSink([…])</td><td>Fan out to multiple sinks simultaneously.</td></tr>
+        </tbody>
+      </table>
+      <pre>from baton.sinks import StdoutSink, FileSink, HttpSink, MultiSink
+
+# dev
+sink = MultiSink([StdoutSink(), FileSink("./events.jsonl")])
+
+# production
+sink = HttpSink(url=os.environ["BATON_INGEST_URL"], api_key=os.environ["BATON_API_KEY"])</pre>
+      <h2 id="library-api">Library API</h2>
+      <p>For vendors whose customers reach the API via agent-generated code (Skills pattern).</p>
+      <h3>Sync (<code>Client</code>)</h3>
+      <pre>from baton import Client, SignalType
+from baton.sinks import HttpSink
+
+client = Client(
+    vendor_id="your-vendor",
+    consent_token=os.environ["BATON_CONSENT_TOKEN"],
+    sink=HttpSink(url=os.environ["BATON_INGEST_URL"], api_key=os.environ["BATON_API_KEY"]),
+)
+
+with client.trace(
+    tool_name="chat.completions.create",
+    intent="summarize the user's question",
+    expected_outcome="2-3 sentence answer",
+) as trace:
+    response = vendor_client.chat.completions.create(...)
+    trace.observed(response)
+
+client.annotate(signal_type=SignalType.DEAD_END, suggested_improvement="...")
+client.close()  # or: with Client(...) as client:</pre>
+      <h3>Async (<code>AsyncClient</code>)</h3>
+      <pre>from baton import AsyncClient, SignalType
+
+async with AsyncClient(
+    vendor_id="your-vendor",
+    consent_token=os.environ["BATON_CONSENT_TOKEN"],
+    sink=HttpSink(url=os.environ["BATON_INGEST_URL"], api_key=os.environ["BATON_API_KEY"]),
+) as client:
+    async with client.trace(tool_name="...", intent="...") as trace:
+        response = await vendor_client.chat.completions.create(...)
+        trace.observed(response)</pre>
+      <h3>Signal types</h3>
+      <p>Eight friction signal types per <a href="https://github.com/good-timing/baton/blob/main/docs/SPEC.md" style="color:var(--accent)">SPEC §3.1</a>. Stable and additive-only until v1.0.</p>
+      <div class="chips">
+        <span class="chip">failure</span><span class="chip">retry_loop</span><span class="chip">dead_end</span><span class="chip">parameter_confusion</span><span class="chip">slow_performance</span><span class="chip">abandonment</span><span class="chip">feature_gap</span><span class="chip">other</span>
+      </div>
+      <h3><code>trace.annotate()</code></h3>
+      <pre>with client.trace(tool_name="search", intent="find docs for X") as trace:
+    try:
+        result = search_api.query(...)
+        trace.observed(result)
+    except ApiError as e:
+        trace.observed(error=e)
+        trace.annotate(signal_type=SignalType.FAILURE, suggested_improvement="add retry-after on 429s")</pre>
+      <h2 id="choosing">Choosing paths</h2>
+      <table class="docs-table">
+        <thead><tr><th>Concern</th><th>MCP integration</th><th>Library API</th></tr></thead>
+        <tbody>
+          <tr><td>Instrumentation lives</td><td>Vendor side (MCP server)</td><td>Agent side (agent-generated code)</td></tr>
+          <tr><td>Setup</td><td>5 lines in your MCP server</td><td>Vendor publishes a Baton-aware Skill</td></tr>
+          <tr><td>Reliability</td><td>Deterministic — every tool call</td><td>Soft — depends on agent following Skill</td></tr>
+          <tr><td>Annotation surface</td><td>MCP tool with MUST/REQUIRED framing</td><td>Python calls (<code>trace.annotate(…)</code>)</td></tr>
+        </tbody>
+      </table>
+      <h2 id="pii">PII scrubbing</h2>
+      <p>Scrubbing is on by default. <code>baton.scrub.Scrubber</code> walks every event payload before it reaches the sink and redacts emails, bearer tokens, <code>sk-*</code> keys, JWTs, credit card numbers, phone numbers, and any field named <code>password</code>, <code>token</code>, <code>secret</code>, etc.</p>
+      <p>To opt out:</p>
+      <pre>from baton.scrub import identity_scrub
+
+install_baton(mcp, VendorConfig(..., scrubber=identity_scrub))</pre>
+    </div>
+
+  </main>
+</div>
+
+<footer>
+  <div class="footer-row">
+    <div class="footer-brand"><strong>Baton</strong> by Good Timing, Inc. &nbsp;&middot;&nbsp; &copy; 2026</div>
+    <div class="footer-links">
+      <a href="/">Home</a>
+      <a href="https://github.com/good-timing/baton-proxy" target="_blank" rel="noopener">GitHub</a>
+      <a href="/privacy.html">Privacy</a>
+      <a href="/terms.html">Terms</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const tabs = document.querySelectorAll('.tab-btn');
+  const panes = { proxy: document.getElementById('tab-proxy'), sdk: document.getElementById('tab-sdk') };
+  const sidebars = { proxy: document.getElementById('sidebar-proxy'), sdk: document.getElementById('sidebar-sdk') };
+
+  function switchTab(name) {
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+    Object.entries(panes).forEach(([k, el]) => el.hidden = k !== name);
+    Object.entries(sidebars).forEach(([k, el]) => el.hidden = k !== name);
+    history.replaceState(null, '', '#' + name);
+    rewireSidebar(name);
+  }
+  tabs.forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
+
+  let currentObserver = null;
+  function rewireSidebar(tab) {
+    if (currentObserver) currentObserver.disconnect();
+    const links = sidebars[tab].querySelectorAll('.sidebar-link');
+    const headings = panes[tab].querySelectorAll('h2[id]');
+    currentObserver = new IntersectionObserver(entries => {
+      for (const e of entries) {
+        if (e.isIntersecting) {
+          links.forEach(l => l.classList.remove('active'));
+          const a = sidebars[tab].querySelector('.sidebar-link[href="#' + e.target.id + '"]');
+          if (a) a.classList.add('active');
+        }
+      }
+    }, { rootMargin: '-10% 0% -75% 0%' });
+    headings.forEach(h => currentObserver.observe(h));
+  }
+
+  document.querySelectorAll('pre').forEach(pre => {
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'copy';
+    btn.addEventListener('click', async () => {
+      await navigator.clipboard.writeText(pre.innerText.replace(/^copy$/, '').trim());
+      btn.textContent = 'copied';
+      setTimeout(() => btn.textContent = 'copy', 1500);
+    });
+    pre.appendChild(btn);
+  });
+
+  switchTab(location.hash.replace('#', '') === 'sdk' ? 'sdk' : 'proxy');
+</script>
+
+</body>
+</html>
