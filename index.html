@@ -263,12 +263,12 @@
       instead of an error. The request vanishes with no ticket and no trace. Baton captures the friction from
       your API, ranks what customers actually want, and lets you respond to them if you want to.
     </p>
-    <p class="cmd-lead">Point Baton at your MCP server and get a friction report in minutes, no rebuild:</p>
+    <p class="cmd-lead">Point Baton at a server you've already configured in Claude and get a friction report in minutes:</p>
     <div class="cmd">
-      <code>uvx baton-proxy scan -- &lt;your MCP server&gt;</code>
-      <button class="cmd-copy" data-cmd="uvx baton-proxy scan -- <your MCP server>">Copy</button>
+      <code>uvx baton-proxy scan --config &lt;server-name&gt;</code>
+      <button class="cmd-copy" data-cmd="uvx baton-proxy scan --config <server-name>">Copy</button>
     </div>
-    <p class="micro">Read-only by default · runs locally · open source · no signup ·
+    <p class="micro">Aim at dev, not prod · runs locally · open source · no signup ·
       <a href="https://github.com/good-timing/baton-proxy/blob/main/README.md" target="_blank" rel="noopener" style="color: var(--accent);">View source</a>
     </p>
   </section>
@@ -289,12 +289,12 @@
   <section class="fade-in">
     <h2>See it on your own MCP server. One line, no rebuild.</h2>
     <div class="cmd">
-      <code>uvx baton-proxy scan -- &lt;your MCP server start command&gt;</code>
-      <button class="cmd-copy" data-cmd="uvx baton-proxy scan -- <your MCP server start command>">Copy</button>
+      <code>uvx baton-proxy scan --config &lt;server-name&gt;</code>
+      <button class="cmd-copy" data-cmd="uvx baton-proxy scan --config <server-name>">Copy</button>
     </div>
     <p class="lead-in" style="margin-top:14px">A friction report in a few minutes.</p>
     <ul class="why-list">
-      <li><strong>Read-only by default.</strong> The scan only exercises read, list, and inspect tools; anything that could change your data is skipped unless you opt in.</li>
+      <li><strong>Exercises every tool, including writes.</strong> Aim it at a dev or local instance, not production.</li>
       <li><strong>Runs locally.</strong> Events write to a file on your machine; nothing is sent anywhere by default.</li>
       <li><strong>Open source, Apache-2.0, zero deps.</strong> Read every line before you run it.</li>
       <li><strong>No rebuild, no signup, no creds.</strong> It wraps your server, it doesn't change it.</li>
@@ -303,11 +303,11 @@
       <summary>What it does and doesn't do</summary>
       <div class="disc-body">
         <ul>
-          <li>Wraps your MCP server locally and drives an agent through <strong>read-only</strong> operator tasks.</li>
-          <li>Shows you the exact calls before it makes them — <code>--dry-run</code> previews the plan and calls nothing.</li>
-          <li>Skips any tool that could change your data unless you <code>--allow</code> it.</li>
-          <li>Runs on your own Claude session; sends nothing off your machine.</li>
-          <li>Doesn't touch production unless you point it there — aim it at a dev or local instance.</li>
+          <li>Targets a server you've already configured in Claude — pass <code>--config &lt;server-name&gt;</code> and it reuses your saved credentials.</li>
+          <li>Drives a headless agent that exercises every tool and annotates friction — errors, missing capabilities, and silent successes.</li>
+          <li>Runs on your own Claude session; LLM cost lands on your auth, never Baton's.</li>
+          <li>Events write to a local temp file and are deleted after the report — nothing leaves your machine.</li>
+          <li>Stdio servers only; HTTP/SSE servers aren't supported yet.</li>
         </ul>
       </div>
     </details>
@@ -315,13 +315,18 @@
 
   <!-- DEPLOY (Diagram #1) -->
   <section class="fade-in">
-    <h2>Capture it from real customers: wrap your MCP server.</h2>
+    <h2>Capture it from real customers: ship the SDK.</h2>
     <p class="body">
-      The scan is a one-off snapshot. To collect this from real customer traffic, put Baton in your MCP server:
-      wrap it with the open-source proxy (no rebuild) or add the SDK in about five lines. It adds one tool the
-      agent calls, <code style="font-family:var(--font-mono);color:var(--accent-soft)">annotate</code>, to record
-      the customer's intent before it acts and flag the gap after, and around every real call it captures the four
-      things only the agent has: intent, the call, what it expected, what it got. Still free, still open source.
+      The scan is a preflight — one run, inferred signal. To capture friction from real customer traffic, add the
+      SDK to your MCP server in about five lines. Every agent that connects gets the signal automatically, nothing
+      changes for your customers. It injects one tool, <code style="font-family:var(--font-mono);color:var(--accent-soft)">annotate</code>,
+      that records intent before each call and flags the gap after — the four things only the agent has: intent,
+      the call, what it expected, what it got. Free and open source.
+    </p>
+    <p class="body">
+      Not the server author? The proxy picks up where the scan left off: prepend <code style="font-family:var(--font-mono);color:var(--accent-soft)">baton-proxy --</code>
+      to any server you run and capture the same signal from your own real sessions — yours, your team's, or
+      servers you use regularly. No rebuild, same local events file.
     </p>
 
     <div class="diagram-wrap">
@@ -455,7 +460,7 @@
     </div>
     <div class="faq-item">
       <div class="faq-q">Will the scan change anything on my server?</div>
-      <div class="faq-a">It's read-only by default: it only exercises read, list, and inspect tools, and skips anything that could change your data unless you opt in. <code>--dry-run</code> shows you the exact calls before it makes any.</div>
+      <div class="faq-a">The agent exercises every tool, including write tools, so aim it at a local or dev instance rather than production. It reuses the credentials from your existing Claude config entry — it doesn't add or change anything on your server itself.</div>
     </div>
     <div class="faq-item">
       <div class="faq-q">Where does my data go?</div>
@@ -476,8 +481,8 @@
     <h2>See what your customers wish your MCP server did.</h2>
     <p class="lede">Start free: run the scan on your own server. When you're ready to turn the signal into a system, talk to us about the Console.</p>
     <div class="cmd">
-      <code>uvx baton-proxy scan -- &lt;your MCP server&gt;</code>
-      <button class="cmd-copy" data-cmd="uvx baton-proxy scan -- <your MCP server>">Copy</button>
+      <code>uvx baton-proxy scan --config &lt;server-name&gt;</code>
+      <button class="cmd-copy" data-cmd="uvx baton-proxy scan --config <server-name>">Copy</button>
     </div>
     <a href="https://calendly.com/dave-goodtiming/30min" target="_blank" rel="noopener" class="btn btn-primary" style="margin-top: 6px;">Book 30 min with a founder →</a>
     <p style="margin-top: 14px; font-size: 0.85rem; color: var(--text-dim);">Prefer email? <a href="mailto:dave@goodtiming.ai" style="color: var(--text-secondary); text-decoration: underline;">dave@goodtiming.ai</a></p>
