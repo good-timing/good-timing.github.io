@@ -91,6 +91,21 @@
     .footer-brand strong { color: var(--text-primary); font-weight: 600; }
     .footer-links a { color: var(--text-dim); margin-left: 18px; }
     .footer-links a:hover { color: var(--text-primary); }
+    /* Syntax colours */
+    .sy-k { color: #C792EA; }
+    .sy-s { color: #C3E88D; }
+    .sy-c { color: #637777; }
+    .sy-t { color: #82AAFF; }
+    .sy-f { color: #82AAFF; }
+    /* Tabbed code block */
+    .code-tabs { margin: 0.75rem 0 1.25rem; }
+    .code-tab-bar { display: flex; background: #0e1014; border: 1px solid var(--border-strong); border-bottom: none; border-radius: 10px 10px 0 0; }
+    .code-tab-btn { padding: 6px 16px; font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.03em; color: var(--text-dim); background: transparent; border: none; border-right: 1px solid var(--border); cursor: pointer; transition: color 0.15s; }
+    .code-tab-btn:last-child { border-right: none; }
+    .code-tab-btn:hover { color: var(--text-primary); }
+    .code-tab-btn.active { color: var(--accent); }
+    .code-tab-btn code { color: inherit; background: none; padding: 0; font-size: inherit; }
+    .code-tabs > pre { margin: 0; border-radius: 0 0 10px 10px; border-top: none; }
     @media (max-width: 760px) {
       nav { padding: 14px 16px; }
       .nav-brand-sub { display: none; }
@@ -278,8 +293,12 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
           <tr><td>from fastmcp import FastMCP</td><td>baton.integrations.fastmcp</td><td>baton-sdk[fastmcp]</td></tr>
         </tbody>
       </table>
-      <h3>Official <code>mcp</code> SDK</h3>
-      <pre>import os
+      <div class="code-tabs">
+        <div class="code-tab-bar">
+          <button class="code-tab-btn active">Official <code>mcp</code></button>
+          <button class="code-tab-btn">fastmcp</button>
+        </div>
+        <pre>import os
 from mcp.server.fastmcp import FastMCP
 from baton.integrations.mcp import install_baton, VendorConfig
 from baton.sinks import HttpSink
@@ -297,8 +316,7 @@ install_baton(mcp, VendorConfig(
 
 @mcp.tool()
 async def your_tool(...): ...</pre>
-      <h3>Standalone <code>fastmcp</code></h3>
-      <pre>import os
+        <pre hidden>import os
 from fastmcp import FastMCP
 from baton.integrations.fastmcp import install_baton, VendorConfig
 from baton.sinks import HttpSink
@@ -316,6 +334,7 @@ install_baton(mcp, VendorConfig(
 
 @mcp.tool()
 async def your_tool(...): ...</pre>
+      </div>
       <h2 id="sinks">Sinks</h2>
       <table class="docs-table">
         <thead><tr><th>Sink</th><th>Use case</th></tr></thead>
@@ -443,12 +462,42 @@ install_baton(mcp, VendorConfig(..., scrubber=identity_scrub))</pre>
     headings.forEach(h => currentObserver.observe(h));
   }
 
+  // Inline code-tab switching (FastMCP vs official mcp)
+  document.querySelectorAll('.code-tabs').forEach(container => {
+    const btns = container.querySelectorAll('.code-tab-btn');
+    const codePanes = container.querySelectorAll(':scope > pre');
+    btns.forEach((btn, i) => {
+      btn.addEventListener('click', () => {
+        btns.forEach((b, j) => { b.classList.toggle('active', j === i); codePanes[j].hidden = j !== i; });
+      });
+    });
+  });
+
+  // Syntax highlighting
+  function hlCode(text) {
+    const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return text.replace(
+      /(#[^\n]*|\/\/[^\n]*)|("""[\s\S]*?"""|'''[\s\S]*?'''|"[^"\n\\]*(?:\\.[^"\n\\]*)*"|'[^'\n\\]*(?:\\.[^'\n\\]*)*')|(\b(?:import|from|as|def|async|await|with|try|except|class|if|else|elif|for|return|in|not|and|or|is|None|True|False|pass|raise|yield|os)\b)|(\b[A-Z][A-Za-z0-9_]*\b)|(\b\w+(?=\s*\())|[\s\S]/g,
+      (m, cmt, str, kw, cls, fn) => {
+        if (cmt) return '<span class="sy-c">' + esc(m) + '</span>';
+        if (str) return '<span class="sy-s">' + esc(m) + '</span>';
+        if (kw)  return '<span class="sy-k">' + m + '</span>';
+        if (cls) return '<span class="sy-t">' + m + '</span>';
+        if (fn)  return '<span class="sy-f">' + m + '</span>';
+        return esc(m);
+      }
+    );
+  }
+
+  // Code blocks: highlight then wire copy button
   document.querySelectorAll('pre').forEach(pre => {
+    const text = pre.textContent;
+    if (!pre.closest('.diagram')) pre.innerHTML = hlCode(text);
     const btn = document.createElement('button');
     btn.className = 'copy-btn';
     btn.textContent = 'copy';
     btn.addEventListener('click', async () => {
-      await navigator.clipboard.writeText(pre.innerText.replace(/^copy$/, '').trim());
+      await navigator.clipboard.writeText(text);
       btn.textContent = 'copied';
       setTimeout(() => btn.textContent = 'copy', 1500);
     });
