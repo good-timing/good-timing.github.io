@@ -247,7 +247,7 @@
     </a>
     <div class="nav-right">
       <a href="/docs.html" class="nav-link">Docs</a>
-      <a href="https://github.com/good-timing/baton-proxy" class="nav-github" aria-label="Baton on GitHub" target="_blank" rel="noopener">
+      <a href="https://github.com/good-timing" class="nav-github" aria-label="Baton on GitHub" target="_blank" rel="noopener">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.54-3.88-1.54-.52-1.34-1.28-1.69-1.28-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.3-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18.92-.26 1.91-.39 2.89-.39.98 0 1.97.13 2.89.39 2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.76.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.4-5.25 5.69.41.36.78 1.07.78 2.17v3.22c0 .31.21.67.8.56C20.71 21.39 24 17.08 24 12 24 5.65 18.85.5 12.5.5h-.5z"/></svg>
       </a>
       <a href="#early-access" class="btn btn-outline">Talk to us</a>
@@ -330,7 +330,7 @@
     </p>
 
     <div class="diagram-wrap">
-      <svg viewBox="0 0 920 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Signal capture: the customer's agent calls your MCP server, which is wrapped by Baton. The agent annotates its intent, makes the tool call, annotates the gap, and Baton emits the captured signal.">
+      <svg viewBox="0 0 920 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Signal capture: the customer's agent calls your MCP server, instrumented by Baton — the proxy or the SDK. The agent annotates its intent, makes the tool call, annotates the gap, and Baton emits the captured signal to a sink you choose.">
         <defs>
           <marker id="ar1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#F5A623"/></marker>
         </defs>
@@ -344,6 +344,7 @@
         <!-- Baton wrap -->
         <rect x="292" y="52" width="392" height="200" rx="16" fill="rgba(245,166,35,0.05)" stroke="rgba(245,166,35,0.5)" stroke-width="1.3" stroke-dasharray="6 5"/>
         <text x="312" y="74" font-family="Inter, sans-serif" font-size="12" font-weight="700" letter-spacing="0.18em" fill="#F5A623">BATON</text>
+        <text x="374" y="74" font-family="JetBrains Mono, monospace" font-size="9" fill="#95989F">· proxy or SDK</text>
         <!-- server box -->
         <rect x="312" y="86" width="352" height="48" rx="10" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.14)" stroke-width="1.1"/>
         <text x="488" y="115" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#ECEEF2">Your MCP server · tools untouched</text>
@@ -423,7 +424,7 @@
         <text x="805" y="140" text-anchor="middle" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#ECEEF2">Your team</text>
         <text x="805" y="162" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#95989F">build · fix · answer</text>
         <!-- response back, routed cleanly under the console -->
-        <path d="M805 220 C 805 286, 330 286, 186 204" fill="none" stroke="#F5A623" stroke-width="1.8" marker-end="url(#ar2)"/>
+        <path d="M805 220 C 612 288, 300 288, 186 204" fill="none" stroke="#F5A623" stroke-width="1.8" marker-end="url(#ar2)"/>
         <text x="495" y="326" text-anchor="middle" font-family="Inter, sans-serif" font-size="12.5" fill="#ECEEF2">response flows back into the customer's agent</text>
         <text x="495" y="344" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" letter-spacing="0.1em" fill="#F5A623">SUPPORT</text>
       </svg>
@@ -494,7 +495,7 @@
       <div class="footer-links">
         <a href="/docs.html">Docs</a>
         <a href="/support-teams.html">For support teams</a>
-        <a href="https://github.com/good-timing/baton-proxy" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/good-timing" target="_blank" rel="noopener">GitHub</a>
         <a href="/privacy.html">Privacy</a>
         <a href="/terms.html">Terms</a>
         <a href="mailto:hello@goodtiming.ai">Contact</a>
