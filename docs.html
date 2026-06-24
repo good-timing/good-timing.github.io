@@ -27,7 +27,7 @@
       --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
     }
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+    html { scroll-behavior: smooth; scroll-padding-top: 90px; scrollbar-gutter: stable; }
     body { font-family: var(--font-body); background: var(--bg-deep); color: var(--text-primary); line-height: 1.6; -webkit-font-smoothing: antialiased; }
     a { color: inherit; text-decoration: none; }
     nav {
@@ -36,13 +36,16 @@
       background: rgba(11,12,16,0.82); backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border);
     }
-    .nav-brand { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 1.05rem; color: var(--text-primary); }
+    .nav-brand { display: flex; align-items: center; gap: 10px; font-weight: 600; letter-spacing: -0.01em; font-size: 1.05rem; color: var(--text-primary); }
     .nav-brand-mark { width: 24px; height: 24px; background: url('/baton-icon.svg') center/contain no-repeat; flex-shrink: 0; }
     .nav-brand-sub { color: #7E818A; font-weight: 400; margin-left: 3px; }
     .nav-right { display: flex; align-items: center; gap: 18px; }
     .nav-github { color: var(--text-dim); display: inline-flex; align-items: center; transition: color 0.15s; }
     .nav-github:hover { color: var(--text-primary); }
-    .btn { display: inline-flex; align-items: center; padding: 9px 18px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all 0.18s; border: 1px solid var(--border-strong); color: var(--text-primary); background: transparent; text-decoration: none; }
+    .nav-link { color: var(--text-secondary); font-size: 0.92rem; font-weight: 500; transition: color 0.15s; }
+    .nav-link:hover { color: var(--text-primary); }
+    .nav-link.active { color: var(--accent); }
+    .btn { display: inline-flex; align-items: center; padding: 10px 20px; border-radius: 8px; font-size: 0.92rem; font-weight: 500; cursor: pointer; transition: all 0.18s; border: 1px solid var(--border-strong); color: var(--text-primary); background: transparent; text-decoration: none; }
     .btn:hover { border-color: var(--accent); color: var(--accent); }
     .docs-wrap { display: flex; max-width: 1100px; margin: 0 auto; padding: 0 32px; gap: 48px; }
     .docs-header { padding: 96px 0 0; border-bottom: 1px solid var(--border); }
@@ -54,6 +57,7 @@
     .tab-btn.active { color: var(--accent); border-color: var(--border); border-bottom-color: var(--bg-deep); background: var(--bg-deep); }
     .docs-sidebar { width: 180px; flex-shrink: 0; padding: 36px 0; }
     .docs-sidebar nav { position: sticky; top: 90px; }
+    .docs-sidebar nav[hidden] { display: none; }
     .sidebar-group { margin-bottom: 24px; }
     .sidebar-label { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 8px; }
     .sidebar-link { display: block; font-size: 0.84rem; color: var(--text-dim); padding: 3px 0; transition: color 0.12s; }
@@ -78,9 +82,15 @@
     .docs-table tr:last-child td { border-bottom: none; }
     .card { border: 1px solid var(--border); border-radius: 12px; background: var(--bg-card); padding: 18px 20px; margin-bottom: 12px; }
     .card h3 { margin-top: 0; margin-bottom: 6px; }
+    .stage-eyebrow { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+    .stage-eyebrow .step { color: var(--text-dim); }
+    .docs-content > div > .stage-eyebrow:first-child { margin-top: 0; margin-bottom: 4px; }
+    .stage-eyebrow + h2 { margin-top: 0; }
+    .card .stage-eyebrow { margin-bottom: 6px; }
     .note { border: 1px solid rgba(245,166,35,0.22); border-radius: 9px; background: rgba(245,166,35,0.05); padding: 12px 16px; margin: 1rem 0; font-size: 0.88rem; color: var(--accent-soft); }
     .note strong { color: var(--accent); }
-    .diagram { border: 1px solid var(--border); border-radius: 12px; background: var(--bg-mid); padding: 20px; margin: 1rem 0 1.5rem; overflow-x: auto; }
+    .diagram { border: 1px solid var(--border); border-radius: 14px; background: radial-gradient(ellipse at 50% 50%, rgba(245,166,35,0.05) 0%, transparent 70%), var(--bg-mid); padding: 26px 22px; margin: 1.25rem 0 1.5rem; overflow-x: auto; }
+    .diagram svg { display: block; width: 100%; height: auto; max-width: 720px; margin: 0 auto; }
     .diagram pre { background: none; border: none; padding: 0; margin: 0; font-size: 0.78rem; color: var(--text-secondary); }
     .diagram pre code { background: none; color: var(--text-secondary); font-size: inherit; }
     .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0.5rem 0 1.25rem; }
@@ -110,6 +120,8 @@
     <span>Baton <span class="nav-brand-sub">by Good Timing</span></span>
   </a>
   <div class="nav-right">
+    <a href="/" class="nav-link">Home</a>
+    <a href="/docs.html" class="nav-link active">Docs</a>
     <a href="https://github.com/good-timing/baton-proxy" class="nav-github" aria-label="GitHub" target="_blank" rel="noopener">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.54-3.88-1.54-.52-1.34-1.28-1.69-1.28-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.3-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18.92-.26 1.91-.39 2.89-.39.98 0 1.97.13 2.89.39 2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.76.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.4-5.25 5.69.41.36.78 1.07.78 2.17v3.22c0 .31.21.67.8.56C20.71 21.39 24 17.08 24 12 24 5.65 18.85.5 12.5.5h-.5z"/></svg>
     </a>
@@ -121,18 +133,28 @@
   <div class="docs-header-inner">
     <h1 class="docs-title">Docs</h1>
     <div class="docs-tabs">
-      <button class="tab-btn active" data-tab="proxy">Proxy</button>
+      <button class="tab-btn active" data-tab="overview">Overview</button>
+      <button class="tab-btn" data-tab="proxy">Proxy</button>
       <button class="tab-btn" data-tab="sdk">SDK</button>
+      <button class="tab-btn" data-tab="console">Console</button>
     </div>
   </div>
 </div>
 
 <div class="docs-wrap">
   <aside class="docs-sidebar">
-    <nav id="sidebar-proxy">
+    <nav id="sidebar-overview">
+      <div class="sidebar-group">
+        <p class="sidebar-label">Overview</p>
+        <a href="#what-is-baton" class="sidebar-link">What is Baton</a>
+        <a href="#stages" class="sidebar-link">Test, deploy &amp; act</a>
+        <a href="#how-it-fits" class="sidebar-link">How it fits together</a>
+      </div>
+    </nav>
+    <nav id="sidebar-proxy" hidden>
       <div class="sidebar-group">
         <p class="sidebar-label">baton-proxy</p>
-        <a href="#overview" class="sidebar-link">Overview</a>
+        <a href="#proxy-overview" class="sidebar-link">Overview</a>
         <a href="#install" class="sidebar-link">Install</a>
         <a href="#quick-start" class="sidebar-link">Quick start</a>
         <a href="#configuration" class="sidebar-link">Configuration</a>
@@ -153,21 +175,90 @@
         <a href="#pii" class="sidebar-link">PII scrubbing</a>
       </div>
     </nav>
+    <nav id="sidebar-console" hidden>
+      <div class="sidebar-group">
+        <p class="sidebar-label">Baton Console</p>
+        <a href="#console-overview" class="sidebar-link">Overview</a>
+        <a href="#console-how" class="sidebar-link">How it works</a>
+        <a href="#console-respond" class="sidebar-link">Respond &amp; prioritize</a>
+        <a href="#console-access" class="sidebar-link">Access &amp; security</a>
+      </div>
+    </nav>
   </aside>
 
   <main class="docs-content">
 
-    <div id="tab-proxy">
-      <h2 id="overview">Overview</h2>
+    <div id="tab-overview">
+      <h2 id="what-is-baton">What is Baton</h2>
+      <p>Baton is actionable product analytics for MCP servers. When a customer&#39;s agent calls your server and your API can&#39;t meet the request, you often get a 200 with an empty body or a vague error — the customer&#39;s intent vanishes with no ticket and no trace. Baton captures that friction at the moment it happens: what the customer was trying to do, the call the agent made, what it expected, and what it got.</p>
+      <p>You instrument your server once. Whatever agent your customers use — Claude, Cursor, ChatGPT — keeps working exactly as before.</p>
+
+      <h2 id="stages">Test, deploy, act</h2>
+      <p>Most teams move through three stages. The first two are free and open source and capture the signal; the third is the paid Console, where you act on it. You only need one of the two capture paths.</p>
+      <div class="card">
+        <p class="stage-eyebrow"><span class="step">Stage 1</span> &nbsp;·&nbsp; Test</p>
+        <h3><code>baton-proxy</code> &nbsp;&middot;&nbsp; free, open source</h3>
+        <p>Get a taste of the kinds of friction Baton surfaces, with no rebuild. The friction comes from <strong>you</strong> running it against your own MCP server — either by driving a few tool calls yourself, or automatically with the <code>scan</code> command, which runs a headless agent and writes a report. Nothing leaves your machine. <a href="#proxy" style="color:var(--accent)">Proxy reference →</a></p>
+      </div>
+      <div class="card">
+        <p class="stage-eyebrow"><span class="step">Stage 2</span> &nbsp;·&nbsp; Deploy</p>
+        <h3><code>baton-sdk</code> &nbsp;&middot;&nbsp; free, open source</h3>
+        <p>See friction from your <strong>actual customers</strong>. They won&#39;t install the proxy, so you instrument your side: wrap your MCP server with the SDK middleware (about five lines), or use the Library API path if you ship via Skills and don&#39;t have an MCP server. Same wire format, same sinks. <a href="#sdk" style="color:var(--accent)">SDK reference →</a></p>
+      </div>
+      <div class="card">
+        <p class="stage-eyebrow"><span class="step">Stage 3</span> &nbsp;·&nbsp; Act</p>
+        <h3>Baton Console &nbsp;&middot;&nbsp; hosted</h3>
+        <p>The paid tier. It collects events across every customer and session, dedupes and ranks the friction into trends — your top unmet demands and silent-failure rates — then routes issues to your team and sends the resolution back into the customer&#39;s agent. <a href="#console" style="color:var(--accent)">Console reference →</a></p>
+      </div>
+
+      <h2 id="how-it-fits">How it fits together</h2>
+      <p>The proxy and the SDK emit the exact same events to a sink you choose; the difference is who drives them and where they live. The proxy is <strong>you</strong>, sampling your own server. The SDK is baked into your server (or your Skill), capturing real <strong>customer</strong> traffic. Either way, the Baton Console is where that signal becomes a ranked roadmap your team can act on.</p>
+      <p style="color:var(--text-dim);font-size:0.88rem">Each section has an architecture diagram: the <a href="#proxy" style="color:var(--accent)">Proxy</a> and <a href="#sdk" style="color:var(--accent)">SDK</a> pages show how capture works; the <a href="#console" style="color:var(--accent)">Console</a> page shows how it comes together across customers.</p>
+    </div>
+
+    <div id="tab-proxy" hidden>
+      <p class="stage-eyebrow"><span class="step">Stage 1 · Test</span> &nbsp;·&nbsp; sample friction yourself</p>
+      <h2 id="proxy-overview">Overview</h2>
       <p>baton-proxy wraps any stdio MCP server and captures friction events. From Claude&#39;s perspective it <em>is</em> the MCP server; the real server is its child process. All MCP traffic passes through unchanged.</p>
-      <div class="diagram"><pre>&#x250C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2510;      &#x250C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2510;      &#x250C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2510;
-&#x2502;  Claude  &#x2502; &#x25C4;&#x2500;&#x2500;&#x25BA; &#x2502;  baton-proxy  &#x2502; &#x25C4;&#x2500;&#x2500;&#x25BA; &#x2502; your MCP server &#x2502;
-&#x2514;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2518;      &#x2514;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x252C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2518;      &#x2514;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2518;
-                           &#x2502;
-              &#x250C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x253C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2510;
-       &#x250C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2510; &#x250C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2510; &#x250C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2510;
-       &#x2502; stderr  &#x2502; &#x2502;  file   &#x2502; &#x2502; Baton Console&#x2502;
-       &#x2514;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2518; &#x2514;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2518; &#x2514;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2518;</pre></div>
+      <div class="diagram">
+        <svg viewBox="0 50 680 256" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="diag-t diag-d">
+          <title id="diag-t">baton-proxy architecture</title>
+          <desc id="diag-d">Claude talks to baton-proxy, which spawns your MCP server as a child process and passes all traffic through unchanged. Per tool call the proxy emits events to three sinks: stderr, a file, and the Baton Console.</desc>
+          <defs>
+            <marker id="diag-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#F5A623"/></marker>
+            <marker id="diag-drop" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#62656D"/></marker>
+          </defs>
+          <rect x="28" y="64" width="140" height="60" rx="12" fill="rgba(255,255,255,0.025)" stroke="rgba(255,255,255,0.14)" stroke-width="1.1"/>
+          <text x="98" y="90" text-anchor="middle" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#ECEEF2">Claude</text>
+          <text x="98" y="107" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" fill="#95989F">your MCP client</text>
+          <line x1="170" y1="94" x2="234" y2="94" stroke="#F5A623" stroke-width="2" marker-start="url(#diag-arrow)" marker-end="url(#diag-arrow)"/>
+          <text x="202" y="84" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="#95989F">MCP</text>
+          <rect x="236" y="64" width="150" height="60" rx="12" fill="rgba(245,166,35,0.06)" stroke="rgba(245,166,35,0.5)" stroke-width="1.3"/>
+          <text x="311" y="90" text-anchor="middle" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#ECEEF2">baton-proxy</text>
+          <text x="311" y="107" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="#FFC36B">traffic passes through</text>
+          <line x1="388" y1="94" x2="452" y2="94" stroke="#F5A623" stroke-width="2" marker-start="url(#diag-arrow)" marker-end="url(#diag-arrow)"/>
+          <text x="420" y="84" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="#95989F">spawns</text>
+          <rect x="454" y="64" width="176" height="60" rx="12" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.14)" stroke-width="1.1"/>
+          <text x="542" y="90" text-anchor="middle" font-family="Inter, sans-serif" font-size="14.5" font-weight="600" fill="#ECEEF2">your MCP server</text>
+          <text x="542" y="107" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="#95989F">unchanged · child process</text>
+          <line x1="311" y1="124" x2="311" y2="176" stroke="#F5A623" stroke-width="1.6"/>
+          <text x="326" y="151" text-anchor="start" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="#95989F">emits per tool call</text>
+          <line x1="105" y1="176" x2="525" y2="176" stroke="#F5A623" stroke-width="1.6"/>
+          <line x1="105" y1="176" x2="105" y2="205" stroke="#62656D" stroke-width="1.4" marker-end="url(#diag-drop)"/>
+          <line x1="311" y1="176" x2="311" y2="205" stroke="#62656D" stroke-width="1.4" marker-end="url(#diag-drop)"/>
+          <line x1="525" y1="176" x2="525" y2="205" stroke="#F5A623" stroke-width="1.6" marker-end="url(#diag-arrow)"/>
+          <rect x="25" y="208" width="160" height="56" rx="11" fill="rgba(255,255,255,0.025)" stroke="rgba(255,255,255,0.14)" stroke-width="1.1"/>
+          <text x="105" y="234" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12.5" fill="#ECEEF2">stderr</text>
+          <text x="105" y="250" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="#62656D">default sink</text>
+          <rect x="211" y="208" width="200" height="56" rx="11" fill="rgba(255,255,255,0.025)" stroke="rgba(255,255,255,0.14)" stroke-width="1.1"/>
+          <text x="311" y="234" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12.5" fill="#ECEEF2">file</text>
+          <text x="311" y="250" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="#62656D">/tmp/baton-proxy.jsonl</text>
+          <rect x="437" y="208" width="176" height="56" rx="11" fill="rgba(245,166,35,0.05)" stroke="rgba(245,166,35,0.32)" stroke-width="1.1"/>
+          <text x="525" y="233" text-anchor="middle" font-family="Inter, sans-serif" font-size="12.5" font-weight="600" fill="#ECEEF2">Baton Console</text>
+          <text x="525" y="250" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="#FFC36B">https · hosted</text>
+          <text x="319" y="293" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="#62656D">tool_call_start · tool_call_end · tool_call_error</text>
+        </svg>
+      </div>
       <p>Per real tool call, three event types are emitted matching the <a href="https://github.com/good-timing/baton/blob/main/docs/SPEC.md" style="color:var(--accent)">Baton wire format</a>:</p>
       <table class="docs-table">
         <thead><tr><th>Event</th><th>Payload fields</th></tr></thead>
@@ -256,10 +347,35 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
     </div>
 
     <div id="tab-sdk" hidden>
+      <p class="stage-eyebrow"><span class="step">Stage 2 · Deploy</span> &nbsp;·&nbsp; capture friction from your customers</p>
       <h2 id="sdk-overview">Overview</h2>
-      <p>baton-sdk is native instrumentation for vendors who control their MCP server source. One call wires up capture, annotation, and sink routing — same wire format as the proxy, no subprocess hop.</p>
+      <p>baton-sdk is native instrumentation for vendors who control their MCP server source. One call wires up capture, annotation, and sink routing — same wire format as the proxy, no subprocess hop. Because it lives inside what you ship, it captures friction from your real customers, who never have to install anything.</p>
       <div class="card"><h3>MCP middleware path</h3><p>Your MCP server calls <code>install_baton(mcp, …)</code>. Five lines. Captures every tool call at the transport boundary and injects the annotation tool. Best for vendors with MCP servers as their primary surface.</p></div>
       <div class="card"><h3>Library API path</h3><p>Agent-generated code wraps vendor API calls with <code>client.trace(…)</code>. Same event envelope, same sinks — different emission boundary. Best for vendors using Skills as their primary distribution.</p></div>
+      <div class="diagram">
+        <svg viewBox="0 50 680 214" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="sdk1-t sdk1-d">
+          <title id="sdk1-t">baton-sdk, MCP middleware path</title>
+          <desc id="sdk1-d">The customer's agent talks to your MCP server over MCP. The Baton SDK runs in-process inside your server, capturing every tool call at the transport boundary, and emits events to the sink you choose. There is no separate proxy process.</desc>
+          <defs>
+            <marker id="sdk1-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#F5A623"/></marker>
+          </defs>
+          <rect x="40" y="70" width="180" height="60" rx="12" fill="rgba(255,255,255,0.025)" stroke="rgba(255,255,255,0.14)" stroke-width="1.1"/>
+          <text x="130" y="96" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#ECEEF2">Customer agent</text>
+          <text x="130" y="113" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="#95989F">any MCP client</text>
+          <line x1="222" y1="100" x2="300" y2="100" stroke="#F5A623" stroke-width="2" marker-start="url(#sdk1-arrow)" marker-end="url(#sdk1-arrow)"/>
+          <text x="261" y="90" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="#95989F">MCP</text>
+          <rect x="302" y="70" width="296" height="60" rx="12" fill="rgba(245,166,35,0.06)" stroke="rgba(245,166,35,0.5)" stroke-width="1.3"/>
+          <text x="450" y="95" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#ECEEF2">your MCP server</text>
+          <text x="450" y="114" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="#FFC36B">+ Baton SDK · in-process</text>
+          <line x1="450" y1="130" x2="450" y2="170" stroke="#F5A623" stroke-width="1.6" marker-end="url(#sdk1-arrow)"/>
+          <text x="464" y="152" text-anchor="start" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="#95989F">emits per tool call</text>
+          <rect x="360" y="172" width="180" height="56" rx="11" fill="rgba(245,166,35,0.05)" stroke="rgba(245,166,35,0.32)" stroke-width="1.1"/>
+          <text x="450" y="196" text-anchor="middle" font-family="Inter, sans-serif" font-size="12.5" font-weight="600" fill="#ECEEF2">events</text>
+          <text x="450" y="212" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8" fill="#95989F">stderr · file · Console</text>
+          <text x="130" y="200" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="#62656D">no subprocess —</text>
+          <text x="130" y="213" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="#62656D">Baton is a library in your server</text>
+        </svg>
+      </div>
       <h2 id="sdk-install">Install</h2>
       <table class="docs-table">
         <thead><tr><th>Command</th><th>Includes</th></tr></thead>
@@ -334,7 +450,36 @@ sink = MultiSink([StdoutSink(), FileSink("./events.jsonl")])
 # production
 sink = HttpSink(url=os.environ["BATON_INGEST_URL"], api_key=os.environ["BATON_API_KEY"])</pre>
       <h2 id="library-api">Library API</h2>
-      <p>For vendors whose customers reach the API via agent-generated code (Skills pattern).</p>
+      <p>For vendors whose customers reach the API via agent-generated code (Skills pattern). Here Baton lives in the Skill code, not in a server — so it fits vendors who have no MCP server at all.</p>
+      <div class="diagram">
+        <svg viewBox="0 50 680 214" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="sdk2-t sdk2-d">
+          <title id="sdk2-t">baton-sdk, Library API path</title>
+          <desc id="sdk2-d">The customer's agent runs your Skill. The Skill code wraps each call to your API with client.trace, which emits events to the sink you choose. Your API is unchanged; Baton lives in the Skill, not your API.</desc>
+          <defs>
+            <marker id="lib-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#F5A623"/></marker>
+          </defs>
+          <rect x="24" y="70" width="150" height="60" rx="12" fill="rgba(255,255,255,0.025)" stroke="rgba(255,255,255,0.14)" stroke-width="1.1"/>
+          <text x="99" y="95" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#ECEEF2">Customer agent</text>
+          <text x="99" y="113" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8" fill="#95989F">runs your Skill</text>
+          <line x1="176" y1="100" x2="230" y2="100" stroke="#62656D" stroke-width="1.6" marker-end="url(#lib-arrow)"/>
+          <text x="203" y="90" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8" fill="#95989F">runs</text>
+          <rect x="232" y="70" width="200" height="60" rx="12" fill="rgba(245,166,35,0.06)" stroke="rgba(245,166,35,0.5)" stroke-width="1.3"/>
+          <text x="332" y="95" text-anchor="middle" font-family="Inter, sans-serif" font-size="13.5" font-weight="600" fill="#ECEEF2">your Skill code</text>
+          <text x="332" y="114" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="#FFC36B">+ client.trace()</text>
+          <line x1="434" y1="100" x2="508" y2="100" stroke="#F5A623" stroke-width="2" marker-end="url(#lib-arrow)"/>
+          <text x="471" y="90" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8" fill="#95989F">API call</text>
+          <rect x="510" y="70" width="146" height="60" rx="12" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.14)" stroke-width="1.1"/>
+          <text x="583" y="95" text-anchor="middle" font-family="Inter, sans-serif" font-size="13.5" font-weight="600" fill="#ECEEF2">your API</text>
+          <text x="583" y="114" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8" fill="#95989F">HTTP · unchanged</text>
+          <line x1="332" y1="130" x2="332" y2="170" stroke="#F5A623" stroke-width="1.6" marker-end="url(#lib-arrow)"/>
+          <text x="346" y="152" text-anchor="start" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="#95989F">trace emits</text>
+          <rect x="242" y="172" width="180" height="56" rx="11" fill="rgba(245,166,35,0.05)" stroke="rgba(245,166,35,0.32)" stroke-width="1.1"/>
+          <text x="332" y="196" text-anchor="middle" font-family="Inter, sans-serif" font-size="12.5" font-weight="600" fill="#ECEEF2">events</text>
+          <text x="332" y="212" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8" fill="#95989F">stderr · file · Console</text>
+          <text x="583" y="200" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="#62656D">Baton lives in the Skill,</text>
+          <text x="583" y="213" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="#62656D">not your API</text>
+        </svg>
+      </div>
       <h3>Sync (<code>Client</code>)</h3>
       <pre>from baton import Client, SignalType
 from baton.sinks import HttpSink
@@ -397,6 +542,56 @@ async with AsyncClient(
 install_baton(mcp, VendorConfig(..., scrubber=identity_scrub))</pre>
     </div>
 
+    <div id="tab-console" hidden>
+      <p class="stage-eyebrow"><span class="step">Stage 3 · Act</span> &nbsp;·&nbsp; turn the signal into a roadmap</p>
+      <h2 id="console-overview">Overview</h2>
+      <p>The proxy and the SDK capture friction for free. The Baton Console is the hosted, paid tier that collects those events across every customer and every session and turns them into something you can act on. It does two things a single local report can&#39;t: it shows the friction across your whole customer base, and it lets your team respond back into the customer&#39;s agent.</p>
+      <div class="diagram">
+        <svg viewBox="0 0 920 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="con-t con-d">
+          <title id="con-t">Baton Console</title>
+          <desc id="con-d">The Baton Console collects sessions from many customers, dedupes and ranks them into trends, and routes issues to your team, who respond back into the customer's agent.</desc>
+          <defs>
+            <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#F5A623"/></marker>
+            <marker id="ar2d" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#62656D"/></marker>
+          </defs>
+          <text x="105" y="52" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.1em" fill="#62656D">SESSIONS · MANY CUSTOMERS</text>
+          <rect x="30" y="70" width="150" height="42" rx="9" fill="rgba(255,255,255,0.025)" stroke="rgba(255,255,255,0.14)" stroke-width="1"/>
+          <text x="105" y="95" text-anchor="middle" font-family="Inter, sans-serif" font-size="12.5" fill="#ECEEF2">customer A · agent</text>
+          <rect x="30" y="124" width="150" height="42" rx="9" fill="rgba(255,255,255,0.025)" stroke="rgba(255,255,255,0.14)" stroke-width="1"/>
+          <text x="105" y="149" text-anchor="middle" font-family="Inter, sans-serif" font-size="12.5" fill="#ECEEF2">customer B · agent</text>
+          <rect x="30" y="178" width="150" height="42" rx="9" fill="rgba(255,255,255,0.025)" stroke="rgba(255,255,255,0.14)" stroke-width="1"/>
+          <text x="105" y="203" text-anchor="middle" font-family="Inter, sans-serif" font-size="12.5" fill="#ECEEF2">customer C · agent</text>
+          <line x1="182" y1="91" x2="371" y2="132" stroke="#62656D" stroke-width="1.4" marker-end="url(#ar2d)"/>
+          <line x1="182" y1="145" x2="371" y2="145" stroke="#62656D" stroke-width="1.4" marker-end="url(#ar2d)"/>
+          <line x1="182" y1="199" x2="371" y2="158" stroke="#62656D" stroke-width="1.4" marker-end="url(#ar2d)"/>
+          <rect x="375" y="70" width="210" height="150" rx="16" fill="rgba(245,166,35,0.09)" stroke="#F5A623" stroke-width="1.6"/>
+          <text x="480" y="120" text-anchor="middle" font-family="Inter, sans-serif" font-size="17" font-weight="700" letter-spacing="0.02em" fill="#F5A623">Baton Console</text>
+          <text x="480" y="152" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#ECEEF2">aggregate · dedupe</text>
+          <text x="480" y="172" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#ECEEF2">rank · trends</text>
+          <text x="480" y="200" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#95989F">analytics + responses</text>
+          <line x1="585" y1="130" x2="726" y2="130" stroke="#F5A623" stroke-width="2" marker-end="url(#ar2)"/>
+          <rect x="730" y="70" width="150" height="150" rx="14" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.18)" stroke-width="1.2"/>
+          <text x="805" y="140" text-anchor="middle" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#ECEEF2">Your team</text>
+          <text x="805" y="162" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#95989F">build · fix · answer</text>
+          <path d="M805 220 C 805 286, 330 286, 186 204" fill="none" stroke="#F5A623" stroke-width="1.8" marker-end="url(#ar2)"/>
+          <text x="495" y="326" text-anchor="middle" font-family="Inter, sans-serif" font-size="12.5" fill="#ECEEF2">response flows back into the customer's agent</text>
+          <text x="495" y="344" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" letter-spacing="0.1em" fill="#F5A623">SUPPORT</text>
+        </svg>
+      </div>
+
+      <h2 id="console-how">How it works</h2>
+      <p>Every event your proxy or SDK emits to an <code>https://</code> sink lands in the Console under your tenant. There it&#39;s deduped across customers and ranked into trends, so you see the demand, not one transcript at a time.</p>
+      <div class="card"><h3>See the friction across every customer</h3><p>The Console dedupes and ranks the friction into trends: your top unmet demands, your silent-failure rate by tool, what to build next. A roadmap, not a single transcript.</p></div>
+
+      <h2 id="console-respond">Respond &amp; prioritize</h2>
+      <p>Analytics tell you what to build. When something&#39;s worth a human right now, the Console closes the loop.</p>
+      <div class="card"><h3>Respond when you want</h3><p>When something&#39;s worth a human, the Console hands your team the fully-described issue and sends the resolution back into the customer&#39;s agent. That&#39;s where support lives: the first response is a fix, not a question.</p></div>
+
+      <h2 id="console-access">Access &amp; security</h2>
+      <p>The Console is hosted by us and auditable by you. Your data is single-tenant, and every event is logged and inspectable — you can see exactly what each agent sent, when, and why. You define the schema and PII is scrubbed before anything leaves your machine, so what you don&#39;t capture can never reach us.</p>
+      <p>Capturing the signal with the proxy or SDK is free. The Console is the paid tier where you act on it. <a href="/#early-access" style="color:var(--accent)">Talk to us about access →</a></p>
+    </div>
+
   </main>
 </div>
 
@@ -414,14 +609,14 @@ install_baton(mcp, VendorConfig(..., scrubber=identity_scrub))</pre>
 
 <script>
   const tabs = document.querySelectorAll('.tab-btn');
-  const panes = { proxy: document.getElementById('tab-proxy'), sdk: document.getElementById('tab-sdk') };
-  const sidebars = { proxy: document.getElementById('sidebar-proxy'), sdk: document.getElementById('sidebar-sdk') };
+  const panes = { overview: document.getElementById('tab-overview'), proxy: document.getElementById('tab-proxy'), sdk: document.getElementById('tab-sdk'), console: document.getElementById('tab-console') };
+  const sidebars = { overview: document.getElementById('sidebar-overview'), proxy: document.getElementById('sidebar-proxy'), sdk: document.getElementById('sidebar-sdk'), console: document.getElementById('sidebar-console') };
 
-  function switchTab(name) {
+  function switchTab(name, updateHash = true) {
     tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === name));
     Object.entries(panes).forEach(([k, el]) => el.hidden = k !== name);
     Object.entries(sidebars).forEach(([k, el]) => el.hidden = k !== name);
-    history.replaceState(null, '', '#' + name);
+    if (updateHash) history.replaceState(null, '', '#' + name);
     rewireSidebar(name);
   }
   tabs.forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
@@ -455,7 +650,22 @@ install_baton(mcp, VendorConfig(..., scrubber=identity_scrub))</pre>
     pre.appendChild(btn);
   });
 
-  switchTab(location.hash.replace('#', '') === 'sdk' ? 'sdk' : 'proxy');
+  function tabForHash(h) {
+    if (!h) return 'overview';
+    if (panes[h]) return h;
+    for (const [name, el] of Object.entries(panes)) {
+      if (el.querySelector('[id="' + (window.CSS && CSS.escape ? CSS.escape(h) : h) + '"]')) return name;
+    }
+    return 'overview';
+  }
+  const initialHash = location.hash.replace('#', '');
+  const startTab = tabForHash(initialHash);
+  const isSection = initialHash && initialHash !== startTab;
+  switchTab(startTab, !isSection);
+  if (isSection) {
+    const target = document.getElementById(initialHash);
+    if (target) requestAnimationFrame(() => target.scrollIntoView());
+  }
 </script>
 
 </body>
