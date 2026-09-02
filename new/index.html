@@ -576,24 +576,26 @@ Steps:
 
 <section id="capSec" class="l1">
   <h2>How capture works</h2>
-  <p class="lede">Baton adds two parameters to every tool you already have: the goal and the
-    expected result. The agent fills them in with each call, and Baton strips them out before your
-    code runs. Two added tools let the agent send feedback directly: annotate, for friction as it
-    happens, and a session report when the work ends. <b>Your customers never see Baton.</b></p>
+  <p class="lede">Baton adds three parameters to every tool you already have: the goal, the
+    expected result, and the task the agent is working through. The agent fills them in with each
+    call, and Baton strips them out before your code runs. One added tool lets the agent send
+    feedback directly: annotate, for friction as it happens. <b>Your customers never see
+    Baton.</b></p>
 
   <h3 class="caph">What Baton adds</h3>
   <div class="addtable">
     <div class="addrow">
       <span class="addkind">params</span>
       <div class="addbody">
-        <div class="addname">user_goal &nbsp;·&nbsp; expected_result</div>
-        <p class="adddesc">Two parameters added to every tool you already have. The agent fills them
-          in with each call; Baton strips them out before your code runs.</p>
+        <div class="addname">user_goal &nbsp;·&nbsp; expected_result &nbsp;·&nbsp; overall_task</div>
+        <p class="adddesc">Three parameters added to every tool you already have. The agent fills
+          them in with each call; Baton strips them out before your code runs.</p>
         <div class="addex"><pre>projects_find_data {
   entity: "task",
   fields: ["owner:name", "status"],
 <span class="inj">  user_goal: "Add a project-level table to the dashboard",</span>
-<span class="inj">  expected_result: "Rows grouped by owner"</span>
+<span class="inj">  expected_result: "Rows grouped by owner",</span>
+<span class="inj">  overall_task: "Build a leadership dashboard"</span>
 }</pre></div>
       </div>
     </div>
@@ -603,14 +605,6 @@ Steps:
         <div class="addname">acme_annotate</div>
         <p class="adddesc">The agent reports friction as it happens: what it tried, what it
           expected, what happened instead.</p>
-      </div>
-    </div>
-    <div class="addrow">
-      <span class="addkind">tool</span>
-      <div class="addbody">
-        <div class="addname">acme_session_report</div>
-        <p class="adddesc">When the work ends, the agent files the session's account: what the user
-          came for, what happened, where it ended.</p>
       </div>
     </div>
   </div>
@@ -716,8 +710,9 @@ withBaton(server, {
   <div class="pillars">
     <div><h3>PII never leaves raw</h3><p>Every payload is scrubbed before it leaves your process:
       emails, keys, tokens, card numbers, and sensitive fields, on by default.</p></div>
-    <div><h3>Deploy where you're comfortable</h3><p>Keep everything inside your perimeter, ship
-      events to your own S3, or use Baton's cloud, hosted single-tenant.</p></div>
+    <div><h3>Deploy where you're comfortable</h3><p>Keep everything inside your perimeter, send
+      events to an endpoint you run, or use Baton's cloud, hosted single-tenant. The proxy can
+      write straight to your own S3.</p></div>
     <div><h3>Auditable end to end</h3><p>Every event is logged and inspectable. You define the
       capture schema, so what you don't capture can never reach us.</p></div>
     <div><h3>Your telemetry, if you want it</h3><p>Events can also route to your own OpenTelemetry
@@ -844,8 +839,8 @@ sidecars:
   proxy:`# wrap the server: prepend one token to its command
 baton-proxy -- npx @vendor/mcp-server
 
-# or scan it once for a friction report
-uvx baton-proxy scan -- npx @vendor/mcp-server`};
+# or scan a server you already have configured
+uvx baton-proxy scan --config <server-name>`};
 document.querySelectorAll('.lang').forEach(l=>l.addEventListener('click',()=>{
   sdkLang=l.dataset.l;
   document.querySelectorAll('.lang').forEach(x=>x.classList.toggle('on',x===l));
