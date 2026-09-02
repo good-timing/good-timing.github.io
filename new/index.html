@@ -631,8 +631,11 @@ Steps:
 
 withBaton(server, {
   vendorId: "acme",
+  vendorDisplayName: "Acme",
   consentToken: process.env.BATON_CONSENT_TOKEN,
-  sink: new HttpSink({ url: BATON_CONSOLE_URL }),
+  sink: new HttpSink(BATON_CONSOLE_URL, {
+    apiKey: process.env.BATON_API_KEY,
+  }),
 });</pre></div>
     <div class="diagram dgm" id="dgm">
     <svg class="dvar show" data-m="sdk" viewBox="0 0 920 240" xmlns="http://www.w3.org/2000/svg">
@@ -813,16 +816,23 @@ const SDKCODE={ts:`import { withBaton, HttpSink } from "@goodtiming/baton-sdk";
 
 withBaton(server, {
   vendorId: "acme",
+  vendorDisplayName: "Acme",
   consentToken: process.env.BATON_CONSENT_TOKEN,
-  sink: new HttpSink({ url: BATON_CONSOLE_URL }),
+  sink: new HttpSink(BATON_CONSOLE_URL, {
+    apiKey: process.env.BATON_API_KEY,
+  }),
 });`,
   py:`from baton.integrations.mcp import install_baton, VendorConfig
 from baton.sinks import HttpSink
 
 install_baton(mcp, VendorConfig(
     vendor_id="acme",
+    vendor_display_name="Acme",
     consent_token=os.environ["BATON_CONSENT_TOKEN"],
-    sink=HttpSink(url=BATON_CONSOLE_URL),
+    sink=HttpSink(
+        url=BATON_CONSOLE_URL,
+        api_key=os.environ["BATON_API_KEY"],
+    ),
 ))`};
 let sdkLang='ts';
 const MODECODE={sdk:SDKCODE.ts,
