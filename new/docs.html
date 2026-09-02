@@ -103,7 +103,9 @@
     .note { border: 1px solid var(--mark); border-radius: 9px; background: var(--brand-wash); padding: 12px 16px; margin: 1rem 0; font-size: 13.5px; color: var(--ink-2); }
     .note strong { color: var(--brand-ink); }
     .diagram { border: 1px solid var(--line); border-radius: 14px; background: var(--card); padding: 22px; margin: 1rem 0 1.5rem; overflow-x: auto; }
-    .diagram pre { background: none; border: none; padding: 0; margin: 0; font-size: 12px; color: var(--ink-3); }
+    /* Box-drawing art only joins up when the rows touch; prose line-height
+       leaves a gap that turns a solid border into a dashed one. */
+    .diagram pre { background: none; border: none; padding: 0; margin: 0; font-size: 12px; line-height: 1.15; color: var(--ink-3); }
     .diagram pre code { background: none; color: var(--ink-3); font-size: inherit; }
     .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0.5rem 0 1.25rem; }
     .chip { font-family: var(--mono); font-size: 11.5px; padding: 3px 10px; border-radius: 6px; background: var(--line-soft); border: 1px solid var(--line); color: var(--ink-3); }
@@ -169,6 +171,7 @@
       <button class="tab-btn active" data-tab="overview">Overview</button>
       <button class="tab-btn" data-tab="proxy">Proxy</button>
       <button class="tab-btn" data-tab="sdk">SDK</button>
+      <button class="tab-btn" data-tab="gateway">Gateway</button>
       <button class="tab-btn" data-tab="console">Console</button>
     </div>
   </div>
@@ -208,6 +211,17 @@
         <a href="#pii" class="sidebar-link">PII scrubbing</a>
       </div>
     </nav>
+    <nav id="sidebar-gateway" hidden>
+      <div class="sidebar-group">
+        <p class="sidebar-label">gateway</p>
+        <a href="#gateway-overview" class="sidebar-link">Where it sits</a>
+        <a href="#gateway-captures" class="sidebar-link">What it captures</a>
+        <a href="#gateway-failopen" class="sidebar-link">Fail open</a>
+        <a href="#gateway-config" class="sidebar-link">What you configure</a>
+        <a href="#gateway-identity" class="sidebar-link">Identity</a>
+        <a href="#gateway-start" class="sidebar-link">Getting set up</a>
+      </div>
+    </nav>
     <nav id="sidebar-console" hidden>
       <div class="sidebar-group">
         <p class="sidebar-label">Baton Console</p>
@@ -227,7 +241,7 @@
       <p>You instrument your server once. Whatever agent your customers use — Claude, Cursor, ChatGPT — keeps working exactly as before.</p>
 
       <h2 id="stages">Test, deploy, act</h2>
-      <p>Most teams move through three stages. The first two are free and open source and capture the signal; the third is the paid Console, where you act on it. You only need one of the two capture paths.</p>
+      <p>Most teams move through three stages. The first two are free and open source and capture the signal; the third is the paid Console, where you act on it. You only need one of the three capture paths.</p>
       <div class="card">
         <p class="stage-eyebrow"><span class="step">Stage 1</span> &nbsp;·&nbsp; Test</p>
         <h3><code>baton-proxy</code> &nbsp;&middot;&nbsp; free, open source</h3>
@@ -236,7 +250,7 @@
       <div class="card">
         <p class="stage-eyebrow"><span class="step">Stage 2</span> &nbsp;·&nbsp; Deploy</p>
         <h3><code>baton-sdk</code> &nbsp;&middot;&nbsp; free, open source</h3>
-        <p>See friction from your <strong>actual customers</strong>. They won&#39;t install the proxy, so you instrument your side: wrap your MCP server with the SDK middleware (about five lines), or use the Library API path if you ship via Skills and don&#39;t have an MCP server. Same wire format, same sinks. <a href="#sdk" style="color:var(--brand)">SDK reference →</a></p>
+        <p>See friction from your <strong>actual customers</strong>. They won&#39;t install the proxy, so you instrument your side: wrap your MCP server with the SDK middleware (about five lines), or use the Library API path if you ship via Skills and don&#39;t have an MCP server. Same wire format, same sinks. If you run many MCP servers behind a gateway, capture at the gateway instead and cover all of them at once. <a href="#sdk" style="color:var(--brand)">SDK reference →</a> &nbsp;&middot;&nbsp; <a href="#gateway" style="color:var(--brand)">Gateway reference →</a></p>
       </div>
       <div class="card">
         <p class="stage-eyebrow"><span class="step">Stage 3</span> &nbsp;·&nbsp; Act</p>
@@ -245,8 +259,8 @@
       </div>
 
       <h2 id="how-it-fits">How it fits together</h2>
-      <p>The proxy and the SDK emit the exact same events to a sink you choose; the difference is who drives them and where they live. The proxy is <strong>you</strong>, sampling your own server. The SDK is baked into your server (or your Skill), capturing real <strong>customer</strong> traffic. Either way, the Baton Console is where that signal becomes a ranked roadmap your team can act on.</p>
-      <p style="color:var(--mute-2);font-size:12.5px">Each section has an architecture diagram: the <a href="#proxy" style="color:var(--brand)">Proxy</a> and <a href="#sdk" style="color:var(--brand)">SDK</a> pages show how capture works; the <a href="#console" style="color:var(--brand)">Console</a> page shows how it comes together across customers.</p>
+      <p>The three capture paths emit the exact same events to a sink you choose; the difference is who drives them and where they live. The proxy is <strong>you</strong>, sampling your own server. The SDK is baked into your server (or your Skill), capturing real <strong>customer</strong> traffic. The gateway path sits one level up, in front of a fleet of servers you did not have to touch. Either way, the Baton Console is where that signal becomes a ranked roadmap your team can act on.</p>
+      <p style="color:var(--mute-2);font-size:12.5px">Each section has an architecture diagram: the <a href="#proxy" style="color:var(--brand)">Proxy</a>, <a href="#sdk" style="color:var(--brand)">SDK</a> and <a href="#gateway" style="color:var(--brand)">Gateway</a> pages show how capture works; the <a href="#console" style="color:var(--brand)">Console</a> page shows how it comes together across customers.</p>
     </div>
 
     <div id="tab-proxy" hidden>
@@ -588,6 +602,63 @@ async with AsyncClient(
 install_baton(mcp, VendorConfig(..., scrubber=identity_scrub))</pre>
     </div>
 
+    <div id="tab-gateway" hidden>
+      <p class="stage-eyebrow"><span class="step">Stage 2 &middot; Deploy</span> &nbsp;&middot;&nbsp; capture a whole fleet at once</p>
+      <h2 id="gateway-overview">Where it sits</h2>
+      <p>For fleets of MCP servers. The other two paths instrument one server at a time: the <a href="#sdk" style="color:var(--brand)">SDK</a> goes inside a server you own, the <a href="#proxy" style="color:var(--brand)">proxy</a> wraps a server you do not. This one captures at the gateway itself, so every server behind it is covered at once, and neither your clients nor your backend servers change.</p>
+      <p>Baton runs as a processor beside your gateway, on the gateway&#39;s external-processor hook for MCP. Traffic still flows client to gateway to server. Baton sees the MCP messages as they pass and never becomes a hop in the path: it is not a subprocess wrap and not an HTTP bridge.</p>
+      <div class="diagram">
+        <pre><code>┌────────────────────┐
+│  customer&#39;s agent  │
+└─────────┬──────────┘
+          │  MCP
+          ▼
+┌────────────────────┐   external-processor    ┌─────────────────────┐
+│    your gateway    │ ──────── hook ────────▶ │  Baton processor    │
+└─────────┬──────────┘                         └──────────┬──────────┘
+          │                                               │  events
+          ▼                                               ▼
+┌────────────────────┐                         ┌─────────────────────┐
+│  MCP server × N    │                         │  Console, or your   │
+│  unchanged         │                         │  own sink           │
+└────────────────────┘                         └─────────────────────┘</code></pre>
+      </div>
+      <p>This is the path that reaches surfaces with no code to instrument. A client behind the gateway is captured without anyone shipping a change to it.</p>
+
+      <h2 id="gateway-captures">What it captures</h2>
+      <p>Two parameters are added to the tool list the gateway returns: the agent&#39;s goal, and the result it expects. The agent fills them in on the next call. Baton reads them off that call and strips them before the request reaches your server, so your tool schemas and your handlers are unchanged and your customers never see them.</p>
+      <table class="docs-table">
+        <thead><tr><th>MCP message</th><th>What Baton does</th></tr></thead>
+        <tbody>
+          <tr><td>tools/list</td><td>Adds the two intent parameters to the response.</td></tr>
+          <tr><td>tools/call</td><td>Reads the values off the request, strips them, emits the event.</td></tr>
+        </tbody>
+      </table>
+      <p>The events are the same wire format the other two paths emit, so one Console reads all three. Capture here is request side: session, identity, intent and arguments all ride the request, which makes it complete and safe under concurrency. Latency and errors are reconstructed downstream from the telemetry your gateway already exports.</p>
+
+      <h2 id="gateway-failopen">Fail open</h2>
+      <div class="note"><strong>Capture never breaks a tool call.</strong> The gateway is configured in fail-open mode on this hook, so if the Baton processor is slow, restarting or gone, the call goes through and the event is the only thing lost. Observation is best effort by design. Your traffic is not.</div>
+
+      <h2 id="gateway-config">What you configure</h2>
+      <p>Two pieces: one hook in your gateway&#39;s own policy, pointed at the processor, and the same handful of environment variables the <a href="#proxy" style="color:var(--brand)">proxy</a> reads.</p>
+      <table class="docs-table">
+        <thead><tr><th>Variable</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td>BATON_VENDOR_ID</td><td>Labels the captured signal.</td></tr>
+          <tr><td>BATON_EVENT_SINK</td><td>Where events go: the Console over https, your own object store, a file, or stderr. Comma separate to fan out.</td></tr>
+          <tr><td>BATON_API_KEY</td><td>Bearer token for the Console sink, from your secret store.</td></tr>
+          <tr><td>BATON_CONSENT_TOKEN</td><td>Per install consent. The processor refuses to ship anywhere remote while this is still the placeholder.</td></tr>
+        </tbody>
+      </table>
+      <p>Nothing has to leave your walls. Point the sink at your own storage and the Console never sees an event.</p>
+
+      <h2 id="gateway-identity">Identity</h2>
+      <p>This path resolves the caller from a request header, and which header is configuration rather than code. The value is hashed inside the processor and the raw identity never leaves your network, exactly as on the other two paths.</p>
+
+      <h2 id="gateway-start">Getting set up</h2>
+      <p>There is no package to install yet. The <a href="#proxy" style="color:var(--brand)">proxy</a> and the <a href="#sdk" style="color:var(--brand)">SDK</a> are published and you can start with either one today; the gateway processor ships with a runbook for your platform team instead, and we set it up with you. <a href="/#early-access" style="color:var(--brand)">Talk to us</a> and we will size it against your gateway.</p>
+    </div>
+
     <div id="tab-console" hidden>
       <p class="stage-eyebrow"><span class="step">Stage 3 · Act</span> &nbsp;·&nbsp; turn the signal into a roadmap</p>
       <h2 id="console-overview">Overview</h2>
@@ -655,8 +726,8 @@ install_baton(mcp, VendorConfig(..., scrubber=identity_scrub))</pre>
 
 <script>
   const tabs = document.querySelectorAll('.tab-btn');
-  const panes = { overview: document.getElementById('tab-overview'), proxy: document.getElementById('tab-proxy'), sdk: document.getElementById('tab-sdk'), console: document.getElementById('tab-console') };
-  const sidebars = { overview: document.getElementById('sidebar-overview'), proxy: document.getElementById('sidebar-proxy'), sdk: document.getElementById('sidebar-sdk'), console: document.getElementById('sidebar-console') };
+  const panes = { overview: document.getElementById('tab-overview'), proxy: document.getElementById('tab-proxy'), sdk: document.getElementById('tab-sdk'), gateway: document.getElementById('tab-gateway'), console: document.getElementById('tab-console') };
+  const sidebars = { overview: document.getElementById('sidebar-overview'), proxy: document.getElementById('sidebar-proxy'), sdk: document.getElementById('sidebar-sdk'), gateway: document.getElementById('sidebar-gateway'), console: document.getElementById('sidebar-console') };
 
   function switchTab(name, updateHash = true) {
     tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === name));
