@@ -35,23 +35,27 @@
     /* Scoped to the page's own nav — the sidebar is a <nav> too. */
     body > nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      /* Contents centred on 1240px, matching new/index.html's nav, so the
-         brand and the CTA do not jump sideways between the two pages. */
-      padding: 16px max(20px, calc((100% - 1240px) / 2));
+      /* Contents centred on 1240px and the height PINNED, both matching
+         new/index.html's nav. Derived height was the bug: this page sets
+         body line-height 1.6 and the front door sets none, so the same
+         button resolved 6px taller here and the bar jumped on every click. */
+      height: 72px; box-sizing: border-box;
+      padding: 0 max(20px, calc((100% - 1240px) / 2));
       display: flex; align-items: center; justify-content: space-between;
       background: rgba(255,255,255,0.88); backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--line);
     }
-    .nav-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; letter-spacing: -0.01em; color: var(--ink); }
+    .nav-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; letter-spacing: -0.01em; line-height: 1.2; color: var(--ink); }
     .nav-brand-mark { width: 25px; height: 25px; flex-shrink: 0; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230ca678'/%3E%3Crect x='10' y='28' width='44' height='8' rx='4' fill='%230b0c10' transform='rotate(-30 32 32)'/%3E%3C/svg%3E") center/contain no-repeat; }
     .nav-brand-sub { color: var(--mute-2); font-weight: 400; font-size: 12px; margin-left: 3px; }
     .nav-right { display: flex; align-items: center; gap: 20px; }
-    .nav-link { color: var(--ink-3); font-size: 13.5px; font-weight: 500; transition: color 0.15s; }
+    .nav-link { color: var(--ink-3); font-size: 13.5px; font-weight: 500; line-height: 1.2; transition: color 0.15s; }
     .nav-link:hover { color: var(--ink); }
     .nav-link.active { color: var(--brand); font-weight: 600; }
     .nav-github { color: var(--mute-2); display: inline-flex; align-items: center; transition: color 0.15s; }
+    .nav-github svg { display: block; }
     .nav-github:hover { color: var(--ink); }
-    .btn { display: inline-flex; align-items: center; padding: 9px 20px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; transition: filter 0.18s; border: 1px solid transparent; color: #fff; background: var(--brand); text-decoration: none; }
+    .btn { display: inline-flex; align-items: center; white-space: nowrap; padding: 9px 20px; border-radius: 10px; font-size: 14px; font-weight: 600; line-height: 1.2; cursor: pointer; transition: filter 0.18s; border: 1px solid transparent; color: #fff; background: var(--brand); text-decoration: none; }
     .btn:hover { filter: brightness(1.06); }
 
     /* ---------- header + tabs ---------- */
@@ -139,7 +143,12 @@
     .code-tabs > pre { margin: 0; border-radius: 0 0 10px 10px; border-top: none; }
 
     @media (max-width: 760px) {
-      body > nav { padding: 14px 16px; }
+      body > nav { height: 60px; padding: 0 16px; }
+      /* Four links plus the CTA do not fit 375px: the brand ran into
+         Home and the button wrapped to two lines. The brand mark is
+         already the home link, so Home is the redundant one. */
+      .nav-home { display: none; }
+      .nav-right { gap: 14px; }
       .nav-brand-sub { display: none; }
       .docs-wrap { flex-direction: column; padding: 0 16px; gap: 0; }
       .docs-sidebar { display: none; }
@@ -158,7 +167,7 @@
     <span>Baton <span class="nav-brand-sub">by Good Timing</span></span>
   </a>
   <div class="nav-right">
-    <a href="/new/" class="nav-link">Home</a>
+    <a href="/new/" class="nav-link nav-home">Home</a>
     <a href="/new/docs.html" class="nav-link active">Docs</a>
     <a href="https://github.com/good-timing" class="nav-github" aria-label="Baton on GitHub" target="_blank" rel="noopener">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.54-3.88-1.54-.52-1.34-1.28-1.69-1.28-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.3-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18.92-.26 1.91-.39 2.89-.39.98 0 1.97.13 2.89.39 2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.76.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.4-5.25 5.69.41.36.78 1.07.78 2.17v3.22c0 .31.21.67.8.56C20.71 21.39 24 17.08 24 12 24 5.65 18.85.5 12.5.5h-.5z"/></svg>
