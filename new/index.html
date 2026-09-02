@@ -176,7 +176,11 @@
   .caption span{font-size:20px}
 
   /* ---------- step chips (product UI, wired) ---------- */
-  .stepsrow{display:flex;gap:8px;margin:14px auto 0;justify-content:center;align-items:center}
+  /* wrap: six chips do not fit a phone on one line, and this row only
+     started mattering when it moved out of the clipped .stagewrap — it
+     was the last thing making the page scroll sideways at 375px. */
+  .stepsrow{display:flex;flex-wrap:wrap;gap:8px;margin:14px auto 0;padding:0 20px;
+            justify-content:center;align-items:center}
   .step{font:inherit;font-size:12.5px;color:var(--ink-3);background:#fff;border:1px solid var(--line);
         border-radius:7px;padding:6px 13px;cursor:pointer}
   .step.on{border-color:var(--brand);color:var(--brand);font-weight:600}
@@ -350,6 +354,11 @@
        would not change what the code says. Pan it rather than fold it. */
     .addex{overflow-x:auto}
     .addrow{flex-wrap:wrap;gap:10px}
+    /* .addex's own scroller could never engage: .addbody is a flex item,
+       and a flex item's default min-width:auto refuses to shrink below
+       its content, so the un-wrappable code lines sized the row and the
+       whole PAGE scrolled sideways instead of just the sample. */
+    .addbody{min-width:0}
   }
 
   /* The nav's own breakpoint, 760px, matching docs.html rather than this

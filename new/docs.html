@@ -62,7 +62,10 @@
     .docs-header { padding: 88px 0 0; background: var(--card); border-bottom: 1px solid var(--line); }
     .docs-header-inner { max-width: 1100px; margin: 0 auto; padding: 28px 32px 18px; }
     .docs-title { font-size: 29px; font-weight: 700; letter-spacing: -0.022em; margin-bottom: 16px; }
-    .docs-tabs { display: flex; gap: 8px; }
+    /* wrap: five tabs do not fit a phone on one line, and a tab that is
+       off the edge of a page that scrolls sideways is a tab nobody
+       finds. Same shape as the front door's chip row. */
+    .docs-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
     .tab-btn { font: inherit; font-size: 12.5px; color: var(--ink-3); background: #fff; border: 1px solid var(--line); border-radius: 7px; padding: 6px 14px; cursor: pointer; transition: color 0.15s, border-color 0.15s; }
     .tab-btn:hover { color: var(--ink); }
     .tab-btn.active { border-color: var(--brand); color: var(--brand); font-weight: 600; }
