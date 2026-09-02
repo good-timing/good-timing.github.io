@@ -558,12 +558,16 @@ Steps:
     </div></div>
 
   </div>
-  <div class="stepsrow">
-    <button class="step">Their agent</button><button class="step">Understand intent</button>
-    <button class="step">Intent patterns</button><button class="step">Repeat failures</button>
-    <button class="step">How to fix</button>
-    <button class="replay" id="replay">Replay</button>
-  </div>
+</div>
+<!-- Outside .stagewrap deliberately. Below 1240px fitStage() pins that
+     wrapper to the SCALED STAGE's height and the CSS clips it, so anything
+     else living inside it is cut away: these chips were invisible on every
+     window under 1240px. -->
+<div class="stepsrow">
+  <button class="step">Their agent</button><button class="step">Understand intent</button>
+  <button class="step">Intent patterns</button><button class="step">Repeat failures</button>
+  <button class="step">How to fix</button>
+  <button class="replay" id="replay">Replay</button>
 </div>
 
 <section>
