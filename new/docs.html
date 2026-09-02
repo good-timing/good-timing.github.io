@@ -193,8 +193,10 @@
         <a href="#proxy-overview" class="sidebar-link">Overview</a>
         <a href="#install" class="sidebar-link">Install</a>
         <a href="#quick-start" class="sidebar-link">Quick start</a>
+        <a href="#intent-params" class="sidebar-link">Intent parameters</a>
         <a href="#configuration" class="sidebar-link">Configuration</a>
         <a href="#injected-tools" class="sidebar-link">Injected tools</a>
+        <a href="#remote" class="sidebar-link">Remote servers</a>
         <a href="#scan" class="sidebar-link">scan</a>
         <a href="#trust" class="sidebar-link">Trust &amp; security</a>
       </div>
@@ -266,12 +268,12 @@
     <div id="tab-proxy" hidden>
       <p class="stage-eyebrow"><span class="step">Stage 1 · Test</span> &nbsp;·&nbsp; sample friction yourself</p>
       <h2 id="proxy-overview">Overview</h2>
-      <p>baton-proxy wraps any stdio MCP server and captures friction events. From Claude&#39;s perspective it <em>is</em> the MCP server; the real server is its child process. All MCP traffic passes through unchanged.</p>
+      <p>baton-proxy wraps any stdio MCP server and captures friction events. From Claude&#39;s perspective it <em>is</em> the MCP server; the real server is its child process. Your server receives the arguments it would have received unwrapped: the proxy adds two intent parameters to each tool&#39;s advertised schema and strips them from every call before forwarding.</p>
       <div class="note"><strong>Requirements:</strong> Python 3.11+ · run via <code>uvx</code> (no install) or <code>pipx</code> · <code>scan</code> needs a server already configured in Claude (<code>~/.claude.json</code>) · stdio MCP servers only — HTTP/SSE isn&#39;t supported yet.</div>
       <div class="diagram">
         <svg viewBox="0 50 680 256" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="diag-t diag-d">
           <title id="diag-t">baton-proxy architecture</title>
-          <desc id="diag-d">Claude talks to baton-proxy, which spawns your MCP server as a child process and passes all traffic through unchanged. Per tool call the proxy emits events to three sinks: stderr, a file, and the Baton Console.</desc>
+          <desc id="diag-d">Claude talks to baton-proxy, which spawns your MCP server as a child process and forwards its traffic, stripping the intent parameters it added before the call reaches the server. Per tool call the proxy emits events to three sinks: stderr, a file, and the Baton Console.</desc>
           <defs>
             <marker id="diag-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#0ca678"/></marker>
             <marker id="diag-drop" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#9ca3af"/></marker>
@@ -350,6 +352,18 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
     "BATON_CONSENT_TOKEN": "customer-consented"
   }
 }</pre>
+      <h2 id="intent-params">Intent parameters</h2>
+      <p>This is how the proxy captures <em>why</em> a call was made, not just what happened. At <code>tools/list</code> it adds two optional string parameters to every upstream tool&#39;s advertised schema. The agent fills them in as it composes each call, and the proxy strips them at <code>tools/call</code> before forwarding.</p>
+      <table class="docs-table">
+        <thead><tr><th>Parameter</th><th>Captured as</th></tr></thead>
+        <tbody>
+          <tr><td><code>user_goal</code></td><td><code>tool_call_start.payload.call_intent</code></td></tr>
+          <tr><td><code>expected_result</code></td><td><code>tool_call_start.payload.call_expected</code>, omitted when the agent did not fill it in</td></tr>
+        </tbody>
+      </table>
+      <p>A parameter description reaches the model at the moment it composes the call, on every client. Some clients drop <code>InitializeResult.instructions</code> entirely, so instructions alone are not a reliable channel. A tool that already declares a parameter of that name is left alone: its value is forwarded untouched and never read as intent.</p>
+      <div class="note"><strong>Fail-open:</strong> if injection or stripping raises, the message is forwarded unmodified. A bug in intent capture cannot break a tool call.</div>
+
       <h2 id="configuration">Configuration</h2>
       <p>All knobs are environment variables. Every one has a default — no config file needed.</p>
       <table class="docs-table">
@@ -360,6 +374,11 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
           <tr><td>BATON_CONSENT_TOKEN</td><td><code>local</code></td><td>Per-process consent token. Must be replaced before using an <code>https://</code> sink.</td></tr>
           <tr><td>BATON_API_KEY</td><td>unset</td><td>Bearer token. Required when sink is <code>https://</code>.</td></tr>
           <tr><td>BATON_VENDOR_ID</td><td>unset</td><td>Labels the install for the operator.</td></tr>
+          <tr><td>BATON_TENANT_TYPE</td><td><code>vendor</code></td><td><code>vendor</code> ships signal to the wrapped server&#39;s vendor Console; <code>customer</code> ships to the end user&#39;s own tenant, and keeps the report tool alongside an HTTP sink.</td></tr>
+          <tr><td>BATON_INTENT_PARAM</td><td><code>optional</code></td><td>Injection mode for the intent parameters. <code>required</code> also lists <code>user_goal</code> in the advertised required set. That is an advertisement only: nothing validates it and no call fails for omitting it.</td></tr>
+          <tr><td>BATON_USER_ID_HMAC_KEY</td><td>unset</td><td>Per-tenant secret keying the end-user <code>user_id</code> hash. Hashed at the edge, so no sink sees a raw principal. Unset means <code>user_id</code> is skipped and events still emit.</td></tr>
+          <tr><td>BATON_UPSTREAM_AUTH_TOKEN</td><td>unset</td><td>Credential for the <code>--url</code> bridge, sent upstream as <code>Authorization: Bearer</code>. Ignored by the stdio form.</td></tr>
+          <tr><td>BATON_UPSTREAM_TIMEOUT</td><td><code>60</code></td><td>Read timeout in seconds for the <code>--url</code> bridge.</td></tr>
           <tr><td>BATON_PROXY_LOG_FILE</td><td>unset</td><td>Path to tee proxy logs to.</td></tr>
         </tbody>
       </table>
@@ -374,9 +393,19 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
       </table>
       <div class="note"><strong>Startup guard:</strong> the proxy refuses to start when an <code>https://</code> sink is configured but <code>BATON_API_KEY</code> is unset, or <code>BATON_CONSENT_TOKEN</code> is still <code>"local"</code>.</div>
       <h2 id="injected-tools">Injected tools</h2>
-      <p>The proxy appends two tools to the upstream server&#39;s tool list during the MCP handshake. The upstream server never sees them.</p>
+      <p>The proxy adds its own tools to the upstream server&#39;s tool list during the MCP handshake. The upstream server never sees them. <code>baton_annotate</code> is always there; the report tool depends on your sinks.</p>
       <div class="card"><h3><code>baton_annotate</code></h3><p>Called by Claude (unprompted) when it hits friction. Emits an annotation event with <code>signal_type</code>, <code>intent</code>, <code>suggested_improvement</code>, and optional context. Available in all sink modes.</p></div>
-      <div class="card"><h3><code>baton_session_report</code></h3><p>Called when the customer asks <em>"Show me the friction report for this session."</em> Returns a markdown summary of the session. <strong>Local sink only</strong> — not injected when an <code>https://</code> sink is configured.</p></div>
+      <div class="card"><h3><code>baton_session_report</code></h3><p>Called when the customer asks <em>"Show me the friction report for this session."</em> Returns a markdown summary of the session. Needs a <code>file://</code> sink to read from, which the default install has, so a <code>stderr:</code>-only install does not get it. Suppressed when an <code>https://</code> sink is also present, which is the vendor production shape; set <code>BATON_TENANT_TYPE=customer</code> to keep it there.</p></div>
+      <h2 id="remote">Remote servers</h2>
+      <p>The proxy also fronts a remote HTTPS MCP server over the Streamable HTTP transport, instead of spawning a subprocess. It stays stdio-facing to Claude and forwards each message as an HTTP POST, streaming the JSON or SSE response back. Injection, emission and correlation are the same code as the subprocess path.</p>
+      <pre>{
+  "command": "baton-proxy",
+  "args": ["--url", "https://mcp.vendor.example.com/mcp"],
+  "env": { "BATON_UPSTREAM_AUTH_TOKEN": "..." }
+}</pre>
+      <p><code>--url</code> and the <code>-- &lt;command&gt;</code> form are mutually exclusive.</p>
+      <div class="note">Bridge scope today: the client-initiated request and response loop only. It does not open the standing GET SSE channel, so server-initiated messages (sampling, elicitation, notifications) are not captured, and requests are serialised. When the upstream is unreachable the handshake degrades to a synthetic healthy response rather than an error, so the client attaches and <code>baton_annotate</code> stays usable instead of the session wedging.</div>
+
       <h2 id="scan">scan</h2>
       <p>Preview friction on a server you already have configured — no permanent install, no change to your Claude config.</p>
       <pre>uvx baton-proxy scan --config my-server</pre>
