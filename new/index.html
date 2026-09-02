@@ -28,7 +28,7 @@
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--page);font-family:var(--sans);color:var(--ink);
-       -webkit-font-smoothing:antialiased}
+       -webkit-font-smoothing:antialiased;padding-top:67px}
   .wrap{width:1240px;margin:0 auto;padding:22px 20px 30px}
 
   /* ---------- scene D: the fix (open error row) ---------- */
@@ -184,11 +184,20 @@
           font-family:inherit;margin-left:6px}
 
 
-  .hp-nav{max-width:1240px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:16px 20px}
+  /* Fixed, exactly as docs.html's nav is: same blur, same hairline, same
+     67px of height. The bar is full-bleed but its CONTENTS are centred on
+     the page's 1240px column, so the brand and the CTA land on the same x
+     on both pages — a nav that jumps sideways on every click is the whole
+     reason this matches. body pays the 67px back below. */
+  .hp-nav{position:fixed;top:0;left:0;right:0;z-index:100;
+          display:flex;align-items:center;gap:10px;
+          padding:16px max(20px,calc((100% - 1240px) / 2));
+          background:rgba(255,255,255,.88);backdrop-filter:blur(16px);
+          border-bottom:1px solid var(--line)}
   .hp-nav svg{width:25px;height:25px;display:block}
   .hp-word{font-weight:700;font-size:16px} .hp-by{font-size:12px;color:var(--mute-2)}
-  .hp-links{margin-left:auto;display:flex;gap:22px;align-items:center;font-size:13.5px}
-  .hp-links a{color:var(--ink-3);text-decoration:none}
+  .hp-links{margin-left:auto;display:flex;gap:20px;align-items:center;font-size:13.5px}
+  .hp-links a{color:var(--ink-3);text-decoration:none;font-weight:500}
   .hp-links .gh{color:var(--mute-2);display:inline-flex;align-items:center;transition:color .15s}
   .hp-links .gh:hover{color:var(--ink)}
   .hp-links .gh svg{width:22px;height:22px}   /* beats .hp-nav svg's 25px */
@@ -338,6 +347,8 @@
     .hp-by{display:none}
     .hp-links{gap:14px}
     .hp-links .hp-btn{padding:8px 14px;font-size:13px}
+    /* Shorter CTA, shorter bar: 16 + 31 + 16. */
+    body{padding-top:63px}
   }
 </style>
 </head>
