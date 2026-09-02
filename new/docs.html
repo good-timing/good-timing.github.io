@@ -373,7 +373,7 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
           <tr><td>BATON_TENANT_ID</td><td><code>local</code></td><td>Tenant identifier sent on every event.</td></tr>
           <tr><td>BATON_CONSENT_TOKEN</td><td><code>local</code></td><td>Per-process consent token. Must be replaced before using an <code>https://</code> sink.</td></tr>
           <tr><td>BATON_API_KEY</td><td>unset</td><td>Bearer token. Required when sink is <code>https://</code>.</td></tr>
-          <tr><td>BATON_VENDOR_ID</td><td>unset</td><td>Labels the install for the operator.</td></tr>
+          <tr><td>BATON_VENDOR_ID</td><td><code>local</code></td><td>Labels the install for the operator. A placeholder: <strong>a remote sink refuses to start while it is still <code>local</code></strong>, because the Console buckets friction by vendor.</td></tr>
           <tr><td>BATON_TENANT_TYPE</td><td><code>vendor</code></td><td><code>vendor</code> ships signal to the wrapped server&#39;s vendor Console; <code>customer</code> ships to the end user&#39;s own tenant, and keeps the report tool alongside an HTTP sink.</td></tr>
           <tr><td>BATON_INTENT_PARAM</td><td><code>optional</code></td><td>Injection mode for the intent parameters. <code>required</code> also lists <code>user_goal</code> in the advertised required set. That is an advertisement only: nothing validates it and no call fails for omitting it.</td></tr>
           <tr><td>BATON_USER_ID_HMAC_KEY</td><td>unset</td><td>Per-tenant secret keying the end-user <code>user_id</code> hash. Hashed at the edge, so no sink sees a raw principal. Unset means <code>user_id</code> is skipped and events still emit.</td></tr>
@@ -388,10 +388,10 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
         <tbody>
           <tr><td>1. Default</td><td>stderr + /tmp/baton-proxy.jsonl</td><td style="color:var(--mute-2)">none</td></tr>
           <tr><td>2. Custom local</td><td>Your path</td><td><code>BATON_EVENT_SINK=file:///your/path.jsonl</code></td></tr>
-          <tr><td>3. Ship to Console</td><td>Hosted</td><td><code>BATON_EVENT_SINK</code> + <code>BATON_API_KEY</code> + <code>BATON_TENANT_ID</code> + <code>BATON_CONSENT_TOKEN</code></td></tr>
+          <tr><td>3. Ship to Console</td><td>Hosted</td><td><code>BATON_EVENT_SINK</code> + <code>BATON_API_KEY</code> + <code>BATON_TENANT_ID</code> + <code>BATON_CONSENT_TOKEN</code> + <code>BATON_VENDOR_ID</code></td></tr>
         </tbody>
       </table>
-      <div class="note"><strong>Startup guard:</strong> the proxy refuses to start when an <code>https://</code> sink is configured but <code>BATON_API_KEY</code> is unset, or <code>BATON_CONSENT_TOKEN</code> is still <code>"local"</code>.</div>
+      <div class="note"><strong>Startup guard:</strong> the proxy refuses to start when an <code>https://</code> sink is configured but <code>BATON_API_KEY</code> is unset, or <code>BATON_CONSENT_TOKEN</code> or <code>BATON_VENDOR_ID</code> is still <code>"local"</code>.</div>
       <h2 id="injected-tools">Injected tools</h2>
       <p>The proxy adds its own tools to the upstream server&#39;s tool list during the MCP handshake. The upstream server never sees them. <code>baton_annotate</code> is always there; the report tool depends on your sinks.</p>
       <div class="card"><h3><code>baton_annotate</code></h3><p>Called by Claude (unprompted) when it hits friction. Emits an annotation event with <code>signal_type</code>, <code>intent</code>, <code>suggested_improvement</code>, and optional context. Available in all sink modes.</p></div>
