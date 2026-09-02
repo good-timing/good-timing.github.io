@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>Baton — Product analytics for MCP servers</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Baton captures user intent straight from their agents, finds the friction, and generates fixes to improve your product.">
 <meta property="og:title" content="Baton — Product analytics for MCP servers">
 <meta property="og:description" content="Baton captures user intent straight from their agents, finds the friction, and generates fixes to improve your product.">
@@ -290,6 +291,33 @@
   .closer .alt a{color:var(--brand);font-weight:600;text-decoration:none}
   .hp-footer{text-align:center;font-size:12.5px;color:var(--mute-2);padding:26px 20px 34px;background:#fff}
 
+  /* ---------- narrow screens ----------
+     Append-only, and deliberately so: every rule below sits inside a
+     max-width query, so the desktop rendering is untouched and the diff
+     is provably additive against Dave's locked file. Most of the page
+     needed nothing — the body is already fluid (max-width everywhere,
+     no fixed widths outside the stage). Three things are not.  */
+  @media (max-width:1240px){
+    /* The stage is composed at a fixed 1200x325 and every scene inside
+       it is positioned in those coordinates, so it cannot reflow. It is
+       scaled to fit by fitStage() instead. A transformed element still
+       contributes its UNSCALED height to layout, which is the gap this
+       clips; fitStage sets the real height to match. */
+    .stagewrap{overflow:hidden}
+    .stagewrap .stage{transform-origin:top left;margin:0}
+  }
+  @media (max-width:720px){
+    .hero h1{font-size:32px}
+    .hero .sub{font-size:16px}
+    section{margin-top:60px}
+    section h2{font-size:23px}
+    /* The only two-column grid on the page. */
+    .pillars{grid-template-columns:1fr;gap:20px}
+    /* The injected-param sample: long lines with no wrap point that
+       would not change what the code says. Pan it rather than fold it. */
+    .addex{overflow-x:auto}
+    .addrow{flex-wrap:wrap;gap:10px}
+  }
 </style>
 </head>
 <body>
@@ -837,6 +865,22 @@ document.querySelectorAll('.shot .calls').forEach(c=>c.addEventListener('click',
   x.classList.toggle('on',on); c.classList.toggle('open',on);
 }));
 window.addEventListener('load',run);
+
+/* The stage cannot reflow (see the narrow-screen block in the CSS), so it
+   scales. Continuous rather than stepped at breakpoints: the montage is
+   the first thing on the page and a half-cut one reads as broken. */
+(function(){
+  var wrap=document.querySelector('.stagewrap'), stage=document.getElementById('stage');
+  if(!wrap||!stage) return;
+  function fitStage(){
+    var k=Math.min(1,(wrap.clientWidth-40)/1200);   /* -40: .stagewrap padding */
+    if(k>=1){ stage.style.transform=''; wrap.style.height=''; return; }
+    stage.style.transform='scale('+k+')';
+    wrap.style.height=Math.round(325*k)+'px';
+  }
+  fitStage();
+  window.addEventListener('resize',fitStage);
+})();
 
 </script>
 </body>
