@@ -5,145 +5,99 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cookie Settings - Baton by Good Timing</title>
-  <link rel="icon" type="image/svg+xml" href="baton-icon.svg">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230ca678'/%3E%3Crect x='10' y='28' width='44' height='8' rx='4' fill='%230b0c10' transform='rotate(-30 32 32)'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    /* The /new light system, copied from privacy.html, which took it on
+       09-02 along with terms.html. This page was missed and stayed on the
+       retired dark palette, one click from both of them.
+
+       Presentation only. Not one byte of the document body has changed, and
+       that is checked rather than claimed: the rendered text hashes the same
+       before and after. What this page SAYS is a separate question, and a
+       live one, since it describes Google Analytics and advertising partners
+       the site does not have. Rewording a published legal page is not a
+       restyle, so nothing here touches the words. */
     :root {
-      --bg-deep: #0b0c10;
-      --accent: #F5A623;
-      --accent-light: #FFC36B;
-      --border: rgba(245, 166, 35, 0.2);
-      --text-primary: #F0EFF4;
-      --text-secondary: #9895A8;
-      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      --font-heading: Georgia, 'Times New Roman', serif;
+      --page:#f7f8fa; --card:#fff; --line:#e5e7eb; --line-soft:#f1f3f5;
+      --ink:#111827; --ink-2:#1f2937; --ink-3:#4b5563;
+      --mute:#6b7280; --mute-2:#9ca3af;
+      --brand:#0ca678;           /* LOCKED 9/1/26: emerald, the brand colour */
+      --mark:#bdeeda;            /* LOCKED 9/1/26: the highlight wash, derived from emerald */
+      --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
     }
 
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
     html { scrollbar-gutter: stable; }
 
     body {
-      font-family: var(--font-body);
-      background: var(--bg-deep);
-      color: var(--text-primary);
+      font-family: var(--sans);
+      background: var(--page);
+      color: var(--ink-2);
       line-height: 1.7;
       -webkit-font-smoothing: antialiased;
     }
 
-    nav {
-      padding: 20px 40px;
-      border-bottom: 1px solid rgba(245, 166, 35, 0.08);
+    /* Mirrors .hp-nav on the front door, narrowed to this page's column. */
+    nav { background: var(--card); border-bottom: 1px solid var(--line); }
+    nav > a {
+      display: flex; align-items: center; gap: 6px;
+      max-width: 720px; margin: 0 auto; padding: 16px 24px;
+      font-size: 15px; color: var(--ink); text-decoration: none;
     }
+    nav > a strong { font-weight: 600; }
+    nav > a span { color: var(--mute); font-weight: 400; }
 
-    nav a {
-      font-family: var(--font-heading);
-      font-size: 1.15rem;
-      color: var(--text-primary);
-      text-decoration: none;
-    }
+    main { max-width: 720px; margin: 0 auto; padding: 64px 24px 96px; }
 
-    nav a em { color: var(--accent-light); font-style: italic; }
-    nav a span { color: var(--text-secondary); font-weight: 400; }
+    h1 { font-size: 34px; letter-spacing: -.02em; color: var(--ink); margin-bottom: 10px; }
+    h2 { font-size: 21px; letter-spacing: -.015em; color: var(--ink); margin-top: 46px; margin-bottom: 12px; }
+    h3 { font-size: 15.5px; font-weight: 600; color: var(--ink-2); margin-top: 30px; margin-bottom: 10px; }
 
-    main {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 80px 40px 120px;
-    }
-
-    h1 {
-      font-family: var(--font-heading);
-      font-size: 2.2rem;
-      margin-bottom: 12px;
-    }
-
-    .subtitle {
-      color: var(--text-secondary);
-      font-size: 0.95rem;
-      margin-bottom: 48px;
-    }
-
-    h2 {
-      font-family: var(--font-heading);
-      font-size: 1.4rem;
-      margin-top: 48px;
-      margin-bottom: 12px;
-    }
-
-    h3 {
-      font-family: var(--font-body);
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-top: 28px;
-      margin-bottom: 8px;
-    }
-
-    p, ul { color: var(--text-secondary); margin-bottom: 16px; }
+    p, ul, ol { color: var(--ink-3); font-size: 15px; margin-bottom: 16px; }
     ul { padding-left: 24px; }
     li { margin-bottom: 6px; }
-    a { color: var(--accent-light); }
-    strong { color: var(--text-primary); }
+
+    a { color: var(--brand); }
+    strong { color: var(--ink); }
+
+    /* This page's own three components. Same roles as before, redrawn in the
+       light system: the intro line reads as secondary, each cookie category
+       is a card, and the browser links are a grid of tiles. */
+    .subtitle { color: var(--mute); font-size: 15px; margin-bottom: 44px; }
 
     .cookie-type {
-      background: rgba(245, 166, 35, 0.05);
-      border: 1px solid rgba(245, 166, 35, 0.12);
-      border-radius: 8px;
-      padding: 16px 20px;
-      margin-bottom: 12px;
+      background: var(--card); border: 1px solid var(--line);
+      border-radius: 10px; padding: 16px 20px; margin-bottom: 12px;
     }
-
-    .cookie-type h3 {
-      margin-top: 0;
-      margin-bottom: 6px;
-    }
-
-    .cookie-type p {
-      margin-bottom: 0;
-      font-size: 0.92rem;
-    }
+    .cookie-type h3 { margin-top: 0; margin-bottom: 6px; }
+    .cookie-type p { margin-bottom: 0; font-size: 14.5px; }
 
     .browser-links {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 24px;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 10px; margin-bottom: 24px;
     }
-
     .browser-link {
-      display: block;
-      padding: 12px 16px;
-      background: rgba(245, 166, 35, 0.07);
-      border: 1px solid rgba(245, 166, 35, 0.15);
-      border-radius: 8px;
-      color: var(--accent-light);
-      text-decoration: none;
-      font-size: 0.9rem;
-      transition: background 0.15s;
+      display: block; padding: 12px 16px;
+      background: var(--card); border: 1px solid var(--line);
+      border-radius: 8px; color: var(--ink-2); text-decoration: none;
+      font-size: 14px; transition: color .15s, border-color .15s;
     }
-
-    .browser-link:hover {
-      background: rgba(245, 166, 35, 0.14);
-    }
+    .browser-link:hover { color: var(--brand); border-color: var(--brand); }
 
     footer {
-      text-align: center;
-      padding: 40px;
-      color: var(--text-secondary);
-      font-size: 0.82rem;
-      border-top: 1px solid var(--border);
-      max-width: 720px;
-      margin: 0 auto;
+      text-align: center; background: var(--card);
+      border-top: 1px solid var(--line);
+      padding: 30px 20px 40px; color: var(--mute-2); font-size: 12.5px;
     }
-
-    footer a { color: var(--text-secondary); }
+    footer a { color: var(--mute); text-decoration: none; }
+    footer a:hover { color: var(--ink-3); text-decoration: underline; }
 
     @media (max-width: 768px) {
-      nav { padding: 16px 20px; }
-      main { padding: 60px 20px 80px; }
+      main { padding: 48px 20px 72px; }
+      h1 { font-size: 28px; }
       .browser-links { grid-template-columns: 1fr; }
     }
   </style>
