@@ -89,29 +89,11 @@
   /* ---------- scene B: the session ---------- */
   .row{background:var(--card);border:1px solid var(--line);border-radius:12px;
        border-left:3px solid var(--blue)}
-  .row-head{display:flex;align-items:center;gap:8px;padding:12px 16px;flex-wrap:wrap}
-  .sidlbl{font-size:12.5px;color:var(--mute)}
-  .sid{font-family:var(--mono);font-size:12.5px;color:var(--ink-2)}
-  .dot{width:8px;height:8px;border-radius:2px;background:#e0a336;display:inline-block;
-       margin-right:7px;vertical-align:1px}
-  .meta{font-size:12.5px;color:var(--mute)}
-  .chip{font-size:11.5px;padding:3px 8px;border-radius:6px;background:#f1f3f5;
-        color:var(--ink-3);border:1px solid var(--line);white-space:nowrap}
-  .chip.warn{background:#fdf2f2;border-color:#f3d4d4;color:#9b3131}
-  .sat{margin-left:auto;font-size:12.5px;color:var(--mute)}
-  .intent{margin:0 16px 14px;background:#fafbfc;border:1px solid var(--line-soft);
-          border-radius:9px;padding:11px 13px}
-  .iline{display:flex;gap:10px;align-items:baseline}
-  .iline+.iline{margin-top:6px}
-  .lbl{font-size:10px;letter-spacing:.09em;color:var(--mute-2);text-transform:uppercase;
-       white-space:nowrap;min-width:100px}
-  .val{font-size:14px;color:var(--ink-2)}
   .acct{margin:0 16px 16px;border:1px solid var(--line);border-radius:10px;background:#fbfcfd}
   .acct-head{display:flex;align-items:center;gap:9px;padding:9px 15px;
              border-bottom:1px solid var(--line-soft);font-size:12.5px;color:var(--mute)}
   .satchip{font-size:11px;font-weight:600;padding:2px 7px;border-radius:6px;background:#f1f3f5;
            color:var(--ink-3);border:1px solid #d8dce2}
-  .covers{margin-left:auto;font-size:11.5px;color:var(--mute-2)}
   .acct-body{padding:14px 16px 12px}
   .h{font-size:10.5px;letter-spacing:.09em;color:var(--mute-2);text-transform:uppercase;margin:0 0 6px}
   .p{font-size:14px;line-height:1.6;color:var(--ink-2);margin:0 0 10px}
@@ -135,6 +117,53 @@
   td.link{color:var(--blue);font-weight:600}
   .fix{font-size:11px;padding:2px 8px;border-radius:6px;background:#fffbeb;
        border:1px solid #f0dfae;color:#92400e;white-space:nowrap}
+
+
+  /* ---------- session row, matching the console (9/10/26) ---------- */
+  .nhead{padding:16px 20px}
+  .idline{display:flex;align-items:flex-start;gap:11px;min-width:0;margin-bottom:6px}
+  .rcaret{color:#b6bcc5;font-size:11px;width:11px;flex:0 0 auto;height:20px;margin-top:1px;
+          display:inline-flex;align-items:center;justify-content:center}
+  .blk{display:flex;align-items:flex-start;gap:11px;flex:1 1 0;min-width:0}
+  .lm{width:20px;height:20px;border-radius:4px;flex:0 0 auto;display:inline-flex;
+      align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;
+      margin-top:1px;font-family:var(--mono);background:hsl(142 55% 62%)}
+  .idline.named .lm{box-shadow:#fff 0 0 0 2px,#93b0f0 0 0 0 4px}
+  .idhead{display:flex;flex-wrap:wrap;align-items:center;gap:2px 10px;flex:1 1 0;min-width:0;
+          border-radius:3px;background:transparent;box-shadow:0 0 0 0 transparent;
+          transition:background .45s ease, box-shadow .45s ease}
+  .uname{font-size:14px;color:#1f2328;font-weight:500;white-space:nowrap;overflow:hidden;
+         text-overflow:ellipsis;max-width:470px;order:1;flex:0 0 auto}
+  .ucount{font-size:12.5px;color:var(--blue);white-space:nowrap;flex:0 0 auto;order:2;
+          text-decoration:none}
+  .summ{font-size:13.5px;color:var(--mute);order:3;flex-basis:100%;width:100%;min-width:0}
+  .idwhen{margin-left:auto;font-size:12.5px;color:#9aa1ab;white-space:nowrap;flex:0 0 auto;
+          padding-left:14px}
+  .metaline{display:flex;align-items:flex-start;gap:12px;padding-left:22px}
+  .bmeta{font-size:12.5px;color:#9aa1ab;display:flex;align-items:center;gap:9px;
+         white-space:nowrap;min-width:0;flex:1 1 0}
+  .rsep{color:#d7dbe0}
+  .rmono{font-family:var(--mono);font-size:13.5px;color:#374151}
+  .fchip{font-size:12px;padding:3px 9px;border-radius:5px;display:inline-flex;align-items:center;
+         white-space:nowrap;background:#f1f3f5;border:1px solid #d8dce2;color:#5b6472}
+  .fchip.rchip{background:#fffbeb;border-color:#fde68a;color:#92400e}
+  .fchip-n{margin-left:7px;color:#868e9b;font-variant-numeric:tabular-nums}
+  .fchip.rchip .fchip-n{color:#b45309}
+  .buckets{display:inline-flex;gap:6px;align-items:center;flex:0 0 auto}
+  .rside{flex:0 0 auto;display:flex;align-items:center;gap:8px}
+  .llmbtn{display:inline-flex;align-items:center;border:1.5px solid var(--blue-edge);
+          border-radius:7px;padding:2px 10px;font-size:12.5px;line-height:18px;font-weight:500;
+          color:var(--blue);background:var(--blue-soft);white-space:nowrap}
+  .kebab{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;
+         border:1.5px solid #dfe3e8;border-radius:7px;background:#fff;color:var(--mute);
+         font-weight:700;letter-spacing:1px;line-height:1}
+  /* Beat 2's highlight: ONE block behind the name and the summary, clear of the glyph.
+     Spread rather than padding so nothing on the row moves when it lands, the same
+     mechanism .hl already uses. width:max-content stops it running to the timestamp. */
+  .lit > .blk > .idhead{background:var(--mark);box-shadow:0 0 0 6px var(--mark);
+                        flex:0 1 auto;width:max-content;max-width:100%}
+  .acct-caret{color:var(--mute-2);font-size:9px;display:inline-block;transform:rotate(90deg)}
+  .prov{padding:0 16px 13px;font-size:11.5px;color:var(--mute-2)}
 
   /* ---------- the beat machinery ---------- */
   .dimmable{transition:opacity .5s ease}
@@ -162,8 +191,8 @@
   .scene{overflow:hidden;pointer-events:none}
   .scene.show{pointer-events:auto}
   .zoom{transform-origin:0 0;width:1200px}
-  #session .zoom{transform:translate(-20px,7px) scale(1.106)}
-  .stage.failView #session .zoom{transform:translate(-26px,-295px) scale(1.256)}
+  #session .zoom{transform:translate(-14px,10px) scale(1.018)}
+  .stage.failView #session .zoom{transform:translate(-26px,-264px) scale(1.256)}
   #insights .zoom{transform:translate(-23px,-19px) scale(1.176)}
   #fixScene .zoom{transform:translate(-26px,-90px) scale(1.247)}
   #chat .thread{width:860px}
@@ -416,25 +445,36 @@
           <span class="nav"><span>Overview</span><span>Insights</span><span class="on">Sessions</span><span>Live</span></span>
         </div>
         <div class="row">
-          <div class="row-head dimmable">
-            <span><span class="dot"></span><span class="sidlbl">Session</span> <span class="sid">5b917f6c</span></span>
-            <span class="meta">· Claude Code · 1 task · 42 calls ·</span>
-            <span class="chip">tool call failure&nbsp;&nbsp;14</span>
-            <span class="chip">retry loop&nbsp;&nbsp;6</span>
-            <span class="chip">unrecovered failure</span>
-            <span class="chip">+1 more</span>
-            <span class="sat">satisfaction 2 of 5</span>
-          </div>
-          <div class="intent">
-            <div class="iline dimmable" id="intentRow"><span class="lbl">First intent</span>
-              <span class="val"><span class="hl" id="intentText">Build a dashboard tracking the Northwind launch for leadership</span></span></div>
-            <div class="iline dimmable"><span class="lbl">Expected result</span>
-              <span class="val">A dashboard showing each project's health, dates and progress</span></div>
+          <div class="nhead">
+            <div class="idline named dimmable" id="intentRow">
+              <span class="rcaret">&#9654;</span>
+              <span class="blk">
+                <span class="lm">L</span>
+                <span class="idhead">
+                  <span class="uname">Launch Dashboard Builder</span>
+                  <a class="ucount" href="#" onclick="return false">4 sessions</a>
+                  <span class="summ">Built the Northwind launch dashboard but never got the project-level table added.</span>
+                </span>
+              </span>
+              <span class="idwhen">Aug 26, 3:26 PM</span>
+            </div>
+            <div class="metaline dimmable">
+              <div class="bmeta">
+                <span class="rmono">5b917f6c</span>
+                <span class="rsep">&middot;</span><span>Claude Code</span>
+                <span class="rsep">&middot;</span><span>1 task</span>
+                <span class="rsep">&middot;</span><span>42 calls</span>
+                <span class="rsep">&middot;</span>
+                <span class="buckets"><span class="fchip rchip">agent friction<span class="fchip-n">14</span></span><span class="fchip">baton friction<span class="fchip-n">6</span></span></span>
+                <span class="rsep">&middot;</span><span>satisfaction 2 of 5</span>
+              </div>
+              <div class="rside"><span class="llmbtn">Explain</span><span class="kebab">&#8943;</span></div>
+            </div>
           </div>
           <div class="acct">
-            <div class="acct-head dimmable"><span>Written by a language model</span>
-              <span class="satchip">satisfaction 2 of 5</span>
-              <span class="covers">Covers 42 calls</span></div>
+            <div class="acct-head dimmable"><span class="acct-caret">&#9654;</span>
+              <span>Summary of this session, written by Explain</span>
+              <span class="satchip">satisfaction 2 of 5</span></div>
             <div class="acct-body">
               <div class="h dimmable">What they came for</div>
               <p class="p dimmable">They wanted a leadership dashboard tracking the Northwind launch: every
@@ -453,6 +493,7 @@
               <p class="p dimmable">The session stopped still retrying the same rejected field path,
                 leaving a dashboard with counts and a chart but no project-level table.</p>
             </div>
+            <div class="prov dimmable">Written by a language model from this session's capture.</div>
           </div>
         </div>
       </div>
@@ -585,25 +626,36 @@ Steps:
     the plain-language account: what the customer came for, what happened, and where it ended.</p>
   <div class="shot">
 <div class="row">
-          <div class="row-head dimmable">
-            <span><span class="dot"></span><span class="sidlbl">Session</span> <span class="sid">5b917f6c</span></span>
-            <span class="meta">· Claude Code · 1 task · 42 calls ·</span>
-            <span class="chip">tool call failure&nbsp;&nbsp;14</span>
-            <span class="chip">retry loop&nbsp;&nbsp;6</span>
-            <span class="chip">unrecovered failure</span>
-            <span class="chip">+1 more</span>
-            <span class="sat">satisfaction 2 of 5</span>
-          </div>
-          <div class="intent">
-            <div class="iline dimmable"><span class="lbl">First intent</span>
-              <span class="val"><span class="hl">Build a dashboard tracking the Northwind launch for leadership</span></span></div>
-            <div class="iline dimmable"><span class="lbl">Expected result</span>
-              <span class="val">A dashboard showing each project's health, dates and progress</span></div>
+          <div class="nhead">
+            <div class="idline named">
+              <span class="rcaret">&#9654;</span>
+              <span class="blk">
+                <span class="lm">L</span>
+                <span class="idhead">
+                  <span class="uname">Launch Dashboard Builder</span>
+                  <a class="ucount" href="#" onclick="return false">4 sessions</a>
+                  <span class="summ">Built the Northwind launch dashboard but never got the project-level table added.</span>
+                </span>
+              </span>
+              <span class="idwhen">Aug 26, 3:26 PM</span>
+            </div>
+            <div class="metaline">
+              <div class="bmeta">
+                <span class="rmono">5b917f6c</span>
+                <span class="rsep">&middot;</span><span>Claude Code</span>
+                <span class="rsep">&middot;</span><span>1 task</span>
+                <span class="rsep">&middot;</span><span>42 calls</span>
+                <span class="rsep">&middot;</span>
+                <span class="buckets"><span class="fchip rchip">agent friction<span class="fchip-n">14</span></span><span class="fchip">baton friction<span class="fchip-n">6</span></span></span>
+                <span class="rsep">&middot;</span><span>satisfaction 2 of 5</span>
+              </div>
+              <div class="rside"><span class="llmbtn">Explain</span><span class="kebab">&#8943;</span></div>
+            </div>
           </div>
           <div class="acct">
-            <div class="acct-head dimmable"><span>Written by a language model</span>
-              <span class="satchip">satisfaction 2 of 5</span>
-              <span class="covers">Covers 42 calls</span></div>
+            <div class="acct-head dimmable"><span class="acct-caret">&#9654;</span>
+              <span>Summary of this session, written by Explain</span>
+              <span class="satchip">satisfaction 2 of 5</span></div>
             <div class="acct-body">
               <div class="h dimmable">What they came for</div>
               <p class="p dimmable">They wanted a leadership dashboard tracking the Northwind launch: every
@@ -622,6 +674,7 @@ Steps:
               <p class="p dimmable">The session stopped still retrying the same rejected field path,
                 leaving a dashboard with counts and a chart but no project-level table.</p>
             </div>
+            <div class="prov dimmable">Written by a language model from this session's capture.</div>
           </div>
         </div>
   </div>
