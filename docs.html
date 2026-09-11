@@ -749,7 +749,7 @@ install_baton(mcp, VendorConfig(..., scrubber=identity_scrub))</pre>
       <div class="card"><h3>Respond when you want</h3><p>When something&#39;s worth a human, the Console hands your team the fully-described issue and sends the resolution back into the customer&#39;s agent. That&#39;s where support lives: the first response is a fix, not a question.</p></div>
 
       <h2 id="console-access">Access &amp; security</h2>
-      <p>The Console is hosted by us and auditable by you. Your data is single-tenant, and every event is logged and inspectable — you can see exactly what each agent sent, when, and why. You define the schema and PII is scrubbed before anything leaves your machine, so what you don&#39;t capture can never reach us.</p>
+      <p>The Console is hosted by us and auditable by you. Your data is single-tenant, and every event is logged and inspectable — you can see exactly what each agent sent, when, and why. Scrubbing runs before anything leaves your machine — emails, phone numbers, card numbers, keys and tokens are redacted at the SDK, on by default — and what you don&#39;t capture can never reach us. It is pattern matching, not a guarantee: free text inside a tool argument or result is sent as written, so decide what your tools hand back.</p>
       <p>Capturing the signal with the proxy or SDK is free. The Console is the paid tier where you act on it. <a href="https://baton.goodtiming.ai/" style="color:var(--brand)">Get started →</a></p>
     </div>
 
