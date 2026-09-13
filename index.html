@@ -287,14 +287,6 @@
   .cappane{background:#fff;border:1px solid var(--line);border-radius:14px;
            padding:20px 24px;margin-top:14px}
   .panetitle{font-size:16.5px;font-weight:600;color:var(--ink);margin:0 0 16px}
-  .langrow{display:flex;gap:6px;margin:0 0 10px}
-  .lang{font:inherit;font-size:12px;padding:4px 12px;border-radius:6px;cursor:pointer;
-        border:1px solid var(--line);background:#fff;color:var(--ink-3)}
-  .lang.on{border-color:var(--brand);color:var(--brand);font-weight:600}
-  .codepanel{background:#f6f8fa;border:1px solid var(--line-soft);border-radius:10px;
-             padding:14px 16px;max-width:680px}
-  .codepanel pre{margin:0;font-family:var(--mono);font-size:12.3px;line-height:1.65;
-                 color:var(--ink-2);white-space:pre-wrap}
   .cappane .diagram{border:none;background:transparent;padding:10px 0 0;margin-top:8px}
   .addtable{background:#fff;border:1px solid var(--line);border-radius:14px;max-width:860px}
   .addrow{display:flex;gap:18px;padding:16px 20px}
@@ -725,40 +717,29 @@ Steps:
   </div>
   <div class="cappane">
   <p class="panetitle" id="modeline"><b>For a single MCP server you control</b></p>
-    <div class="langrow" id="langrow">
-      <button class="lang on" data-l="ts">TypeScript</button>
-      <button class="lang" data-l="py">Python</button>
-    </div>
-    <div class="codepanel" id="codepanel"><pre id="codepre">import { withBaton, HttpSink } from "@goodtiming/baton-sdk";
-
-withBaton(server, {
-  vendorId: "acme",
-  vendorDisplayName: "Acme",
-  consentToken: process.env.BATON_CONSENT_TOKEN,
-  sink: new HttpSink(BATON_CONSOLE_URL, {
-    apiKey: process.env.BATON_API_KEY,
-  }),
-});</pre></div>
     <div class="diagram dgm" id="dgm">
-    <svg class="dvar show" data-m="sdk" viewBox="0 0 920 240" xmlns="http://www.w3.org/2000/svg">
+    <svg class="dvar show" data-m="sdk" viewBox="0 0 920 258" xmlns="http://www.w3.org/2000/svg">
       <defs><marker id="arE1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#0ca678"/></marker></defs>
-      <rect x="30" y="80" width="160" height="80" rx="13" fill="#fff" stroke="#e5e7eb" stroke-width="1.2"/>
-      <text x="110" y="115" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="600" fill="#111827">Customer's agent</text>
-      <text x="110" y="135" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9.3" fill="#0ca678">Claude · ChatGPT · Copilot</text>
-      <line x1="192" y1="120" x2="262" y2="120" stroke="#0ca678" stroke-width="2" marker-end="url(#arE1)"/>
-      <text x="227" y="108" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#6b7280">MCP</text>
-      <rect x="270" y="30" width="390" height="185" rx="14" fill="rgba(12,166,120,0.05)" stroke="rgba(12,166,120,0.55)" stroke-width="1.6" stroke-dasharray="6 4"/>
-      <text x="292" y="56" font-family="JetBrains Mono,monospace" font-size="11.5" font-weight="700" fill="#0ca678" id="wrapLabel">withBaton( server )</text>
-      <rect x="300" y="72" width="330" height="98" rx="11" fill="#fff" stroke="#e5e7eb" stroke-width="1.2"/>
-      <text x="465" y="115" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="600" fill="#111827">Your MCP server</text>
-      <text x="465" y="136" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#6b7280">your code unchanged</text>
-      <text x="465" y="200" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#6b7280">user_goal · expected_result · annotate · session_report</text>
-      <line x1="662" y1="120" x2="732" y2="120" stroke="#0ca678" stroke-width="2" marker-end="url(#arE1)"/>
-      <text x="697" y="108" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#6b7280">emits</text>
-      <rect x="740" y="80" width="160" height="80" rx="13" fill="#fff" stroke="#e5e7eb" stroke-width="1.2"/>
-      <text x="820" y="112" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="600" fill="#111827">events</text>
-      <text x="820" y="130" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#6b7280">Baton Console,</text>
-      <text x="820" y="145" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#6b7280">or your own sink</text>
+      <rect x="30" y="98" width="160" height="80" rx="13" fill="#fff" stroke="#e5e7eb" stroke-width="1.2"/>
+      <text x="110" y="133" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="600" fill="#111827">Customer's agent</text>
+      <text x="110" y="153" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9.3" fill="#0ca678">Claude · ChatGPT · Copilot</text>
+      <line x1="192" y1="138" x2="262" y2="138" stroke="#0ca678" stroke-width="2" marker-end="url(#arE1)"/>
+      <text x="227" y="126" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#6b7280">MCP</text>
+      <rect x="270" y="30" width="390" height="203" rx="14" fill="rgba(12,166,120,0.05)" stroke="rgba(12,166,120,0.55)" stroke-width="1.6" stroke-dasharray="6 4"/>
+      <text x="292" y="54" font-family="JetBrains Mono,monospace" font-size="11.5" font-weight="700" fill="#0ca678">withBaton( server )</text>
+      <text x="452" y="54" font-family="Inter,sans-serif" font-size="10" fill="#6b7280">TypeScript</text>
+      <text x="292" y="73" font-family="JetBrains Mono,monospace" font-size="11.5" font-weight="700" fill="#0ca678">install_baton( mcp )</text>
+      <text x="452" y="73" font-family="Inter,sans-serif" font-size="10" fill="#6b7280">Python</text>
+      <rect x="300" y="90" width="330" height="98" rx="11" fill="#fff" stroke="#e5e7eb" stroke-width="1.2"/>
+      <text x="465" y="133" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="600" fill="#111827">Your MCP server</text>
+      <text x="465" y="154" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#6b7280">your code unchanged</text>
+      <text x="465" y="218" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#6b7280">user_goal · expected_result · annotate · session_report</text>
+      <line x1="662" y1="138" x2="732" y2="138" stroke="#0ca678" stroke-width="2" marker-end="url(#arE1)"/>
+      <text x="697" y="126" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#6b7280">emits</text>
+      <rect x="740" y="98" width="160" height="80" rx="13" fill="#fff" stroke="#e5e7eb" stroke-width="1.2"/>
+      <text x="820" y="130" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="600" fill="#111827">events</text>
+      <text x="820" y="148" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#6b7280">Baton Console,</text>
+      <text x="820" y="163" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#6b7280">or your own sink</text>
     </svg>
     <svg class="dvar" data-m="gw" viewBox="0 0 920 270" xmlns="http://www.w3.org/2000/svg">
       <defs><marker id="arE3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#0ca678"/></marker></defs>
@@ -926,61 +907,10 @@ document.getElementById('replay').addEventListener('click',run);
 const MODELINES={sdk:"<b>For a single MCP server you control</b>",
   gw:"<b>For fleets of MCP servers</b>",
   proxy:"<b>For MCP servers you don't control or testing before you modify yours</b>"};
-const SDKCODE={ts:`import { withBaton, HttpSink } from "@goodtiming/baton-sdk";
-
-withBaton(server, {
-  vendorId: "acme",
-  vendorDisplayName: "Acme",
-  consentToken: process.env.BATON_CONSENT_TOKEN,
-  sink: new HttpSink(BATON_CONSOLE_URL, {
-    apiKey: process.env.BATON_API_KEY,
-  }),
-});`,
-  py:`from baton.integrations.mcp import install_baton, VendorConfig
-from baton.sinks import HttpSink
-
-install_baton(mcp, VendorConfig(
-    vendor_id="acme",
-    vendor_display_name="Acme",
-    consent_token=os.environ["BATON_CONSENT_TOKEN"],
-    sink=HttpSink(
-        url=BATON_CONSOLE_URL,
-        api_key=os.environ["BATON_API_KEY"],
-    ),
-))`};
-let sdkLang='ts';
-const MODECODE={sdk:SDKCODE.ts,
-  gw:`# agentgateway.yaml: attach the processor to your MCP route
-policies:
-  mcpGuardrails:
-    processors:
-      - kind: remote
-        host: "127.0.0.1:4445"
-        failureMode: failOpen   # never block a real tool call
-        metadata:
-          mcp_session: 'request.headers["mcp-session-id"]'
-        methods:
-          tools/list: response  # inject the intent params
-          tools/call: full      # capture, strip, pair the result`,
-  proxy:`# wrap the server: prepend one token to its command
-baton-proxy -- npx @vendor/mcp-server
-
-# or scan a server you already have configured
-uvx baton-proxy scan --config <server-name>`};
-document.querySelectorAll('.lang').forEach(l=>l.addEventListener('click',()=>{
-  sdkLang=l.dataset.l;
-  document.querySelectorAll('.lang').forEach(x=>x.classList.toggle('on',x===l));
-  document.getElementById('codepre').textContent=SDKCODE[sdkLang];
-  document.getElementById('wrapLabel').textContent =
-    sdkLang==='ts' ? 'withBaton( server )' : 'install_baton( mcp )';
-}));
 document.querySelectorAll('#capchips .step').forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('#capchips .step').forEach(c=>c.classList.toggle('on',c===b));
   document.querySelectorAll('#dgm .dvar').forEach(s=>s.classList.toggle('show',s.dataset.m===b.dataset.m));
   document.getElementById('modeline').innerHTML=MODELINES[b.dataset.m];
-  document.getElementById('langrow').style.display = b.dataset.m==='sdk' ? 'flex' : 'none';
-  document.getElementById('codepre').textContent =
-    b.dataset.m==='sdk' ? SDKCODE[sdkLang] : MODECODE[b.dataset.m];
 }));
 
 document.querySelectorAll('.shot .calls').forEach(c=>c.addEventListener('click',()=>{
