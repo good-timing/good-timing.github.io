@@ -866,7 +866,7 @@ const lit=(id,on)=>document.getElementById(id).classList.toggle('lit',on);
 const cap=document.getElementById('cap'), capText=document.getElementById('capText');
 const say=t=>{if(!t)return;capText.textContent=t;cap.classList.add('on');};
 const hush=()=>cap.classList.remove('on');
-const chips=[...document.querySelectorAll('.stagewrap .step')];
+const chips=[...document.querySelectorAll('.stepsrow .step')];
 const mark=n=>chips.forEach((c,i)=>c.classList.toggle('on',i===n));
 const softReset=()=>{stage.classList.remove('dimmed');
   ['intentRow','failRow','clusterRow','intentsPanel','ruleLine'].forEach(i=>lit(i,false));hush();};
