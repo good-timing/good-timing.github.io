@@ -221,7 +221,10 @@
         <a href="#sdk-overview" class="sidebar-link">Overview</a>
         <a href="#sdk-install" class="sidebar-link">Install</a>
         <a href="#mcp-integration" class="sidebar-link">MCP integration</a>
+        <a href="#without-dsn" class="sidebar-link">Without a DSN</a>
+        <a href="#vendorconfig" class="sidebar-link">VendorConfig</a>
         <a href="#sinks" class="sidebar-link">Sinks</a>
+        <a href="#off-switch" class="sidebar-link">Turning capture off</a>
         <a href="#library-api" class="sidebar-link">Library API</a>
         <a href="#choosing" class="sidebar-link">Choosing paths</a>
         <a href="#pii" class="sidebar-link">PII scrubbing</a>
@@ -266,7 +269,7 @@
       <div class="card">
         <p class="stage-eyebrow"><span class="step">Stage 2</span> &nbsp;·&nbsp; Deploy</p>
         <h3><code>baton-sdk</code> &nbsp;&middot;&nbsp; free, open source</h3>
-        <p>See friction from your <strong>actual customers</strong>. They won&#39;t install the proxy, so you instrument your side: wrap your MCP server with the SDK middleware (about five lines), or use the Library API path if you ship via Skills and don&#39;t have an MCP server. Same wire format, same sinks. If you run many MCP servers behind a gateway, capture at the gateway instead and cover all of them at once. <a href="#sdk" style="color:var(--brand)">SDK reference →</a> &nbsp;&middot;&nbsp; <a href="#gateway" style="color:var(--brand)">Gateway reference →</a></p>
+        <p>See friction from your <strong>actual customers</strong>. They won&#39;t install the proxy, so you instrument your side: wrap your MCP server with the SDK (two lines), or use the Library API path if you ship via Skills and don&#39;t have an MCP server. Same wire format, same sinks. If you run many MCP servers behind a gateway, capture at the gateway instead and cover all of them at once. <a href="#sdk" style="color:var(--brand)">SDK reference →</a> &nbsp;&middot;&nbsp; <a href="#gateway" style="color:var(--brand)">Gateway reference →</a></p>
       </div>
       <div class="card">
         <p class="stage-eyebrow"><span class="step">Stage 3</span> &nbsp;·&nbsp; Act</p>
@@ -447,20 +450,21 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
       <p class="stage-eyebrow"><span class="step">Stage 2 · Deploy</span> &nbsp;·&nbsp; capture friction from your customers</p>
       <h2 id="sdk-overview">Overview</h2>
       <p>baton-sdk is native instrumentation for vendors who control their MCP server source. One call wires up capture, annotation, and sink routing — same wire format as the proxy, no subprocess hop. Because it lives inside what you ship, it captures friction from your real customers, who never have to install anything.</p>
-      <div class="card"><h3>MCP middleware path</h3><p>Your MCP server calls <code>install_baton(mcp, …)</code>. Five lines. Captures every tool call at the transport boundary and injects the annotation tool. Best for vendors with MCP servers as their primary surface.</p></div>
-      <div class="card"><h3>Library API path</h3><p>Agent-generated code wraps vendor API calls with <code>client.trace(…)</code>. Same event envelope, same sinks — different emission boundary. Best for vendors using Skills as their primary distribution.</p></div>
-      <p>baton-sdk is open source under Apache-2.0; the source lives in the <a href="https://github.com/good-timing/baton" target="_blank" rel="noopener" style="color:var(--brand)">baton</a> repo. Requires Python 3.11+.</p>
+      <div class="card"><h3>MCP middleware path</h3><p>Your MCP server calls <code>install_baton(mcp, dsn=…)</code>. Two lines. Captures every tool call at the transport boundary and adds the annotation tool. Best for vendors with MCP servers as their primary surface.</p></div>
+      <div class="card"><h3>Library API path</h3><p>Code that calls your API wraps each call in <code>client.trace(…)</code>. Same event envelope, same sinks — different emission boundary. Best for vendors who ship Skills rather than an MCP server.</p></div>
+      <p>baton-sdk is open source under Apache-2.0; the source lives in the <a href="https://github.com/good-timing/baton" target="_blank" rel="noopener" style="color:var(--brand)">baton</a> repo. Requires Python 3.11+. The TypeScript SDK, <code>@goodtiming/baton-sdk</code>, takes the same DSN; its reference is the <a href="https://www.npmjs.com/package/@goodtiming/baton-sdk" target="_blank" rel="noopener" style="color:var(--brand)">npm README</a>.</p>
       <h2 id="sdk-install">Install</h2>
       <table class="docs-table">
         <thead><tr><th>Command</th><th>Includes</th></tr></thead>
         <tbody>
+          <tr><td>pip install "baton-sdk[http]&gt;=0.8.3"</td><td><strong style="color:var(--ink)">Needed to send events to a Baton Console.</strong> The <code>http</code> extra is httpx, which the Console sink sends through. This is the line the setup agent adds, and 0.8.3 is the first release that reads every DSN <code>/account</code> issues.</td></tr>
           <tr><td>pip install baton-sdk</td><td>Core — Library API and sinks only. Writes to stderr or a file.</td></tr>
-          <tr><td>pip install "baton-sdk[http]&gt;=0.6.1"</td><td><strong style="color:var(--ink)">Needed to send events to a Baton Console.</strong> The <code>http</code> extra is httpx, which the Console sink emits through. This is what the setup recipe installs.</td></tr>
-          <tr><td>pip install "baton-sdk[mcp,http]"</td><td>+ adapter for the official <code>mcp</code> SDK.</td></tr>
-          <tr><td>pip install "baton-sdk[fastmcp,http]"</td><td>+ adapter for standalone <code>fastmcp</code> by jlowin.</td></tr>
+          <tr><td>pip install "baton-sdk[mcp,http]"</td><td>+ the official <code>mcp</code> SDK, <code>mcp&gt;=1.20,&lt;3</code>.</td></tr>
+          <tr><td>pip install "baton-sdk[fastmcp,http]"</td><td>+ standalone <code>fastmcp</code>, <code>fastmcp&gt;=2.14,&lt;5</code>.</td></tr>
           <tr><td>pip install "baton-sdk[all]"</td><td>Everything above.</td></tr>
         </tbody>
       </table>
+      <p>Quote the extras. zsh, the default shell on macOS, treats square brackets as a pattern and stops with <code>no matches found</code> before pip runs.</p>
       <h2 id="mcp-integration">MCP integration</h2>
       <p>The SDK runs in-process inside your server and captures every tool call at the transport boundary — no subprocess, your tools unchanged.</p>
       <div class="diagram">
@@ -487,72 +491,133 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
           <text x="130" y="213" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="#9ca3af">Baton is a library in your server</text>
         </svg>
       </div>
-      <table class="docs-table">
-        <thead><tr><th>Your FastMCP import</th><th>Adapter</th><th>Extra</th></tr></thead>
-        <tbody>
-          <tr><td>from mcp.server.fastmcp import FastMCP</td><td>baton.integrations.mcp</td><td>baton-sdk[mcp,http]</td></tr>
-          <tr><td>from fastmcp import FastMCP</td><td>baton.integrations.fastmcp</td><td>baton-sdk[fastmcp,http]</td></tr>
-        </tbody>
-      </table>
       <div class="code-tabs">
         <div class="code-tab-bar">
-          <button class="code-tab-btn active">Official <code>mcp</code></button>
+          <button class="code-tab-btn active"><code>mcp</code> 2.x</button>
+          <button class="code-tab-btn"><code>mcp</code> 1.x</button>
           <button class="code-tab-btn">fastmcp</button>
+          <button class="code-tab-btn">TypeScript</button>
         </div>
-        <pre>import os
-from mcp.server.fastmcp import FastMCP
-from baton.integrations.mcp import install_baton, VendorConfig
-from baton.sinks import HttpSink
+        <pre>from mcp.server.mcpserver import MCPServer
+from baton import install_baton
 
-mcp = FastMCP("your-vendor-mcp")
-install_baton(mcp, VendorConfig(
-    vendor_id="your-vendor",
-    vendor_display_name="Your Vendor",
-    consent_token=os.environ["BATON_CONSENT_TOKEN"],
-    sink=HttpSink(
-        url=os.environ["BATON_INGEST_URL"],
-        api_key=os.environ["BATON_API_KEY"],
-    ),
-))
+mcp = MCPServer("Acme Knowledge Base")
+install_baton(mcp, dsn="https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...")
 
 @mcp.tool()
 async def your_tool(...): ...</pre>
-        <pre hidden>import os
-from fastmcp import FastMCP
-from baton.integrations.fastmcp import install_baton, VendorConfig
-from baton.sinks import HttpSink
+        <pre hidden>from mcp.server.fastmcp import FastMCP
+from baton import install_baton
 
-mcp = FastMCP("your-vendor-mcp")
-install_baton(mcp, VendorConfig(
-    vendor_id="your-vendor",
-    vendor_display_name="Your Vendor",
-    consent_token=os.environ["BATON_CONSENT_TOKEN"],
-    sink=HttpSink(
-        url=os.environ["BATON_INGEST_URL"],
-        api_key=os.environ["BATON_API_KEY"],
-    ),
-))
+mcp = FastMCP("Acme Knowledge Base")
+install_baton(mcp, dsn="https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...")
 
 @mcp.tool()
 async def your_tool(...): ...</pre>
+        <pre hidden>from fastmcp import FastMCP
+from baton import install_baton
+
+mcp = FastMCP("Acme Knowledge Base")
+install_baton(mcp, dsn="https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...")
+
+@mcp.tool
+def your_tool(...): ...</pre>
+        <pre hidden>import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { withBaton } from "@goodtiming/baton-sdk";
+
+const server = new McpServer({ name: "acme-knowledge-base", version: "1.0.0" });
+withBaton(server, {
+  dsn: "https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...",
+});</pre>
       </div>
+      <p>That string is the whole configuration. It is the <strong>DSN</strong> for one server, and it carries four things: a publishable key (<code>baton_pk_…</code>), the host events go to, your workspace id (<code>ten_…</code>) and the server's id (<code>srv-…</code>). The SDK reads all four and builds the sink itself.</p>
+      <p><code>install_baton</code> works out which library your server comes from, and raises <code>TypeError</code> before changing anything if the object is not an MCP server it supports. Tools registered before and after the call are both captured. It adds one tool to your server, named after it: a server called <code>"Acme Knowledge Base"</code> gets <code>acme-knowledge-base_annotate</code>.</p>
+      <h3>Getting a DSN</h3>
+      <p>Sign in at <a href="https://baton.goodtiming.ai/account" style="color:var(--brand)">baton.goodtiming.ai/account</a> and press <strong>Add a server</strong>, with a name if you want one. The page shows the new DSN with a <strong>Copy</strong> button, and every server's DSN stays listed under <strong>Publishable keys</strong>. The <a href="https://baton.goodtiming.ai/setup/agent" style="color:var(--brand)">setup agent</a> makes one for you when it wires up a server.</p>
+      <p>We assign the server id and it never changes. The name is a label on <code>/account</code> and in your workspace picker, and you can rename it there. A publishable key can only write events, and only for the server its DSN names, so it is safe in your source.</p>
+      <h3>Where the DSN goes</h3>
+      <p><strong>A server you distribute</strong> — a stdio server started on your user's machine — takes the DSN in source, as above. An MCP client starts a stdio server with a fixed allowlist of environment variables (six names on macOS and Linux) plus whatever the user wrote in their own client config, so a value in your <code>.env</code> never reaches it.</p>
+      <p><strong>A server you host</strong> can read it from the environment. Set <code>BATON_DSN</code> and pass nothing:</p>
+      <pre>install_baton(mcp)  # reads BATON_DSN</pre>
+      <p>An explicit <code>dsn=</code> wins over <code>BATON_DSN</code>, and either one wins over <code>BATON_VENDOR_ID</code> and <code>BATON_TENANT_ID</code>, so a new DSN is never overridden by values an earlier install left in the environment.</p>
+      <div class="note">A bare <code>baton_pk_…</code> key in place of the DSN stops at startup with a message saying to copy the full value from <code>/account</code>. A secret <code>baton_sk_…</code> key in a DSN works, and logs a warning: it reads and writes everything in your workspace, so it must never ship.</div>
+      <h2 id="without-dsn">Without a DSN</h2>
+      <p>To send to your own collector, or to try the SDK before you have a key, name the parts. Leave out <code>sink</code> and events go to stderr as JSON Lines.</p>
+      <pre>import os
+from baton import install_baton, VendorConfig
+from baton.sinks import HttpSink
+
+install_baton(mcp, VendorConfig(
+    vendor_id="acme-kb",
+    tenant_id="acme",
+    vendor_display_name="Acme Knowledge Base",
+    sink=HttpSink("https://collector.example.com", api_key=os.environ["COLLECTOR_KEY"]),
+))</pre>
+      <p><code>vendor_id</code> names the server and <code>tenant_id</code> names the account the collector authenticates. One account holds many servers, so giving both the same value merges every server in it into one. <code>HttpSink</code> posts to <code>{url}/v0/events</code> with the key as a bearer token.</p>
+      <p>A <code>VendorConfig</code> can carry a DSN too — <code>VendorConfig(dsn=…, scrubber=…)</code> — when you want a DSN and other settings. Passing a DSN alongside <code>vendor_id</code>, <code>tenant_id</code> or <code>sink</code> raises, because the DSN already sets them.</p>
+      <table class="docs-table">
+        <thead><tr><th>Your server</th><th>Adapter, if you import one directly</th></tr></thead>
+        <tbody>
+          <tr><td>from mcp.server.mcpserver import MCPServer</td><td>baton.integrations.official</td></tr>
+          <tr><td>from mcp.server.fastmcp import FastMCP</td><td>baton.integrations.official</td></tr>
+          <tr><td>from fastmcp import FastMCP</td><td>baton.integrations.standalone</td></tr>
+        </tbody>
+      </table>
+      <h2 id="vendorconfig">VendorConfig</h2>
+      <p>Keyword-only. With a DSN, every other field is optional.</p>
+      <table class="docs-table">
+        <thead><tr><th>Field</th><th>Default</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td>dsn</td><td><code>BATON_DSN</code></td><td>The value from <code>/account</code>. Sets <code>vendor_id</code>, <code>tenant_id</code> and <code>sink</code>, and <code>vendor_display_name</code> when that is unset.</td></tr>
+          <tr><td>vendor_id</td><td>—</td><td>The server's id. Required without a DSN. Letters, digits, <code>_</code> and <code>-</code>, up to 48 characters.</td></tr>
+          <tr><td>tenant_id</td><td><code>BATON_TENANT_ID</code>, then <code>vendor_id</code></td><td>The account the collector authenticates.</td></tr>
+          <tr><td>vendor_display_name</td><td>the DSN's server id</td><td>The name the calling agent reads, in the server instructions and the annotation tool's description. Required without a DSN.</td></tr>
+          <tr><td>sink</td><td>from the DSN, else <code>StdoutSink()</code></td><td>Where events go. See <a href="#sinks" style="color:var(--brand)">Sinks</a>.</td></tr>
+          <tr><td>consent_token</td><td><code>"customer-consented"</code></td><td>Attached to every event. An explicit empty string raises.</td></tr>
+          <tr><td>annotation_tool_name</td><td>from the server's name</td><td>Pins the annotation tool's name. Without a usable server name it is <code>{vendor_id}_annotate</code>.</td></tr>
+          <tr><td>scrubber</td><td><code>Scrubber()</code></td><td>Runs on every payload. Pass <code>identity_scrub</code> to turn scrubbing off, or your own callable. See <a href="#pii" style="color:var(--brand)">PII scrubbing</a>.</td></tr>
+          <tr><td>intent_param_mode</td><td><code>"optional"</code></td><td>Adds <code>user_goal</code>, <code>expected_result</code> and <code>overall_task</code> to every tool's input schema and removes them before your handler runs. <code>"required"</code> also makes <code>user_goal</code> required; <code>"off"</code> adds none.</td></tr>
+          <tr><td>proactive_mode</td><td><code>"off"</code></td><td><code>"on"</code> asks the agent to file an annotation before each tool call. Turn it on if <code>intent_param_mode</code> is <code>"off"</code>, or nothing captures intent.</td></tr>
+          <tr><td>user_id_mode</td><td><code>"hashed"</code></td><td><code>"hashed"</code> sends the end user as an HMAC computed in your process. <code>"raw"</code> sends the identity as-is, into the collector's database.</td></tr>
+          <tr><td>user_id_hmac_key</td><td><code>BATON_USER_ID_HMAC_KEY</code></td><td>The secret for hashed mode. You hold it; Baton never sees it. Unset leaves <code>user_id</code> off events. Generate it with <code>openssl rand -hex 32</code>.</td></tr>
+          <tr><td>resolve_user</td><td>—</td><td>A function, sync or async, that returns the end user from a call's headers, <code>_meta</code>, tool name and arguments. Checked before the verified access token, and the only way a stdio server reports a user.</td></tr>
+        </tbody>
+      </table>
       <h2 id="sinks">Sinks</h2>
       <table class="docs-table">
         <thead><tr><th>Sink</th><th>Use case</th></tr></thead>
         <tbody>
-          <tr><td>StdoutSink()</td><td>Zero config. Events to stderr as JSON Lines. Default if <code>sink=</code> is omitted.</td></tr>
+          <tr><td>StdoutSink()</td><td>Events to stderr as JSON Lines. The default with no DSN and no <code>sink=</code>.</td></tr>
           <tr><td>FileSink("./events.jsonl")</td><td>Capture to a local file.</td></tr>
-          <tr><td>HttpSink(url=…, api_key=…)</td><td>POST to any HTTP collector. Bounded buffer + retry + circuit breaker.</td></tr>
-          <tr><td>MultiSink([…])</td><td>Fan out to multiple sinks simultaneously.</td></tr>
+          <tr><td>HttpSink(url, api_key=…)</td><td>POST to <code>{url}/v0/events</code>. Bounded buffer, retry, circuit breaker. A DSN builds this one for you.</td></tr>
+          <tr><td>MultiSink([…])</td><td>Fan out to several sinks at once.</td></tr>
         </tbody>
       </table>
-      <pre>from baton.sinks import StdoutSink, FileSink, HttpSink, MultiSink
+      <pre>from baton import install_baton, VendorConfig
+from baton.sinks import StdoutSink, FileSink, MultiSink
 
-# dev
-sink = MultiSink([StdoutSink(), FileSink("./events.jsonl")])
-
-# production
-sink = HttpSink(url=os.environ["BATON_INGEST_URL"], api_key=os.environ["BATON_API_KEY"])</pre>
+# development: stderr and a file
+install_baton(mcp, VendorConfig(
+    vendor_id="acme-kb",
+    vendor_display_name="Acme Knowledge Base",
+    sink=MultiSink([StdoutSink(), FileSink("./events.jsonl")]),
+))</pre>
+      <h2 id="off-switch">Turning capture off</h2>
+      <p>Set <code>BATON_DISABLED=1</code> in the environment of the process that runs the server, and the SDK installs nothing: no wrapped tools, no annotation tool, no change to the server instructions, no collector connection, no background thread. The server runs as it would without the <code>install_baton</code> line. The SDK reads the variable once at startup, never writes to stdout, and never stops the server from starting, even with a config it would otherwise refuse. Any value other than empty, <code>0</code>, <code>false</code>, <code>no</code> or <code>off</code> turns it on.</p>
+      <p>The switch belongs to whoever runs the server.</p>
+      <ul>
+        <li><strong style="color:var(--ink)">A server you distribute</strong> runs on your user's machine, so the switch is theirs. It goes in the <code>env</code> block for your server in their MCP client's config file, not in their shell: the client passes the server a fixed allowlist of environment variables, and an exported <code>BATON_DISABLED</code> is not on it.</li>
+        <li><strong style="color:var(--ink)">A server you host</strong> runs on your machine, so the switch is yours. Your users cannot set it, and there is no per-user opt-out.</li>
+      </ul>
+      <pre>{
+  "mcpServers": {
+    "acme-knowledge-base": {
+      "command": "acme-kb-mcp",
+      "env": { "BATON_DISABLED": "1" }
+    }
+  }
+}</pre>
+      <div class="note">If you tell your users about this switch, tell them where the variable goes. Someone who sets it in their shell has a server that is still capturing.</div>
       <h2 id="library-api">Library API</h2>
       <p>For vendors whose customers reach the API via agent-generated code (Skills pattern). Here Baton lives in the Skill code, not in a server — so it fits vendors who have no MCP server at all.</p>
       <div class="diagram">
@@ -586,13 +651,8 @@ sink = HttpSink(url=os.environ["BATON_INGEST_URL"], api_key=os.environ["BATON_AP
       </div>
       <h3>Sync (<code>Client</code>)</h3>
       <pre>from baton import Client, SignalType
-from baton.sinks import HttpSink
 
-client = Client(
-    vendor_id="your-vendor",
-    consent_token=os.environ["BATON_CONSENT_TOKEN"],
-    sink=HttpSink(url=os.environ["BATON_INGEST_URL"], api_key=os.environ["BATON_API_KEY"]),
-)
+client = Client(dsn="https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...")
 
 with client.trace(
     tool_name="chat.completions.create",
@@ -603,18 +663,15 @@ with client.trace(
     trace.observed(response)
 
 client.annotate(signal_type=SignalType.DEAD_END, suggested_improvement="...")
-client.close()  # or: with Client(...) as client:</pre>
+client.close()  # or: with Client(dsn=...) as client:</pre>
       <h3>Async (<code>AsyncClient</code>)</h3>
-      <pre>from baton import AsyncClient, SignalType
+      <pre>from baton import AsyncClient
 
-async with AsyncClient(
-    vendor_id="your-vendor",
-    consent_token=os.environ["BATON_CONSENT_TOKEN"],
-    sink=HttpSink(url=os.environ["BATON_INGEST_URL"], api_key=os.environ["BATON_API_KEY"]),
-) as client:
+async with AsyncClient(dsn="https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...") as client:
     async with client.trace(tool_name="...", intent="...") as trace:
         response = await vendor_client.chat.completions.create(...)
         trace.observed(response)</pre>
+      <p>Both take the same keyword arguments: <code>dsn</code>, or <code>vendor_id</code>, <code>tenant_id</code> and <code>sink</code> without one. Both read <code>BATON_DSN</code> when no DSN is passed.</p>
       <h3>Signal types</h3>
       <p>Eight friction signal types per <a href="https://github.com/good-timing/baton/blob/main/docs/SPEC.md" style="color:var(--brand)">SPEC §3.1</a>. Stable and additive-only until v1.0.</p>
       <div class="chips">
@@ -633,17 +690,19 @@ async with AsyncClient(
         <thead><tr><th>Concern</th><th>MCP integration</th><th>Library API</th></tr></thead>
         <tbody>
           <tr><td>Instrumentation lives</td><td>Vendor side (MCP server)</td><td>Agent side (agent-generated code)</td></tr>
-          <tr><td>Setup</td><td>5 lines in your MCP server</td><td>Vendor publishes a Baton-aware Skill</td></tr>
+          <tr><td>Setup</td><td>2 lines in your MCP server</td><td>Vendor publishes a Baton-aware Skill</td></tr>
           <tr><td>Reliability</td><td>Deterministic — every tool call</td><td>Soft — depends on agent following Skill</td></tr>
           <tr><td>Annotation surface</td><td>MCP tool with MUST/REQUIRED framing</td><td>Python calls (<code>trace.annotate(…)</code>)</td></tr>
         </tbody>
       </table>
       <h2 id="pii">PII scrubbing</h2>
-      <p>Scrubbing is on by default. <code>baton.scrub.Scrubber</code> walks every event payload before it reaches the sink and redacts emails, bearer tokens, <code>sk-*</code> keys, JWTs, credit card numbers, phone numbers, and any field named <code>password</code>, <code>token</code>, <code>secret</code>, etc.</p>
-      <p>To opt out:</p>
-      <pre>from baton.scrub import identity_scrub
+      <p>Scrubbing is on by default. <code>baton.scrub.Scrubber</code> walks every event payload before it reaches the sink and redacts email addresses, <code>Bearer</code> tokens of 16 or more characters, <code>sk-</code> keys, <code>AKIA</code> access keys, JWTs, North American phone numbers, and card numbers that pass a Luhn check. It also redacts the whole value of any field named <code>email</code>, <code>phone</code>, <code>ssn</code>, <code>api_key</code>, <code>token</code>, <code>secret</code>, <code>password</code> or <code>user_name</code>.</p>
+      <p><strong style="color:var(--ink)">It matches patterns. It does not find every piece of personal data.</strong> <code>{"name": "Jane Doe", "address": "12 Elm St"}</code> passes through unchanged, and a card number written with spaces or hyphens is not caught. Decide what your tools put in their arguments and results with that in mind.</p>
+      <p>To turn it off:</p>
+      <pre>from baton import install_baton, VendorConfig
+from baton.scrub import identity_scrub
 
-install_baton(mcp, VendorConfig(..., scrubber=identity_scrub))</pre>
+install_baton(mcp, VendorConfig(dsn="https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...", scrubber=identity_scrub))</pre>
     </div>
 
     <div id="tab-gateway" hidden>
