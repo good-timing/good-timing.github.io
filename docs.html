@@ -457,10 +457,10 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
       <table class="docs-table">
         <thead><tr><th>Command</th><th>Includes</th></tr></thead>
         <tbody>
-          <tr><td>pip install "baton-sdk[http]&gt;=0.8.6"</td><td><strong style="color:var(--ink)">Needed to send events to a Baton Console.</strong> The <code>http</code> extra is httpx, which the Console sink sends through. This is the line the setup agent adds, and 0.8.6 is the oldest release the Console accepts: earlier ones send <code>user_id</code>, which was renamed <code>principal_id</code>.</td></tr>
-          <tr><td>pip install baton-sdk</td><td>Core — Library API and sinks only. Writes to stderr or a file.</td></tr>
-          <tr><td>pip install "baton-sdk[mcp,http]"</td><td>+ the official <code>mcp</code> SDK, <code>mcp&gt;=1.20,&lt;3</code>.</td></tr>
-          <tr><td>pip install "baton-sdk[fastmcp,http]"</td><td>+ standalone <code>fastmcp</code>, <code>fastmcp&gt;=2.14,&lt;5</code>.</td></tr>
+          <tr><td>pip install "baton-sdk&gt;=0.8.8"</td><td><strong style="color:var(--ink)">Needed to send events to a Baton Console.</strong> httpx is a core dependency, so the Console sink needs no extra. 0.8.6 is the oldest release the Console accepts — earlier ones send <code>user_id</code>, which was renamed <code>principal_id</code> — and on 0.8.7 and earlier the sink also needed the <code>[http]</code> extra, which a fresh <code>[mcp]</code> or <code>[fastmcp]</code> install did not pull in.</td></tr>
+          <tr><td>pip install baton-sdk</td><td>Core — Library API and sinks, the Console sink included. Writes to stderr, a file, or https.</td></tr>
+          <tr><td>pip install "baton-sdk[mcp]"</td><td>+ the official <code>mcp</code> SDK, <code>mcp&gt;=1.20,&lt;3</code>.</td></tr>
+          <tr><td>pip install "baton-sdk[fastmcp]"</td><td>+ standalone <code>fastmcp</code>, <code>fastmcp&gt;=2.14,&lt;5</code>.</td></tr>
           <tr><td>pip install "baton-sdk[all]"</td><td>Everything above.</td></tr>
         </tbody>
       </table>
