@@ -733,16 +733,18 @@ install_baton(mcp, VendorConfig(dsn="https://baton_pk_...@baton.goodtiming.ai/te
         <thead><tr><th>MCP message</th><th>What Baton does</th></tr></thead>
         <tbody>
           <tr><td>tools/list</td><td>Adds the two intent parameters to the response.</td></tr>
-          <tr><td>tools/call</td><td>Reads the values off the request, strips them, emits the event.</td></tr>
+          <tr><td>tools/call request</td><td>Reads the values off the request, strips them, emits <code>tool_call_start</code>.</td></tr>
+          <tr><td>tools/call response</td><td>Pairs the result with its call and emits <code>tool_call_end</code> or <code>tool_call_error</code>, with the duration.</td></tr>
         </tbody>
       </table>
-      <p>The events are the same wire format the other two paths emit, so one Console reads all three. Capture here is request side: session, identity, intent and arguments all ride the request, which makes it complete and safe under concurrency. Latency and errors are reconstructed downstream from the telemetry your gateway already exports.</p>
+      <p>The events are the same wire format the other two paths emit, so one Console reads all three. A response carries no request id, so the gateway passes the session id to the processor on both halves of each call, and results pair within a session in the order calls were made. Pairing is exact while a session's calls complete in order. Calls running at the same time inside one session can pair with the wrong request, and a call with no session id gets no result event.</p>
+      <p>Scrubbing runs in the processor before any sink sees an event, with the same patterns as the <a href="#pii" style="color:var(--brand)">SDK</a>.</p>
 
       <h2 id="gateway-failopen">Fail open</h2>
       <div class="note"><strong>Capture never breaks a tool call.</strong> The gateway is configured in fail-open mode on this hook, so if the Baton processor is slow, restarting or gone, the call goes through and the event is the only thing lost. Observation is best effort by design. Your traffic is not.</div>
 
       <h2 id="gateway-config">What you configure</h2>
-      <p>Two pieces: one hook in your gateway&#39;s own policy, pointed at the processor, and the same handful of environment variables the <a href="#proxy" style="color:var(--brand)">proxy</a> reads.</p>
+      <p>Two pieces: one hook in your gateway&#39;s own policy, pointed at the processor and set to see both the request and the response of each tool call along with its session id, and the same handful of environment variables the <a href="#proxy" style="color:var(--brand)">proxy</a> reads.</p>
       <table class="docs-table">
         <thead><tr><th>Variable</th><th>Purpose</th></tr></thead>
         <tbody>
@@ -756,6 +758,7 @@ install_baton(mcp, VendorConfig(dsn="https://baton_pk_...@baton.goodtiming.ai/te
 
       <h2 id="gateway-identity">Identity</h2>
       <p>This path resolves the caller from a request header, and which header is configuration rather than code. The value is hashed inside the processor and the raw identity never leaves your network, exactly as on the other two paths.</p>
+      <p>It needs two settings, and both matter: the header, which your gateway must pass on every call, and the hashing key, <code>BATON_PRINCIPAL_ID_HMAC_KEY</code>. A call without the header is captured with no caller, and nothing reports it. Without the key, the processor logs one warning and sends every event with no caller.</p>
 
       <h2 id="gateway-start">Getting set up</h2>
       <p>There is no package to install yet. The <a href="#proxy" style="color:var(--brand)">proxy</a> and the <a href="#sdk" style="color:var(--brand)">SDK</a> are published and you can start with either one today; the gateway processor ships with a runbook for your platform team instead, and we set it up with you. <a href="https://calendly.com/dave-goodtiming/30min" style="color:var(--brand)">Talk to us</a> and we will size it against your gateway.</p>
