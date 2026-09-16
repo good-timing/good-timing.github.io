@@ -285,8 +285,8 @@
 
     <div id="tab-overview">
       <h2 id="what-is-baton">What is Baton</h2>
-      <p>Baton is actionable product analytics for MCP servers. When a customer&#39;s agent calls your server and your API can&#39;t meet the request, you often get a 200 with an empty body or a vague error — the customer&#39;s intent vanishes with no ticket and no trace. Baton captures that friction at the moment it happens: what the customer was trying to do, the call the agent made, what it expected, and what it got.</p>
-      <p>You instrument your server once. Whatever agent your customers use — Claude, Cursor, ChatGPT — keeps working exactly as before.</p>
+      <p>Baton is actionable product analytics for MCP servers. When a customer&#39;s agent calls your server and your API can&#39;t meet the request, you often get a 200 with an empty body or a vague error. The customer&#39;s intent vanishes with no ticket and no trace. Baton captures that friction at the moment it happens: what the customer was trying to do, the call the agent made, what it expected, and what it got.</p>
+      <p>You instrument your server once. Whatever agent your customers use (Claude, Cursor, ChatGPT) keeps working exactly as before.</p>
 
       <h2 id="start-here">Quickstart</h2>
       <p>Pick the one that matches what you run. All three emit the same events in the same wire format to the same sinks, so the choice is about where the code goes, not what you get. Nothing below needs an account, and nothing leaves your machine.</p>
@@ -320,7 +320,7 @@ def search_orders(customer: str) -&gt; dict:
           <p>Leave out <code>sink</code> and events go to stderr as JSON Lines, one per line.</p>
           <pre>python server.py 2&gt;events.jsonl</pre>
           <p class="stepline">Step 4 <span>&middot; verify</span></p>
-          <p>One tool call produces three events — <code>tool_call_start</code>, <code>tool_call_end</code>, and a <code>surface_snapshot</code> describing the server. The first, formatted:</p>
+          <p>One tool call produces three events: <code>tool_call_start</code>, <code>tool_call_end</code>, and a <code>surface_snapshot</code> describing the server. The first, formatted:</p>
           <pre class="pre-output">{
   "event_id": "01a0a8cb-d94f-74bd-8cb5-53a4287d53a3",
   "tenant_id": "acme",
@@ -343,8 +343,8 @@ def search_orders(customer: str) -&gt; dict:
     "intent_source": null
   }
 }</pre>
-          <p><strong>Abridged.</strong> <code>runtime_meta</code> is the <code>_meta</code> block the client attaches to each request &mdash; per call, not per session &mdash; and a few transport fields are left out. Every key shown is one the SDK emits, with the values from that run.</p>
-          <p>The four intent fields are null here because the call came from a script, not an agent. When an agent makes it, <code>call_intent</code> and <code>call_expected</code> carry what it was trying to do, <code>call_workflow</code> the wider task, and <code>intent_source</code> reads <code>injected_param</code> once any of them is filled, marking the value as one the agent typed into an injected parameter rather than one carried by an annotation call — see <a href="#mcp-integration" style="color:var(--brand)">MCP integration</a>.</p>
+          <p><strong>Abridged.</strong> <code>runtime_meta</code> is the <code>_meta</code> block the client attaches to each request, per call rather than per session, and a few transport fields are left out. Every key shown is one the SDK emits, with the values from that run.</p>
+          <p>The four intent fields are null here because the call came from a script, not an agent. When an agent makes it, <code>call_intent</code> and <code>call_expected</code> carry what it was trying to do, <code>call_workflow</code> the wider task, and <code>intent_source</code> reads <code>injected_param</code> once any of them is filled, marking the value as one the agent typed into an injected parameter rather than one carried by an annotation call. See <a href="#mcp-integration" style="color:var(--brand)">MCP integration</a>.</p>
         </div>
 
         <div class="code-pane" hidden>
@@ -356,7 +356,7 @@ def search_orders(customer: str) -&gt; dict:
   "args": ["baton-proxy", "--", "python", "server.py"]
 }</pre>
           <p class="stepline">Step 2 <span>&middot; choose where events go</span></p>
-          <p>In the same entry &mdash; not your shell. The client starts the proxy and passes it a fixed environment allowlist (six names on macOS and Linux), so an exported <code>BATON_EVENT_SINK</code> never reaches it.</p>
+          <p>In the same entry, not your shell. The client starts the proxy and passes it a fixed environment allowlist (six names on macOS and Linux), so an exported <code>BATON_EVENT_SINK</code> never reaches it.</p>
           <pre>"env": { "BATON_EVENT_SINK": "file:///tmp/baton-proxy.jsonl" }</pre>
           <p class="stepline">Step 3 <span>&middot; use it</span></p>
           <p>Drive a few tool calls from your client.</p>
@@ -390,7 +390,7 @@ def search_orders(customer: str) -&gt; dict:
           <p>Configure the hook fail-open, so a Baton outage costs you the event and not the call.</p>
           <p class="stepline">Step 3 <span>&middot; verify</span></p>
           <p>Events are the same envelope the other two paths emit, carrying the gateway&#39;s own identity for the caller.</p>
-          <div class="note">This path is configured against your gateway rather than installed from a registry, so there is no copy-paste command here and no captured output — the shape depends on which gateway you run. <a href="#gateway" style="color:var(--brand)">Gateway reference →</a> has what it needs, and we will set it up with you.</div>
+          <div class="note">This path is configured against your gateway rather than installed from a registry, so there is no copy-paste command here and no captured output; the shape depends on which gateway you run. <a href="#gateway" style="color:var(--brand)">Gateway reference →</a> has what it needs, and we will set it up with you.</div>
         </div>
       </div>
 
@@ -419,7 +419,7 @@ def search_orders(customer: str) -&gt; dict:
       <div class="card">
         <p class="stage-eyebrow"><span class="step">Stage 1</span> &nbsp;·&nbsp; Test</p>
         <h3><code>baton-proxy</code> &nbsp;&middot;&nbsp; free, open source</h3>
-        <p>Get a taste of the kinds of friction Baton surfaces, with no rebuild. The friction comes from <strong>you</strong> running it against your own MCP server — either by driving a few tool calls yourself, or automatically with the <code>scan</code> command, which runs a headless agent and writes a report. Nothing leaves your machine. <a href="#proxy" style="color:var(--brand)">Proxy reference →</a></p>
+        <p>Get a taste of the kinds of friction Baton surfaces, with no rebuild. The friction comes from <strong>you</strong> running it against your own MCP server, either by driving a few tool calls yourself or automatically with the <code>scan</code> command, which runs a headless agent and writes a report. Nothing leaves your machine. <a href="#proxy" style="color:var(--brand)">Proxy reference →</a></p>
       </div>
       <div class="card">
         <p class="stage-eyebrow"><span class="step">Stage 2</span> &nbsp;·&nbsp; Deploy</p>
@@ -429,7 +429,7 @@ def search_orders(customer: str) -&gt; dict:
       <div class="card">
         <p class="stage-eyebrow"><span class="step">Stage 3</span> &nbsp;·&nbsp; Act</p>
         <h3>Baton Console &nbsp;&middot;&nbsp; hosted</h3>
-        <p>The paid tier. It collects events across every customer and session, dedupes and ranks the friction into trends — your top unmet demands and silent-failure rates — then routes issues to your team and sends the resolution back into the customer&#39;s agent. <a href="#console" style="color:var(--brand)">Console reference →</a></p>
+        <p>The paid tier. It collects events across every customer and session, dedupes and ranks the friction into trends such as your top unmet demands and silent-failure rates, then routes issues to your team and sends the resolution back into the customer&#39;s agent. <a href="#console" style="color:var(--brand)">Console reference →</a></p>
       </div>
 
       <h2 id="how-it-fits">How it fits together</h2>
@@ -487,24 +487,24 @@ uvx baton-proxy --url "https://mcp.example.com/mcp"  # remote, as a bridge</pre>
       </div>
       <ul>
         <li><strong>The proxy is the server, as far as Claude is concerned.</strong> Your real server runs as its child process and receives the arguments it would have received unwrapped.</li>
-        <li><strong>Green marks what Baton owns</strong> — here the proxy and the Console. Everything neutral is yours or your client's, and none of it changes.</li>
+        <li><strong>Green marks what Baton owns</strong>, here the proxy and the Console. Everything neutral is yours or your client's, and none of it changes.</li>
         <li><strong>Three sinks, one event.</strong> The same envelope goes to stderr, a file, and an <code>https://</code> collector; which ones are live is configuration.</li>
       </ul>
       <h2 id="install">Install</h2>
-      <p>For a one-off <code>scan</code>, install nothing — <code>uvx</code> runs it on demand:</p>
+      <p>For a one-off <code>scan</code>, install nothing: <code>uvx</code> runs it on demand.</p>
       <pre>uvx baton-proxy scan --config &lt;server-name&gt;</pre>
       <p>To wrap a server permanently in Claude&#39;s config, put <code>baton-proxy</code> on your PATH so the config can invoke it directly:</p>
       <pre>pipx install baton-proxy</pre>
-      <p style="color:var(--mute-2);font-size:12.5px">Plain <code>pip install baton-proxy</code> works if you manage your own Python env. Requires Python 3.11+. Currently 0.x — the wire format is stable and additive-only until v1.0; see the <a href="https://github.com/good-timing/baton-proxy/releases" target="_blank" rel="noopener" style="color:var(--brand)">releases</a>.</p>
+      <p style="color:var(--mute-2);font-size:12.5px">Plain <code>pip install baton-proxy</code> works if you manage your own Python env. Requires Python 3.11+. Currently 0.x. The wire format is stable and additive-only until v1.0; see the <a href="https://github.com/good-timing/baton-proxy/releases" target="_blank" rel="noopener" style="color:var(--brand)">releases</a>.</p>
       <h2 id="quick-start">Quickstart</h2>
       <p>Replace your MCP server entry in Claude&#39;s config. The only change is wrapping your existing command:</p>
       <pre>// Before
 { "command": "npx", "args": ["@vendor/mcp-server"] }
 
-// After — events go to stderr + /tmp/baton-proxy.jsonl
+// After. Events go to stderr + /tmp/baton-proxy.jsonl
 { "command": "baton-proxy", "args": ["--", "npx", "@vendor/mcp-server"] }</pre>
       <p>Restart Claude and drive a few tool calls. Then see what happened:</p>
-      <pre>// In conversation — ask Claude:
+      <pre>// In conversation, ask Claude:
 "Show me the friction report for this session."
 
 // Or inspect raw:
@@ -521,9 +521,9 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
   }
 }</pre>
       <h3 id="scan">scan</h3>
-      <p>Preview friction on a server you already have configured — no permanent install, no change to your Claude config.</p>
+      <p>Preview friction on a server you already have configured, with no permanent install and no change to your Claude config.</p>
       <pre>uvx baton-proxy scan --config my-server</pre>
-      <p><code>scan</code> reads the named entry from <code>~/.claude.json</code>, reuses its credentials, drives a headless agent, and writes <code>./baton-report.md</code>. Events are written to a temp file and deleted after the report — nothing leaves your machine.</p>
+      <p><code>scan</code> reads the named entry from <code>~/.claude.json</code>, reuses its credentials, drives a headless agent, and writes <code>./baton-report.md</code>. Events are written to a temp file and deleted after the report, so nothing leaves your machine.</p>
       <table class="docs-table">
         <thead><tr><th>Flag</th><th>Description</th></tr></thead>
         <tbody>
@@ -534,7 +534,7 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
         </tbody>
       </table>
       <h2 id="configuration">Configuration</h2>
-      <p>All knobs are environment variables. Every one has a default — no config file needed.</p>
+      <p>All knobs are environment variables. Every one has a default, so no config file is needed.</p>
       <table class="docs-table">
         <thead><tr><th>Variable</th><th>Default</th><th>Purpose</th></tr></thead>
         <tbody>
@@ -545,7 +545,7 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
           <tr><td>BATON_VENDOR_ID</td><td><code>local</code></td><td>Labels the install for the operator. A placeholder: <strong>a remote sink refuses to start while it is still <code>local</code></strong>, because the Console buckets friction by vendor.</td></tr>
           <tr><td>BATON_TENANT_TYPE</td><td><code>vendor</code></td><td><code>vendor</code> ships signal to the wrapped server&#39;s vendor Console; <code>customer</code> ships to the end user&#39;s own tenant, and keeps the report tool alongside an HTTP sink.</td></tr>
           <tr><td>BATON_INTENT_PARAM</td><td><code>required</code></td><td>Injection mode for the intent parameters. <code>required</code> lists <code>user_goal</code> in the advertised required set; <code>optional</code> does not. That is an advertisement only: nothing validates it and no call fails for omitting it.</td></tr>
-          <tr><td>BATON_PRINCIPAL_ID_HMAC_KEY</td><td>unset</td><td>Per-tenant secret keying the <code>principal_id</code> hash. <strong>Named <code>BATON_USER_ID_HMAC_KEY</code> before 0.6.8</strong>, and no longer read under that name — an install still setting the old one logs a startup warning and captures no <code>principal_id</code>. Hashed at the edge, so no sink sees a raw principal. Unset means <code>principal_id</code> is skipped and events still emit. <strong>Generate it with <code>openssl rand -hex 32</code></strong> — the input space is emails and user ids, small and guessable, so a memorable key is not a weaker pseudonym but none at all: it can be dictionary-attacked back to raw identities.</td></tr>
+          <tr><td>BATON_PRINCIPAL_ID_HMAC_KEY</td><td>unset</td><td>Per-tenant secret keying the <code>principal_id</code> hash. <strong>Named <code>BATON_USER_ID_HMAC_KEY</code> before 0.6.8</strong>, and no longer read under that name. An install still setting the old one logs a startup warning and captures no <code>principal_id</code>. Hashed at the edge, so no sink sees a raw principal. Unset means <code>principal_id</code> is skipped and events still emit. <strong>Generate it with <code>openssl rand -hex 32</code></strong>. The input space is emails and user ids, small and guessable, so a memorable key is not a weaker pseudonym but none at all: it can be dictionary-attacked back to raw identities.</td></tr>
           <tr><td>BATON_UPSTREAM_AUTH_TOKEN</td><td>unset</td><td>Credential for the <code>--url</code> bridge, sent upstream as <code>Authorization: Bearer</code>. Ignored by the stdio form.</td></tr>
           <tr><td>BATON_UPSTREAM_TIMEOUT</td><td><code>60</code></td><td>Read timeout in seconds for the <code>--url</code> bridge.</td></tr>
           <tr><td>BATON_PROXY_LOG_FILE</td><td>unset</td><td>Path to tee proxy logs to.</td></tr>
@@ -585,7 +585,7 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
           <tr><td>tool_call_error</td><td>tool_name, error_type, error_body, duration_ms</td></tr>
         </tbody>
       </table>
-      <p>Each line in the events file is one JSON object — <code>{ event_type, payload }</code>. A silent failure (a 200 that carried an error) lands like this:</p>
+      <p>Each line in the events file is one JSON object, <code>{ event_type, payload }</code>. A silent failure (a 200 that carried an error) lands like this:</p>
       <pre>{"event_type":"tool_call_start","payload":{"tool_name":"run_sql","params":{"statement":"ALTER TABLE orders ADD CONSTRAINT fk_customer FOREIGN KEY (customer_id) REFERENCES customers(id)"}}}
 {"event_type":"tool_call_end","payload":{"tool_name":"run_sql","result":"200 OK — body: \"foreign keys are not supported\"","duration_ms":412}}
 {"event_type":"annotation","payload":{"signal_type":"failure","intent":"add a foreign key so an order can't reference a missing customer","suggested_improvement":"reject unsupported DDL with an error instead of a silent 200"}}</pre>
@@ -596,7 +596,7 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
         <tbody>
           <tr><td><code>user_goal</code></td><td><code>tool_call_start.payload.call_intent</code></td></tr>
           <tr><td><code>expected_result</code></td><td><code>tool_call_start.payload.call_expected</code>, omitted when the agent did not fill it in</td></tr>
-          <tr><td><code>overall_task</code></td><td><code>tool_call_start.payload.call_workflow</code> — the task label sessions are grouped by, so it is only useful when the agent repeats the same string across a task</td></tr>
+          <tr><td><code>overall_task</code></td><td><code>tool_call_start.payload.call_workflow</code>. The task label sessions are grouped by, so it is only useful when the agent repeats the same string across a task</td></tr>
         </tbody>
       </table>
       <p>In the default mode, <code>user_goal</code> is the one advertised in each tool&#39;s <code>required</code> list. That is advertisement only: a call that omits it is served exactly as it would be unwrapped, and <code>call_intent</code> is simply null. Measured on proxy 0.6.8, a wrapped tool&#39;s schema lists <code>["customer", "user_goal"]</code> as required where the unwrapped one listed <code>["customer"]</code>.</p>
@@ -608,7 +608,7 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
         <li><strong style="color:var(--ink)">Open source, Apache 2.0.</strong> <a href="https://github.com/good-timing/baton-proxy" style="color:var(--brand)">github.com/good-timing/baton-proxy</a></li>
         <li><strong style="color:var(--ink)">Fail-open.</strong> A Console outage never breaks the MCP pipe. Emission is enqueued on a background thread.</li>
         <li><strong style="color:var(--ink)">Outbound-only.</strong> The proxy never accepts inbound connections.</li>
-        <li><strong style="color:var(--ink)">No external dependencies.</strong> Pure stdlib — no pydantic, no httpx.</li>
+        <li><strong style="color:var(--ink)">No external dependencies.</strong> Pure stdlib: no pydantic, no httpx.</li>
         <li><strong style="color:var(--ink)">Credential isolation.</strong> <code>BATON_*</code> vars are filtered from the upstream subprocess env.</li>
       </ul>
     </div>
@@ -616,16 +616,16 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
     <div id="tab-sdk" hidden>
       <p class="stage-eyebrow"><span class="step">Stage 2 · Deploy</span> &nbsp;·&nbsp; capture friction from your customers</p>
       <h2 id="sdk-overview">Overview</h2>
-      <p>baton-sdk is native instrumentation for vendors who control their MCP server source. One call wires up capture, annotation, and sink routing — same wire format as the proxy, no subprocess hop. Because it lives inside what you ship, it captures friction from your real customers, who never have to install anything.</p>
+      <p>baton-sdk is native instrumentation for vendors who control their MCP server source. One call wires up capture, annotation, and sink routing, with the same wire format as the proxy and no subprocess hop. Because it lives inside what you ship, it captures friction from your real customers, who never have to install anything.</p>
       <div class="card"><h3>MCP middleware path</h3><p>Your MCP server calls <code>install_baton(mcp, dsn=…)</code>. Two lines. Captures every tool call at the transport boundary and adds the annotation tool. Best for vendors with MCP servers as their primary surface.</p></div>
-      <div class="card"><h3>Library API path</h3><p>Code that calls your API wraps each call in <code>client.trace(…)</code>. Same event envelope, same sinks — different emission boundary. Best for vendors who ship Skills rather than an MCP server.</p></div>
+      <div class="card"><h3>Library API path</h3><p>Code that calls your API wraps each call in <code>client.trace(…)</code>. Same event envelope, same sinks, different emission boundary. Best for vendors who ship Skills rather than an MCP server.</p></div>
       <p>baton-sdk is open source under Apache-2.0; the source lives in the <a href="https://github.com/good-timing/baton" target="_blank" rel="noopener" style="color:var(--brand)">baton</a> repo. The Python package needs 3.11+. There is a <a href="#typescript" style="color:var(--brand)">TypeScript SDK</a> too, <code>@goodtiming/baton-sdk</code> on npm, which takes the same DSN and emits the same events; everything on this page applies to both unless it says otherwise.</p>
       <h2 id="sdk-install">Install</h2>
       <table class="docs-table">
         <thead><tr><th>Command</th><th>Includes</th></tr></thead>
         <tbody>
-          <tr><td>pip install "baton-sdk&gt;=0.8.8"</td><td><strong style="color:var(--ink)">Needed to send events to a Baton Console.</strong> httpx is a core dependency, so the Console sink needs no extra. 0.8.6 is the oldest release the Console accepts — earlier ones send <code>user_id</code>, which was renamed <code>principal_id</code> — and on 0.8.7 and earlier the sink also needed the <code>[http]</code> extra, which a fresh <code>[mcp]</code> or <code>[fastmcp]</code> install did not pull in.</td></tr>
-          <tr><td>pip install baton-sdk</td><td>Core — Library API and sinks, the Console sink included. Writes to stderr, a file, or https.</td></tr>
+          <tr><td>pip install "baton-sdk&gt;=0.8.8"</td><td><strong style="color:var(--ink)">Needed to send events to a Baton Console.</strong> httpx is a core dependency, so the Console sink needs no extra. 0.8.6 is the oldest release the Console accepts, because earlier ones send <code>user_id</code>, which was renamed <code>principal_id</code>. On 0.8.7 and earlier the sink also needed the <code>[http]</code> extra, which a fresh <code>[mcp]</code> or <code>[fastmcp]</code> install did not pull in.</td></tr>
+          <tr><td>pip install baton-sdk</td><td>Core. Library API and sinks, the Console sink included. Writes to stderr, a file, or https.</td></tr>
           <tr><td>pip install "baton-sdk[mcp]"</td><td>+ the official <code>mcp</code> SDK, <code>mcp&gt;=1.20,&lt;3</code>.</td></tr>
           <tr><td>pip install "baton-sdk[fastmcp]"</td><td>+ standalone <code>fastmcp</code>, <code>fastmcp&gt;=2.14,&lt;5</code>.</td></tr>
           <tr><td>pip install "baton-sdk[all]"</td><td>Everything above.</td></tr>
@@ -633,7 +633,7 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
       </table>
       <p>Quote the extras. zsh, the default shell on macOS, treats square brackets as a pattern and stops with <code>no matches found</code> before pip runs.</p>
       <h2 id="mcp-integration">Quickstart</h2>
-      <p>The SDK runs in-process inside your server and captures every tool call at the transport boundary — no subprocess, your tools unchanged.</p>
+      <p>The SDK runs in-process inside your server and captures every tool call at the transport boundary, with no subprocess and your tools unchanged.</p>
       <p>The following diagram illustrates where the SDK runs inside your MCP server:</p>
       <div class="diagram">
         <svg viewBox="0 50 680 214" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="sdk1-t sdk1-d">
@@ -655,13 +655,13 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
           <rect x="360" y="172" width="180" height="56" rx="11" fill="var(--brand-wash)" stroke="var(--mark)" stroke-width="1.1"/>
           <text x="450" y="196" text-anchor="middle" font-family="var(--sans)" font-size="12.5" font-weight="600" fill="var(--ink)">events</text>
           <text x="450" y="212" text-anchor="middle" font-family="var(--mono)" font-size="8" fill="var(--mute)">stderr · file · Console</text>
-          <text x="130" y="200" text-anchor="middle" font-family="var(--mono)" font-size="8.5" fill="var(--mute-2)">no subprocess —</text>
+          <text x="130" y="200" text-anchor="middle" font-family="var(--mono)" font-size="8.5" fill="var(--mute-2)">no subprocess:</text>
           <text x="130" y="213" text-anchor="middle" font-family="var(--mono)" font-size="8.5" fill="var(--mute-2)">Baton is a library in your server</text>
         </svg>
       </div>
       <ul>
         <li><strong>No second process.</strong> The SDK is a library inside your server, so there is nothing extra to deploy, supervise or keep alive.</li>
-        <li><strong>Capture is at the transport boundary</strong> — the tool name, params, result and error that crossed MCP. The SDK does not reach into your logs or your database.</li>
+        <li><strong>Capture is at the transport boundary</strong>: the tool name, params, result and error that crossed MCP. The SDK does not reach into your logs or your database.</li>
         <li><strong>The sink is yours to choose</strong>, and it is the only thing that leaves the process.</li>
       </ul>
       <div class="code-tabs">
@@ -709,7 +709,7 @@ withBaton(server, {
       <p>Sign in at <a href="https://baton.goodtiming.ai/account" style="color:var(--brand)">baton.goodtiming.ai/account</a> and press <strong>Add a server</strong>, with a name if you want one. The page shows the new DSN with a <strong>Copy</strong> button, and every server's DSN stays listed under <strong>Publishable keys</strong>. The <a href="https://baton.goodtiming.ai/setup/agent" style="color:var(--brand)">setup agent</a> makes one for you when it wires up a server.</p>
       <p>We assign the server id and it never changes. The name is a label on <code>/account</code> and in your workspace picker, and you can rename it there. A publishable key can only write events, and only for the server its DSN names, so it is safe in your source.</p>
       <h3>Where the DSN goes</h3>
-      <p><strong>A server you distribute</strong> — a stdio server started on your user's machine — takes the DSN in source, as above. An MCP client starts a stdio server with a fixed allowlist of environment variables (six names on macOS and Linux) plus whatever the user wrote in their own client config, so a value in your <code>.env</code> never reaches it.</p>
+      <p><strong>A server you distribute</strong>, meaning a stdio server started on your user's machine, takes the DSN in source, as above. An MCP client starts a stdio server with a fixed allowlist of environment variables (six names on macOS and Linux) plus whatever the user wrote in their own client config, so a value in your <code>.env</code> never reaches it.</p>
       <p><strong>A server you host</strong> can read it from the environment. Set <code>BATON_DSN</code> and pass nothing:</p>
       <pre>install_baton(mcp)  # reads BATON_DSN</pre>
       <p>An explicit <code>dsn=</code> wins over <code>BATON_DSN</code>, and either one wins over <code>BATON_VENDOR_ID</code> and <code>BATON_TENANT_ID</code>, so a new DSN is never overridden by values an earlier install left in the environment.</p>
@@ -727,7 +727,7 @@ install_baton(mcp, VendorConfig(
     sink=HttpSink("https://collector.example.com", api_key=os.environ["COLLECTOR_KEY"]),
 ))</pre>
       <p><code>vendor_id</code> names the server and <code>tenant_id</code> names the account the collector authenticates. One account holds many servers, so giving both the same value merges every server in it into one. <code>HttpSink</code> posts to <code>{url}/v0/events</code> with the key as a bearer token.</p>
-      <p>A <code>VendorConfig</code> can carry a DSN too — <code>VendorConfig(dsn=…, scrubber=…)</code> — when you want a DSN and other settings. Passing a DSN alongside <code>vendor_id</code>, <code>tenant_id</code> or <code>sink</code> raises, because the DSN already sets them.</p>
+      <p>A <code>VendorConfig</code> can carry a DSN too, as <code>VendorConfig(dsn=…, scrubber=…)</code>, when you want a DSN and other settings. Passing a DSN alongside <code>vendor_id</code>, <code>tenant_id</code> or <code>sink</code> raises, because the DSN already sets them.</p>
       <table class="docs-table">
         <thead><tr><th>Your server</th><th>Adapter, if you import one directly</th></tr></thead>
         <tbody>
@@ -752,7 +752,7 @@ install_baton(mcp, VendorConfig(
           <tr><td>proactive_mode</td><td><code>"off"</code></td><td><code>"on"</code> asks the agent to file an annotation before each tool call. Turn it on if <code>intent_param_mode</code> is <code>"off"</code>, or nothing captures intent.</td></tr>
           <tr><td>principal_id_mode</td><td><code>"hashed"</code></td><td><code>"hashed"</code> sends the principal as an HMAC computed in your process. <code>"raw"</code> sends the identity as-is, into the collector's database.</td></tr>
           <tr><td>principal_id_hmac_key</td><td><code>BATON_PRINCIPAL_ID_HMAC_KEY</code></td><td>The secret for hashed mode. You hold it; Baton never sees it. Unset leaves <code>principal_id</code> off events. Generate it with <code>openssl rand -hex 32</code>.</td></tr>
-          <tr><td>resolve_principal</td><td>—</td><td>A function, sync or async, that returns the principal — a user, a service account or an organisation — from a call's headers, <code>_meta</code>, tool name and arguments. Checked before the verified access token, and the only way a stdio server reports one.</td></tr>
+          <tr><td>resolve_principal</td><td>—</td><td>A function, sync or async, that returns the principal (a user, a service account or an organisation) from a call's headers, <code>_meta</code>, tool name and arguments. Checked before the verified access token, and the only way a stdio server reports one.</td></tr>
         </tbody>
       </table>
       <h3 id="sinks">Sinks</h3>
@@ -791,7 +791,7 @@ install_baton(mcp, VendorConfig(
 }</pre>
       <div class="note">If you tell your users about this switch, tell them where the variable goes. Someone who sets it in their shell has a server that is still capturing.</div>
       <h2 id="library-api">Library API</h2>
-      <p>For vendors whose customers reach the API via agent-generated code (Skills pattern). Here Baton lives in the Skill code, not in a server — so it fits vendors who have no MCP server at all.</p>
+      <p>For vendors whose customers reach the API via agent-generated code (Skills pattern). Here Baton lives in the Skill code rather than in a server, so it fits vendors who have no MCP server at all.</p>
       <p>The following diagram illustrates where the SDK sits on the library path:</p>
       <div class="diagram">
         <svg viewBox="0 50 680 214" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="sdk2-t sdk2-d">
@@ -869,14 +869,14 @@ async with AsyncClient(dsn="https://baton_pk_...@baton.goodtiming.ai/ten_.../srv
         <tbody>
           <tr><td>Instrumentation lives</td><td>Vendor side (MCP server)</td><td>Agent side (agent-generated code)</td></tr>
           <tr><td>Setup</td><td>2 lines in your MCP server</td><td>Vendor publishes a Baton-aware Skill</td></tr>
-          <tr><td>Reliability</td><td>Deterministic — every tool call</td><td>Soft — depends on agent following Skill</td></tr>
+          <tr><td>Reliability</td><td>Deterministic. Every tool call</td><td>Soft. Depends on agent following Skill</td></tr>
           <tr><td>Annotation surface</td><td>MCP tool with MUST/REQUIRED framing</td><td>Python calls (<code>trace.annotate(…)</code>)</td></tr>
         </tbody>
       </table>
       <h2 id="typescript">TypeScript</h2>
       <p>The same SDK for Node. <code>@goodtiming/baton-sdk</code> emits the same envelope as the Python package to the same sinks, so a workspace can run both and the Console never learns which one produced an event. Node 20+.</p>
       <pre>npm install @goodtiming/baton-sdk</pre>
-      <p>Your MCP server is the argument, as in Python. Both major versions of the official TypeScript MCP SDK are supported and both are optional peer dependencies, so you install whichever one you already use — <code>@modelcontextprotocol/sdk</code> 1.x or <code>@modelcontextprotocol/server</code> 2.x — and nothing else.</p>
+      <p>Your MCP server is the argument, as in Python. Both major versions of the official TypeScript MCP SDK are supported and both are optional peer dependencies, so you install whichever one you already use, either <code>@modelcontextprotocol/sdk</code> 1.x or <code>@modelcontextprotocol/server</code> 2.x, and nothing else.</p>
       <pre>import { McpServer } from "@modelcontextprotocol/server";
 import { withBaton } from "@goodtiming/baton-sdk";
 
@@ -885,9 +885,9 @@ const server = new McpServer({ name: "acme-knowledge-base", version: "1.0.0" });
 withBaton(server, {
   dsn: "https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...",
 });</pre>
-      <p>Config fields are the Python names in camelCase — <code>vendorId</code>, <code>tenantId</code>, <code>vendorDisplayName</code>, <code>intentParamMode</code>, <code>scrubber</code> — and a <code>dsn</code> replaces the first three exactly as it does in Python. Tools registered before or after <code>withBaton</code> are both captured, and so are tools added or removed later.</p>
+      <p>Config fields are the Python names in camelCase (<code>vendorId</code>, <code>tenantId</code>, <code>vendorDisplayName</code>, <code>intentParamMode</code>, <code>scrubber</code>), and a <code>dsn</code> replaces the first three exactly as it does in Python. Tools registered before or after <code>withBaton</code> are both captured, and so are tools added or removed later.</p>
       <h3>What it captures</h3>
-      <p>The same three intent parameters, the same annotation tool, the same <code>surface_snapshot</code>, and the same events. <code>intentParamMode</code> defaults to <code>"required"</code>, which advertises <code>user_goal</code> in each tool&#39;s <code>required</code> list and never enforces it — measured identical to the Python SDK and the proxy on the currently published versions.</p>
+      <p>The same three intent parameters, the same annotation tool, the same <code>surface_snapshot</code>, and the same events. <code>intentParamMode</code> defaults to <code>"required"</code>, which advertises <code>user_goal</code> in each tool&#39;s <code>required</code> list and never enforces it. Measured identical to the Python SDK and the proxy on the currently published versions.</p>
       <p>PII scrubbing is <strong>on by default</strong> here too, a rule-for-rule port of Python&#39;s ruleset. Pass <code>identityScrub</code> to opt out, or your own <code>(value: unknown) =&gt; unknown</code>. Read <a href="#pii" style="color:var(--brand)">what it does and does not catch</a> before relying on it.</p>
       <h3>What is not here yet</h3>
       <p>Stated so you find out now rather than later. None of it blocks the paths above.</p>
@@ -1031,7 +1031,7 @@ install_baton(mcp, VendorConfig(dsn="https://baton_pk_...@baton.goodtiming.ai/te
       </div>
       <ul>
         <li><strong>Many customers, one view.</strong> Sessions arrive from every customer running your server and are deduped and ranked together, so you read demand rather than transcripts.</li>
-        <li><strong>The Console is the only Baton-owned box here</strong> — your team and your customers' agents are yours.</li>
+        <li><strong>The Console is the only Baton-owned box here</strong>. Your team and your customers' agents are yours.</li>
         <li><strong>The response goes back the way it came</strong>, into the customer's agent, which is what makes the first reply a fix rather than a question.</li>
       </ul>
 
@@ -1044,7 +1044,7 @@ install_baton(mcp, VendorConfig(dsn="https://baton_pk_...@baton.goodtiming.ai/te
       <div class="card"><h3>Respond when you want</h3><p>When something&#39;s worth a human, the Console hands your team the fully-described issue and sends the resolution back into the customer&#39;s agent. That&#39;s where support lives: the first response is a fix, not a question.</p></div>
 
       <h2 id="console-access">Access &amp; security</h2>
-      <p>The Console is hosted by us and auditable by you. Your data is single-tenant, and every event is logged and inspectable — you can see exactly what each agent sent, when, and why. Scrubbing runs before anything leaves your machine — emails, phone numbers, card numbers, keys and tokens are redacted at the SDK, on by default — and what you don&#39;t capture can never reach us. It is pattern matching, not a guarantee: free text inside a tool argument or result is sent as written, so decide what your tools hand back.</p>
+      <p>The Console is hosted by us and auditable by you. Your data is single-tenant, and every event is logged and inspectable, so you can see exactly what each agent sent, when, and why. Scrubbing runs before anything leaves your machine: emails, phone numbers, card numbers, keys and tokens are redacted at the SDK, on by default. What you don&#39;t capture can never reach us. It is pattern matching, not a guarantee: free text inside a tool argument or result is sent as written, so decide what your tools hand back.</p>
       <p>Capturing the signal with the proxy or SDK is free. The Console is the paid tier where you act on it. <a href="https://baton.goodtiming.ai/" style="color:var(--brand)">Get started →</a></p>
     </div>
 
