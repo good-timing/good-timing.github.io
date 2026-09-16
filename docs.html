@@ -996,33 +996,33 @@ install_baton(mcp, VendorConfig(dsn="https://baton_pk_...@baton.goodtiming.ai/te
       <h2 id="console-overview">Overview</h2>
       <p>The proxy and the SDK capture friction one server at a time. The Baton Console is the hosted service that collects those events across every customer and every session and turns them into something you can act on. It does what a single local report can&#39;t: it shows the friction across your whole customer base, ranked, with the evidence behind every number one click away.</p>
       <ul>
-        <li><strong>Many customers, one view.</strong> Sessions arrive from every customer running your server and are grouped together, so you read demand rather than transcripts.</li>
-        <li><strong>Every output is text you copy.</strong> Baton drafts the fix and hands it to you. It does not open tickets, message your team, or reach back into a customer&#39;s agent. Nothing ships without you.</li>
+        <li><strong>Many customers, one view.</strong> Sessions arrive from every customer running your server and are grouped together, so what you read is demand across your base, not one transcript at a time.</li>
+        <li><strong>Every output is text you copy.</strong> Baton drafts the fix and hands it to you. It does not open tickets or reach back into a customer&#39;s agent. Nothing ships without you.</li>
       </ul>
 
       <h2 id="console-dashboard">What you see</h2>
       <p>Four tabs, one filter bar across all of them. Every number is a link: click it and you land on the sessions behind it with the filter already applied.</p>
 
       <h3 id="console-tab-overview">The Overview tab</h3>
-      <p>How agents experience your server, on one screen. Four stat tiles chosen for what your traffic actually has: sessions, tasks, identified users, the share of tool calls that returned an error, sessions containing a failure, reports filed by agents.</p>
-      <p>Below them, four categories with a count each &mdash; recurring errors, token costs, high-friction sessions, and tools whose calls fail more than 20% of the time &mdash; then the three most recent sessions worth a person&#39;s attention. A server card lists your tools, the surface hash and when it was last seen, and warns you if your server sends no <code>initialize</code> instructions, because then every agent connects with zero guidance from you.</p>
+      <p>How agents experience your server, on one screen. Four stat tiles, picked from what your traffic has: sessions, tasks, identified users, the share of tool calls that returned an error, sessions containing a failure, and reports filed by agents.</p>
+      <p>Below them, four categories with a count each: recurring errors, token costs, high-friction sessions, and tools whose calls fail more than 20% of the time. Then the three most recent sessions worth a person&#39;s attention. A server card lists your tools, the surface hash and when it was last seen, and warns you if your server sends no <code>initialize</code> instructions, because then every agent connects with zero guidance from you.</p>
 
       <h3 id="console-tab-insights">The Insights tab</h3>
-      <p>Five panels, each one a list of things you could go fix this week.</p>
+      <p>Five panels. Each is a list of things you could go and fix.</p>
       <div class="card-grid">
         <div class="card"><h3>High-friction sessions</h3><p>Four counts: the last tool call failed, a tool failed and never succeeded again in that task, any call failed at all, and sessions you rated low. A session can sit in more than one.</p></div>
         <div class="card"><h3>Recurring errors</h3><p>Errors that repeat across sessions, grouped into one pattern per tool with ids and quoted values ignored. Each row names where the fix belongs: the tool description, the error message, the implementation, or account config.</p></div>
         <div class="card"><h3>Token costs</h3><p>What your surface costs every session before anyone calls anything. Tool definitions that are never called, mandated fetches, and responses large enough to push earlier results out of the agent&#39;s context.</p></div>
         <div class="card"><h3>Tool error rates</h3><p>Every tool ranked by how often its calls come back as errors, with p50 and p95 latency and the error codes, plus the tools nothing has called.</p></div>
       </div>
-      <p>The fifth is <strong>Filed feedback</strong>: what agents told you they needed and could not get, in their own words, through the annotation tool. That lane only fills when the agent chooses to report, so it is the smallest and often the most direct.</p>
+      <p>The fifth is <strong>Filed feedback</strong>: what agents told you they needed and could not get, in their own words, through the annotation tool. That lane only fills when the agent chooses to report, so it is usually the smallest of the five.</p>
 
       <h3 id="console-tab-sessions">The Sessions tab</h3>
       <p>The session list, filtered and paged. Open one and you get its tasks, the calls inside each task, and two lanes of markers: what the agent filed, and what Baton detected. Click a marker and the call list narrows to exactly the calls it counted, so a number always shows its evidence.</p>
-      <p>Run <strong>Explain</strong> on a session and a model reads it and writes what the user was trying to do and how it went, including a satisfaction rating. You can flag a session to come back to, or exclude it from your numbers, though exclusion requires a written reason, which is what makes it defensible to whoever reads the number next.</p>
+      <p>Run <strong>Explain</strong> on a session and a model reads it and writes what the user was trying to do and how it went, including a satisfaction rating. You can flag a session to come back to, or exclude it from your numbers. Excluding one requires a written reason, so the next person to read the number can see why it moved.</p>
 
       <h3 id="console-tab-live">The Live tab</h3>
-      <p>Every event as it arrives, newest first, refreshed every couple of seconds. One row shape, no highlighting, no interpretation: this is the raw stream, for watching your own setup work while you drive an agent at it. Events show up within seconds. Interpretation belongs on the other three tabs.</p>
+      <p>Every event as it arrives, newest first, refreshed every couple of seconds. One row shape, no highlighting. This is the raw stream, for watching your own setup work while you drive an agent at it. Events appear within seconds of the call. Anything that interprets them lives on the other three tabs.</p>
 
       <h2 id="console-access">Access &amp; security</h2>
       <p>The Console is hosted by us and auditable by you. Your data is single-tenant, and every event is logged and inspectable, so you can see exactly what each agent sent, when, and why. Scrubbing runs before anything leaves your machine: emails, phone numbers, card numbers, keys and tokens are redacted at the SDK, on by default. What you don&#39;t capture can never reach us. It is pattern matching, not a guarantee: free text inside a tool argument or result is sent as written, so decide what your tools hand back.</p>
