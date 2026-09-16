@@ -242,12 +242,9 @@
         <p class="sidebar-label">baton-proxy</p>
         <a href="#proxy-overview" class="sidebar-link">Overview</a>
         <a href="#install" class="sidebar-link">Install</a>
-        <a href="#quick-start" class="sidebar-link">Quick start</a>
-        <a href="#intent-params" class="sidebar-link">Intent parameters</a>
+        <a href="#quick-start" class="sidebar-link">Quickstart</a>
         <a href="#configuration" class="sidebar-link">Configuration</a>
-        <a href="#injected-tools" class="sidebar-link">Injected tools</a>
-        <a href="#remote" class="sidebar-link">Remote servers</a>
-        <a href="#scan" class="sidebar-link">scan</a>
+        <a href="#proxy-captures" class="sidebar-link">What it captures</a>
         <a href="#trust" class="sidebar-link">Trust &amp; security</a>
       </div>
     </nav>
@@ -256,25 +253,21 @@
         <p class="sidebar-label">baton-sdk</p>
         <a href="#sdk-overview" class="sidebar-link">Overview</a>
         <a href="#sdk-install" class="sidebar-link">Install</a>
-        <a href="#mcp-integration" class="sidebar-link">MCP integration</a>
-        <a href="#without-dsn" class="sidebar-link">Without a DSN</a>
-        <a href="#vendorconfig" class="sidebar-link">VendorConfig</a>
-        <a href="#sinks" class="sidebar-link">Sinks</a>
-        <a href="#off-switch" class="sidebar-link">Turning capture off</a>
+        <a href="#mcp-integration" class="sidebar-link">Quickstart</a>
+        <a href="#vendorconfig" class="sidebar-link">Configuration</a>
         <a href="#library-api" class="sidebar-link">Library API</a>
-        <a href="#choosing" class="sidebar-link">Choosing paths</a>
+        <a href="#typescript" class="sidebar-link">TypeScript</a>
         <a href="#pii" class="sidebar-link">PII scrubbing</a>
       </div>
     </nav>
     <nav id="sidebar-gateway" hidden>
       <div class="sidebar-group">
         <p class="sidebar-label">gateway</p>
-        <a href="#gateway-overview" class="sidebar-link">Where it sits</a>
+        <a href="#gateway-overview" class="sidebar-link">Overview</a>
+        <a href="#gateway-start" class="sidebar-link">Quickstart</a>
+        <a href="#gateway-config" class="sidebar-link">Configuration</a>
         <a href="#gateway-captures" class="sidebar-link">What it captures</a>
-        <a href="#gateway-failopen" class="sidebar-link">Fail open</a>
-        <a href="#gateway-config" class="sidebar-link">What you configure</a>
-        <a href="#gateway-identity" class="sidebar-link">Identity</a>
-        <a href="#gateway-start" class="sidebar-link">Getting set up</a>
+        <a href="#gateway-failopen" class="sidebar-link">Trust &amp; security</a>
       </div>
     </nav>
     <nav id="sidebar-console" hidden>
@@ -487,26 +480,13 @@ uvx baton-proxy --url https://mcp.example.com/mcp  # remote, as a bridge</pre>
         <li><strong>Green marks what Baton owns</strong> — here the proxy and the Console. Everything neutral is yours or your client's, and none of it changes.</li>
         <li><strong>Three sinks, one event.</strong> The same envelope goes to stderr, a file, and an <code>https://</code> collector; which ones are live is configuration.</li>
       </ul>
-      <p>Per real tool call, three event types are emitted matching the <a href="https://github.com/good-timing/baton/blob/main/docs/SPEC.md" style="color:var(--brand)">Baton wire format</a>:</p>
-      <table class="docs-table">
-        <thead><tr><th>Event</th><th>Payload fields</th></tr></thead>
-        <tbody>
-          <tr><td>tool_call_start</td><td>tool_name, params</td></tr>
-          <tr><td>tool_call_end</td><td>tool_name, result, duration_ms</td></tr>
-          <tr><td>tool_call_error</td><td>tool_name, error_type, error_body, duration_ms</td></tr>
-        </tbody>
-      </table>
-      <p>Each line in the events file is one JSON object — <code>{ event_type, payload }</code>. A silent failure (a 200 that carried an error) lands like this:</p>
-      <pre>{"event_type":"tool_call_start","payload":{"tool_name":"run_sql","params":{"statement":"ALTER TABLE orders ADD CONSTRAINT fk_customer FOREIGN KEY (customer_id) REFERENCES customers(id)"}}}
-{"event_type":"tool_call_end","payload":{"tool_name":"run_sql","result":"200 OK — body: \"foreign keys are not supported\"","duration_ms":412}}
-{"event_type":"annotation","payload":{"signal_type":"failure","intent":"add a foreign key so an order can't reference a missing customer","suggested_improvement":"reject unsupported DDL with an error instead of a silent 200"}}</pre>
       <h2 id="install">Install</h2>
       <p>For a one-off <code>scan</code>, install nothing — <code>uvx</code> runs it on demand:</p>
       <pre>uvx baton-proxy scan --config &lt;server-name&gt;</pre>
       <p>To wrap a server permanently in Claude&#39;s config, put <code>baton-proxy</code> on your PATH so the config can invoke it directly:</p>
       <pre>pipx install baton-proxy</pre>
       <p style="color:var(--mute-2);font-size:12.5px">Plain <code>pip install baton-proxy</code> works if you manage your own Python env. Requires Python 3.11+. Currently 0.x — the wire format is stable and additive-only until v1.0; see the <a href="https://github.com/good-timing/baton-proxy/releases" target="_blank" rel="noopener" style="color:var(--brand)">releases</a>.</p>
-      <h2 id="quick-start">Quick start</h2>
+      <h2 id="quick-start">Quickstart</h2>
       <p>Replace your MCP server entry in Claude&#39;s config. The only change is wrapping your existing command:</p>
       <pre>// Before
 { "command": "npx", "args": ["@vendor/mcp-server"] }
@@ -530,20 +510,19 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
     "BATON_CONSENT_TOKEN": "customer-consented"
   }
 }</pre>
-      <h2 id="intent-params">Intent parameters</h2>
-      <p>This is how the proxy captures <em>why</em> a call was made, not just what happened. At <code>tools/list</code> it adds three string parameters to every upstream tool&#39;s advertised schema. The agent fills them in as it composes each call, and the proxy strips them at <code>tools/call</code> before forwarding.</p>
+      <h3 id="scan">scan</h3>
+      <p>Preview friction on a server you already have configured — no permanent install, no change to your Claude config.</p>
+      <pre>uvx baton-proxy scan --config my-server</pre>
+      <p><code>scan</code> reads the named entry from <code>~/.claude.json</code>, reuses its credentials, drives a headless agent, and writes <code>./baton-report.md</code>. Events are written to a temp file and deleted after the report — nothing leaves your machine.</p>
       <table class="docs-table">
-        <thead><tr><th>Parameter</th><th>Captured as</th></tr></thead>
+        <thead><tr><th>Flag</th><th>Description</th></tr></thead>
         <tbody>
-          <tr><td><code>user_goal</code></td><td><code>tool_call_start.payload.call_intent</code></td></tr>
-          <tr><td><code>expected_result</code></td><td><code>tool_call_start.payload.call_expected</code>, omitted when the agent did not fill it in</td></tr>
-          <tr><td><code>overall_task</code></td><td><code>tool_call_start.payload.call_workflow</code> — the task label sessions are grouped by, so it is only useful when the agent repeats the same string across a task</td></tr>
+          <tr><td>--config &lt;name&gt;</td><td>Entry name in <code>~/.claude.json</code> (required).</td></tr>
+          <tr><td>--config-file &lt;path&gt;</td><td>Use a specific config file.</td></tr>
+          <tr><td>--timeout &lt;seconds&gt;</td><td>Bound the run (default: 300s).</td></tr>
+          <tr><td>--out &lt;path&gt;</td><td>Report output path (default: <code>./baton-report.md</code>).</td></tr>
         </tbody>
       </table>
-      <p>In the default mode, <code>user_goal</code> is the one advertised in each tool&#39;s <code>required</code> list. That is advertisement only: a call that omits it is served exactly as it would be unwrapped, and <code>call_intent</code> is simply null. Measured on proxy 0.6.8, a wrapped tool&#39;s schema lists <code>["customer", "user_goal"]</code> as required where the unwrapped one listed <code>["customer"]</code>.</p>
-      <p>A parameter description reaches the model at the moment it composes the call, on every client. Some clients drop <code>InitializeResult.instructions</code> entirely, so instructions alone are not a reliable channel. A tool that already declares a parameter of that name is left alone: its value is forwarded untouched and never read as intent.</p>
-      <div class="note"><strong>Fail-open:</strong> if injection or stripping raises, the message is forwarded unmodified. A bug in intent capture cannot break a tool call.</div>
-
       <h2 id="configuration">Configuration</h2>
       <p>All knobs are environment variables. Every one has a default — no config file needed.</p>
       <table class="docs-table">
@@ -572,11 +551,7 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
         </tbody>
       </table>
       <div class="note"><strong>Startup guard:</strong> the proxy refuses to start when an <code>https://</code> sink is configured but <code>BATON_API_KEY</code> is unset, or <code>BATON_CONSENT_TOKEN</code> or <code>BATON_VENDOR_ID</code> is still <code>"local"</code>.</div>
-      <h2 id="injected-tools">Injected tools</h2>
-      <p>The proxy adds its own tools to the upstream server&#39;s tool list during the MCP handshake. The upstream server never sees them. <code>baton_annotate</code> is always there; the report tool depends on your sinks.</p>
-      <div class="card"><h3><code>baton_annotate</code></h3><p>Called by Claude (unprompted) when it hits friction. Emits an annotation event with <code>signal_type</code>, <code>intent</code>, <code>suggested_improvement</code>, and optional context. Available in all sink modes.</p></div>
-      <div class="card"><h3><code>baton_session_report</code></h3><p>Called when the customer asks <em>"Show me the friction report for this session."</em> Returns a markdown summary of the session. Needs a <code>file://</code> sink to read from, which the default install has, so a <code>stderr:</code>-only install does not get it. Suppressed when an <code>https://</code> sink is also present, which is the vendor production shape; set <code>BATON_TENANT_TYPE=customer</code> to keep it there.</p></div>
-      <h2 id="remote">Remote servers</h2>
+      <h3 id="remote">Remote servers</h3>
       <p>The proxy also fronts a remote HTTPS MCP server over the Streamable HTTP transport, instead of spawning a subprocess. It stays stdio-facing to Claude and forwards each message as an HTTP POST, streaming the JSON or SSE response back. Injection, emission and correlation are the same code as the subprocess path.</p>
       <pre>{
   "command": "baton-proxy",
@@ -586,19 +561,38 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
       <p><code>--url</code> and the <code>-- &lt;command&gt;</code> form are mutually exclusive.</p>
       <div class="note">Bridge scope today: the client-initiated request and response loop only. It does not open the standing GET SSE channel, so server-initiated messages (sampling, elicitation, notifications) are not captured, and requests are serialised. When the upstream is unreachable the handshake degrades to a synthetic healthy response rather than an error, so the client attaches and <code>baton_annotate</code> stays usable instead of the session wedging.</div>
 
-      <h2 id="scan">scan</h2>
-      <p>Preview friction on a server you already have configured — no permanent install, no change to your Claude config.</p>
-      <pre>uvx baton-proxy scan --config my-server</pre>
-      <p><code>scan</code> reads the named entry from <code>~/.claude.json</code>, reuses its credentials, drives a headless agent, and writes <code>./baton-report.md</code>. Events are written to a temp file and deleted after the report — nothing leaves your machine.</p>
+      <h3 id="injected-tools">Injected tools</h3>
+      <p>The proxy adds its own tools to the upstream server&#39;s tool list during the MCP handshake. The upstream server never sees them. <code>baton_annotate</code> is always there; the report tool depends on your sinks.</p>
+      <div class="card"><h3><code>baton_annotate</code></h3><p>Called by Claude (unprompted) when it hits friction. Emits an annotation event with <code>signal_type</code>, <code>intent</code>, <code>suggested_improvement</code>, and optional context. Available in all sink modes.</p></div>
+      <div class="card"><h3><code>baton_session_report</code></h3><p>Called when the customer asks <em>"Show me the friction report for this session."</em> Returns a markdown summary of the session. Needs a <code>file://</code> sink to read from, which the default install has, so a <code>stderr:</code>-only install does not get it. Suppressed when an <code>https://</code> sink is also present, which is the vendor production shape; set <code>BATON_TENANT_TYPE=customer</code> to keep it there.</p></div>
+      <h2 id="proxy-captures">What it captures</h2>
+      <p>Per real tool call, three event types are emitted matching the <a href="https://github.com/good-timing/baton/blob/main/docs/SPEC.md" style="color:var(--brand)">Baton wire format</a>:</p>
       <table class="docs-table">
-        <thead><tr><th>Flag</th><th>Description</th></tr></thead>
+        <thead><tr><th>Event</th><th>Payload fields</th></tr></thead>
         <tbody>
-          <tr><td>--config &lt;name&gt;</td><td>Entry name in <code>~/.claude.json</code> (required).</td></tr>
-          <tr><td>--config-file &lt;path&gt;</td><td>Use a specific config file.</td></tr>
-          <tr><td>--timeout &lt;seconds&gt;</td><td>Bound the run (default: 300s).</td></tr>
-          <tr><td>--out &lt;path&gt;</td><td>Report output path (default: <code>./baton-report.md</code>).</td></tr>
+          <tr><td>tool_call_start</td><td>tool_name, params</td></tr>
+          <tr><td>tool_call_end</td><td>tool_name, result, duration_ms</td></tr>
+          <tr><td>tool_call_error</td><td>tool_name, error_type, error_body, duration_ms</td></tr>
         </tbody>
       </table>
+      <p>Each line in the events file is one JSON object — <code>{ event_type, payload }</code>. A silent failure (a 200 that carried an error) lands like this:</p>
+      <pre>{"event_type":"tool_call_start","payload":{"tool_name":"run_sql","params":{"statement":"ALTER TABLE orders ADD CONSTRAINT fk_customer FOREIGN KEY (customer_id) REFERENCES customers(id)"}}}
+{"event_type":"tool_call_end","payload":{"tool_name":"run_sql","result":"200 OK — body: \"foreign keys are not supported\"","duration_ms":412}}
+{"event_type":"annotation","payload":{"signal_type":"failure","intent":"add a foreign key so an order can't reference a missing customer","suggested_improvement":"reject unsupported DDL with an error instead of a silent 200"}}</pre>
+      <h3 id="intent-params">Intent parameters</h3>
+      <p>This is how the proxy captures <em>why</em> a call was made, not just what happened. At <code>tools/list</code> it adds three string parameters to every upstream tool&#39;s advertised schema. The agent fills them in as it composes each call, and the proxy strips them at <code>tools/call</code> before forwarding.</p>
+      <table class="docs-table">
+        <thead><tr><th>Parameter</th><th>Captured as</th></tr></thead>
+        <tbody>
+          <tr><td><code>user_goal</code></td><td><code>tool_call_start.payload.call_intent</code></td></tr>
+          <tr><td><code>expected_result</code></td><td><code>tool_call_start.payload.call_expected</code>, omitted when the agent did not fill it in</td></tr>
+          <tr><td><code>overall_task</code></td><td><code>tool_call_start.payload.call_workflow</code> — the task label sessions are grouped by, so it is only useful when the agent repeats the same string across a task</td></tr>
+        </tbody>
+      </table>
+      <p>In the default mode, <code>user_goal</code> is the one advertised in each tool&#39;s <code>required</code> list. That is advertisement only: a call that omits it is served exactly as it would be unwrapped, and <code>call_intent</code> is simply null. Measured on proxy 0.6.8, a wrapped tool&#39;s schema lists <code>["customer", "user_goal"]</code> as required where the unwrapped one listed <code>["customer"]</code>.</p>
+      <p>A parameter description reaches the model at the moment it composes the call, on every client. Some clients drop <code>InitializeResult.instructions</code> entirely, so instructions alone are not a reliable channel. A tool that already declares a parameter of that name is left alone: its value is forwarded untouched and never read as intent.</p>
+      <div class="note"><strong>Fail-open:</strong> if injection or stripping raises, the message is forwarded unmodified. A bug in intent capture cannot break a tool call.</div>
+
       <h2 id="trust">Trust &amp; security</h2>
       <ul>
         <li><strong style="color:var(--ink)">Open source, Apache 2.0.</strong> <a href="https://github.com/good-timing/baton-proxy" style="color:var(--brand)">github.com/good-timing/baton-proxy</a></li>
@@ -615,7 +609,7 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
       <p>baton-sdk is native instrumentation for vendors who control their MCP server source. One call wires up capture, annotation, and sink routing — same wire format as the proxy, no subprocess hop. Because it lives inside what you ship, it captures friction from your real customers, who never have to install anything.</p>
       <div class="card"><h3>MCP middleware path</h3><p>Your MCP server calls <code>install_baton(mcp, dsn=…)</code>. Two lines. Captures every tool call at the transport boundary and adds the annotation tool. Best for vendors with MCP servers as their primary surface.</p></div>
       <div class="card"><h3>Library API path</h3><p>Code that calls your API wraps each call in <code>client.trace(…)</code>. Same event envelope, same sinks — different emission boundary. Best for vendors who ship Skills rather than an MCP server.</p></div>
-      <p>baton-sdk is open source under Apache-2.0; the source lives in the <a href="https://github.com/good-timing/baton" target="_blank" rel="noopener" style="color:var(--brand)">baton</a> repo. Requires Python 3.11+. The TypeScript SDK, <code>@goodtiming/baton-sdk</code>, takes the same DSN; its reference is the <a href="https://www.npmjs.com/package/@goodtiming/baton-sdk" target="_blank" rel="noopener" style="color:var(--brand)">npm README</a>.</p>
+      <p>baton-sdk is open source under Apache-2.0; the source lives in the <a href="https://github.com/good-timing/baton" target="_blank" rel="noopener" style="color:var(--brand)">baton</a> repo. The Python package needs 3.11+. There is a <a href="#typescript" style="color:var(--brand)">TypeScript SDK</a> too, <code>@goodtiming/baton-sdk</code> on npm, which takes the same DSN and emits the same events; everything on this page applies to both unless it says otherwise.</p>
       <h2 id="sdk-install">Install</h2>
       <table class="docs-table">
         <thead><tr><th>Command</th><th>Includes</th></tr></thead>
@@ -628,7 +622,7 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
         </tbody>
       </table>
       <p>Quote the extras. zsh, the default shell on macOS, treats square brackets as a pattern and stops with <code>no matches found</code> before pip runs.</p>
-      <h2 id="mcp-integration">MCP integration</h2>
+      <h2 id="mcp-integration">Quickstart</h2>
       <p>The SDK runs in-process inside your server and captures every tool call at the transport boundary — no subprocess, your tools unchanged.</p>
       <p>The following diagram illustrates where the SDK runs inside your MCP server:</p>
       <div class="diagram">
@@ -710,7 +704,7 @@ withBaton(server, {
       <pre>install_baton(mcp)  # reads BATON_DSN</pre>
       <p>An explicit <code>dsn=</code> wins over <code>BATON_DSN</code>, and either one wins over <code>BATON_VENDOR_ID</code> and <code>BATON_TENANT_ID</code>, so a new DSN is never overridden by values an earlier install left in the environment.</p>
       <div class="note">A bare <code>baton_pk_…</code> key in place of the DSN stops at startup with a message saying to copy the full value from <code>/account</code>. A secret <code>baton_sk_…</code> key in a DSN works, and logs a warning: it reads and writes everything in your workspace, so it must never ship.</div>
-      <h2 id="without-dsn">Without a DSN</h2>
+      <h3 id="without-dsn">Without a DSN</h3>
       <p>To send to your own collector, or to try the SDK before you have a key, name the parts. Leave out <code>sink</code> and events go to stderr as JSON Lines.</p>
       <pre>import os
 from baton import install_baton, VendorConfig
@@ -732,7 +726,7 @@ install_baton(mcp, VendorConfig(
           <tr><td>from fastmcp import FastMCP</td><td>baton.integrations.standalone</td></tr>
         </tbody>
       </table>
-      <h2 id="vendorconfig">VendorConfig</h2>
+      <h2 id="vendorconfig">Configuration</h2>
       <p>Keyword-only. With a DSN, every other field is optional.</p>
       <table class="docs-table">
         <thead><tr><th>Field</th><th>Default</th><th>What it does</th></tr></thead>
@@ -751,7 +745,7 @@ install_baton(mcp, VendorConfig(
           <tr><td>resolve_principal</td><td>—</td><td>A function, sync or async, that returns the principal — a user, a service account or an organisation — from a call's headers, <code>_meta</code>, tool name and arguments. Checked before the verified access token, and the only way a stdio server reports one.</td></tr>
         </tbody>
       </table>
-      <h2 id="sinks">Sinks</h2>
+      <h3 id="sinks">Sinks</h3>
       <table class="docs-table">
         <thead><tr><th>Sink</th><th>Use case</th></tr></thead>
         <tbody>
@@ -770,7 +764,7 @@ install_baton(mcp, VendorConfig(
     vendor_display_name="Acme Knowledge Base",
     sink=MultiSink([StdoutSink(), FileSink("./events.jsonl")]),
 ))</pre>
-      <h2 id="off-switch">Turning capture off</h2>
+      <h3 id="off-switch">Turning capture off</h3>
       <p>Set <code>BATON_DISABLED=1</code> in the environment of the process that runs the server, and the SDK installs nothing: no wrapped tools, no annotation tool, no change to the server instructions, no collector connection, no background thread. The server runs as it would without the <code>install_baton</code> line. The SDK reads the variable once at startup, never writes to stdout, and never stops the server from starting, even with a config it would otherwise refuse. Any value other than empty, <code>0</code>, <code>false</code>, <code>no</code> or <code>off</code> turns it on.</p>
       <p>The switch belongs to whoever runs the server.</p>
       <ul>
@@ -859,7 +853,7 @@ async with AsyncClient(dsn="https://baton_pk_...@baton.goodtiming.ai/ten_.../srv
     except ApiError as e:
         trace.observed(error=e)
         trace.annotate(signal_type=SignalType.FAILURE, suggested_improvement="add retry-after on 429s")</pre>
-      <h2 id="choosing">Choosing paths</h2>
+      <h3 id="choosing">Choosing paths</h3>
       <table class="docs-table">
         <thead><tr><th>Concern</th><th>MCP integration</th><th>Library API</th></tr></thead>
         <tbody>
@@ -869,6 +863,33 @@ async with AsyncClient(dsn="https://baton_pk_...@baton.goodtiming.ai/ten_.../srv
           <tr><td>Annotation surface</td><td>MCP tool with MUST/REQUIRED framing</td><td>Python calls (<code>trace.annotate(…)</code>)</td></tr>
         </tbody>
       </table>
+      <h2 id="typescript">TypeScript</h2>
+      <p>The same SDK for Node. <code>@goodtiming/baton-sdk</code> emits the same envelope as the Python package to the same sinks, so a workspace can run both and the Console never learns which one produced an event. Node 20+.</p>
+      <pre>npm install @goodtiming/baton-sdk</pre>
+      <p>Your MCP server is the argument, as in Python. Both major versions of the official TypeScript MCP SDK are supported and both are optional peer dependencies, so you install whichever one you already use — <code>@modelcontextprotocol/sdk</code> 1.x or <code>@modelcontextprotocol/server</code> 2.x — and nothing else.</p>
+      <pre>import { McpServer } from "@modelcontextprotocol/server";
+import { withBaton } from "@goodtiming/baton-sdk";
+
+const server = new McpServer({ name: "acme-knowledge-base", version: "1.0.0" });
+
+withBaton(server, {
+  dsn: "https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...",
+});</pre>
+      <p>Config fields are the Python names in camelCase — <code>vendorId</code>, <code>tenantId</code>, <code>vendorDisplayName</code>, <code>intentParamMode</code>, <code>scrubber</code> — and a <code>dsn</code> replaces the first three exactly as it does in Python. Tools registered before or after <code>withBaton</code> are both captured, and so are tools added or removed later.</p>
+      <h3>What it captures</h3>
+      <p>The same three intent parameters, the same annotation tool, the same <code>surface_snapshot</code>, and the same events. <code>intentParamMode</code> defaults to <code>"required"</code>, which advertises <code>user_goal</code> in each tool&#39;s <code>required</code> list and never enforces it — measured identical to the Python SDK and the proxy on the currently published versions.</p>
+      <p>PII scrubbing is <strong>on by default</strong> here too, a rule-for-rule port of Python&#39;s ruleset. Pass <code>identityScrub</code> to opt out, or your own <code>(value: unknown) =&gt; unknown</code>. Read <a href="#pii" style="color:var(--brand)">what it does and does not catch</a> before relying on it.</p>
+      <h3>What is not here yet</h3>
+      <p>Stated so you find out now rather than later. None of it blocks the paths above.</p>
+      <ul>
+        <li><strong>Only <code>StdoutSink</code> and <code>HttpSink</code>.</strong> <code>FileSink</code> and <code>MultiSink</code> are deferred; the Python package has all four.</li>
+        <li><strong>Only the high-level <code>McpServer</code>.</strong> The low-level <code>Server</code> is not wrapped.</li>
+        <li><strong>Intent parameters need a Zod schema.</strong> On the 2.x SDK a tool registered with a non-Zod standard schema is still wrapped and still emits <code>tool_call_*</code>; it just advertises no intent parameters.</li>
+        <li><strong>The per-request <code>createMcpHandler</code> shape is unscoped.</strong> It builds a fresh server per request, which would make the session id and the snapshot dedup request-lifetime state.</li>
+      </ul>
+      <h3>Wire compatibility</h3>
+      <p>This is a tested property, not an intention. Both SDKs are checked against <a href="https://github.com/good-timing/baton-spec" target="_blank" rel="noopener" style="color:var(--brand)">baton-spec</a>, a neutral schema repo: every event type is validated against the shared JSON Schema, and the TypeScript emitter is diffed field-by-field against captured Python output for the same scenario. Envelope and payload keys must match exactly; values match except for ids, timestamps, timings and the genuinely language-specific fields.</p>
+
       <h2 id="pii">PII scrubbing</h2>
       <p>Scrubbing is on by default. <code>baton.scrub.Scrubber</code> walks every event payload before it reaches the sink and redacts email addresses, <code>Bearer</code> tokens of 16 or more characters, <code>sk-</code> keys, <code>AKIA</code> access keys, JWTs, North American phone numbers, and card numbers that pass a Luhn check. It also redacts the whole value of any field named <code>email</code>, <code>phone</code>, <code>ssn</code>, <code>api_key</code>, <code>token</code>, <code>secret</code>, <code>password</code> or <code>user_name</code>.</p>
       <p><strong style="color:var(--ink)">It matches patterns. It does not find every piece of personal data.</strong> <code>{"name": "Jane Doe", "address": "12 Elm St"}</code> passes through unchanged, and a card number written with spaces or hyphens is not caught. Decide what your tools put in their arguments and results with that in mind.</p>
@@ -881,7 +902,7 @@ install_baton(mcp, VendorConfig(dsn="https://baton_pk_...@baton.goodtiming.ai/te
 
     <div id="tab-gateway" hidden>
       <p class="stage-eyebrow"><span class="step">Stage 2 &middot; Deploy</span> &nbsp;&middot;&nbsp; capture a whole fleet at once</p>
-      <h2 id="gateway-overview">Where it sits</h2>
+      <h2 id="gateway-overview">Overview</h2>
       <p>For fleets of MCP servers. The other two paths instrument one server at a time: the <a href="#sdk" style="color:var(--brand)">SDK</a> goes inside a server you own, the <a href="#proxy" style="color:var(--brand)">proxy</a> wraps a server you do not. This one captures at the gateway itself, so every server behind it is covered at once, and neither your clients nor your backend servers change.</p>
       <p>Baton runs as a processor beside your gateway, on the gateway&#39;s external-processor hook for MCP. Traffic still flows client to gateway to server. Baton sees the MCP messages as they pass and never becomes a hop in the path: it is not a subprocess wrap and not an HTTP bridge.</p>
       <p>The following diagram illustrates where Baton sits relative to your gateway:</p>
@@ -925,6 +946,25 @@ install_baton(mcp, VendorConfig(dsn="https://baton_pk_...@baton.goodtiming.ai/te
       </ul>
       <p>This is the path that reaches surfaces with no code to instrument. A client behind the gateway is captured without anyone shipping a change to it.</p>
 
+      <h2 id="gateway-start">Quickstart</h2>
+      <p>There is no package to install yet. The <a href="#proxy" style="color:var(--brand)">proxy</a> and the <a href="#sdk" style="color:var(--brand)">SDK</a> are published and you can start with either one today; the gateway processor ships with a runbook for your platform team instead, and we set it up with you. <a href="https://calendly.com/dave-goodtiming/30min" style="color:var(--brand)">Talk to us</a> and we will size it against your gateway.</p>
+      <h2 id="gateway-config">Configuration</h2>
+      <p>Two pieces: one hook in your gateway&#39;s own policy, pointed at the processor and set to see both the request and the response of each tool call along with its session id, and the same handful of environment variables the <a href="#proxy" style="color:var(--brand)">proxy</a> reads.</p>
+      <table class="docs-table">
+        <thead><tr><th>Variable</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td>BATON_VENDOR_ID</td><td>Labels the captured signal.</td></tr>
+          <tr><td>BATON_EVENT_SINK</td><td>Where events go: the Console over https, your own object store, a file, or stderr. Comma separate to fan out.</td></tr>
+          <tr><td>BATON_API_KEY</td><td>Bearer token for the Console sink, from your secret store.</td></tr>
+          <tr><td>BATON_CONSENT_TOKEN</td><td>Per install consent. The processor refuses to ship anywhere remote while this is still the placeholder.</td></tr>
+        </tbody>
+      </table>
+      <p>Nothing has to leave your walls. Point the sink at your own storage and the Console never sees an event.</p>
+
+      <h3 id="gateway-identity">Identity</h3>
+      <p>This path resolves the caller from a request header, and which header is configuration rather than code. The value is hashed inside the processor and the raw identity never leaves your network, exactly as on the other two paths.</p>
+      <p>It needs two settings, and both matter: the header, which your gateway must pass on every call, and the hashing key, <code>BATON_PRINCIPAL_ID_HMAC_KEY</code>. A call without the header is captured with no caller, and nothing reports it. Without the key, the processor logs one warning and sends every event with no caller.</p>
+
       <h2 id="gateway-captures">What it captures</h2>
       <p>Two parameters are added to the tool list the gateway returns: the agent&#39;s goal, and the result it expects. The agent fills them in on the next call. Baton reads them off that call and strips them before the request reaches your server, so your tool schemas and your handlers are unchanged and your customers never see them.</p>
       <table class="docs-table">
@@ -938,28 +978,8 @@ install_baton(mcp, VendorConfig(dsn="https://baton_pk_...@baton.goodtiming.ai/te
       <p>The events are the same wire format the other two paths emit, so one Console reads all three. A response carries no request id, so the gateway passes the session id to the processor on both halves of each call, and results pair within a session in the order calls were made. Pairing is exact while a session's calls complete in order. Calls running at the same time inside one session can pair with the wrong request, and a call with no session id gets no result event.</p>
       <p>Scrubbing runs in the processor before any sink sees an event, with the same patterns as the <a href="#pii" style="color:var(--brand)">SDK</a>.</p>
 
-      <h2 id="gateway-failopen">Fail open</h2>
+      <h2 id="gateway-failopen">Trust &amp; security</h2>
       <div class="note"><strong>Capture never breaks a tool call.</strong> The gateway is configured in fail-open mode on this hook, so if the Baton processor is slow, restarting or gone, the call goes through and the event is the only thing lost. Observation is best effort by design. Your traffic is not.</div>
-
-      <h2 id="gateway-config">What you configure</h2>
-      <p>Two pieces: one hook in your gateway&#39;s own policy, pointed at the processor and set to see both the request and the response of each tool call along with its session id, and the same handful of environment variables the <a href="#proxy" style="color:var(--brand)">proxy</a> reads.</p>
-      <table class="docs-table">
-        <thead><tr><th>Variable</th><th>Purpose</th></tr></thead>
-        <tbody>
-          <tr><td>BATON_VENDOR_ID</td><td>Labels the captured signal.</td></tr>
-          <tr><td>BATON_EVENT_SINK</td><td>Where events go: the Console over https, your own object store, a file, or stderr. Comma separate to fan out.</td></tr>
-          <tr><td>BATON_API_KEY</td><td>Bearer token for the Console sink, from your secret store.</td></tr>
-          <tr><td>BATON_CONSENT_TOKEN</td><td>Per install consent. The processor refuses to ship anywhere remote while this is still the placeholder.</td></tr>
-        </tbody>
-      </table>
-      <p>Nothing has to leave your walls. Point the sink at your own storage and the Console never sees an event.</p>
-
-      <h2 id="gateway-identity">Identity</h2>
-      <p>This path resolves the caller from a request header, and which header is configuration rather than code. The value is hashed inside the processor and the raw identity never leaves your network, exactly as on the other two paths.</p>
-      <p>It needs two settings, and both matter: the header, which your gateway must pass on every call, and the hashing key, <code>BATON_PRINCIPAL_ID_HMAC_KEY</code>. A call without the header is captured with no caller, and nothing reports it. Without the key, the processor logs one warning and sends every event with no caller.</p>
-
-      <h2 id="gateway-start">Getting set up</h2>
-      <p>There is no package to install yet. The <a href="#proxy" style="color:var(--brand)">proxy</a> and the <a href="#sdk" style="color:var(--brand)">SDK</a> are published and you can start with either one today; the gateway processor ships with a runbook for your platform team instead, and we set it up with you. <a href="https://calendly.com/dave-goodtiming/30min" style="color:var(--brand)">Talk to us</a> and we will size it against your gateway.</p>
     </div>
 
     <div id="tab-console" hidden>

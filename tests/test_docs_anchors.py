@@ -31,6 +31,7 @@ repo. Re-run the grep rather than trusting this comment if the set matters.
 from __future__ import annotations
 
 import re
+from html.parser import HTMLParser
 from pathlib import Path
 
 import pytest
@@ -107,6 +108,97 @@ def test_every_sidebar_link_points_into_its_own_tab() -> None:
         body = re.split(r'<div id="tab-|</main>', pane.group(1))[0]
         for href in re.findall(r'href="#([^"]+)"', nav.group(1)):
             assert f'id="{href}"' in body, f"sidebar-{tab} links #{href}, which is not in tab-{tab}"
+
+
+class _Outline(HTMLParser):
+    """Which tab pane each heading actually lands in, per a real parser.
+
+    The point is that it does not pattern-match. A regex that slices the file
+    "from ``<div id="tab-x">`` to the next ``<div id="tab-``" measures the
+    SOURCE ORDER of the text, and the browser measures NESTING. On 2026-09-15
+    those disagreed: reordering the gateway tab moved its last section to
+    second, and the last section was carrying the pane's own closing
+    ``</div>``, so three sections ended up outside the pane. Every regex check
+    in this file passed. The browser showed a tab with two headings and a
+    sidebar listing five.
+
+    So this tracks open ``<div>``s the way a parser does, and reports the
+    heading's real ancestor.
+    """
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.stack: list[str | None] = []
+        self.headings: list[tuple[str, str, str | None]] = []  # (tag, id, tab)
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        a = dict(attrs)
+        if tag == "div":
+            el_id = a.get("id") or ""
+            self.stack.append(el_id[4:] if el_id.startswith("tab-") else None)
+        elif tag in ("h2", "h3") and a.get("id"):
+            tab = next((x for x in reversed(self.stack) if x), None)
+            self.headings.append((tag, a["id"] or "", tab))
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag == "div" and self.stack:
+            self.stack.pop()
+
+
+def _outline() -> _Outline:
+    o = _Outline()
+    o.feed(_MARKUP)
+    return o
+
+
+@pytest.mark.parametrize("tab", sorted(_TABS))
+def test_every_section_is_nested_inside_its_tab_pane(tab: str) -> None:
+    """Sections belong to a pane by NESTING, not by sitting after its opening
+    tag. A pane that closes early leaves the rest of its sections in the
+    document body: they render on every tab at once, and the tab switcher —
+    which hides panes, not headings — cannot hide them."""
+    sidebar = re.search(rf'<nav id="sidebar-{tab}"[^>]*>(.*?)</nav>', _MARKUP, re.S)
+    assert sidebar
+    listed = re.findall(r'href="#([^"]+)"', sidebar.group(1))
+    placed = {hid: owner for _, hid, owner in _outline().headings}
+    for hid in listed:
+        assert placed.get(hid) == tab, (
+            f"#{hid} is listed in sidebar-{tab} but nests inside "
+            f"{placed.get(hid) or 'no tab pane at all'}"
+        )
+
+
+def test_no_heading_escapes_every_tab_pane() -> None:
+    """The symmetric check, for a heading no sidebar happens to list."""
+    loose = [hid for _, hid, tab in _outline().headings if tab is None]
+    assert not loose, f"headings outside every tab pane: {loose}"
+
+
+@pytest.mark.parametrize("tab", sorted(_TABS))
+def test_each_sidebar_mirrors_its_tab_s_h2s_in_order(tab: str) -> None:
+    """The sidebar IS the tab's outline, so it lists the ``<h2>``s — all of
+    them, only them, in page order.
+
+    Restructuring is what this catches. Re-ordering sections and demoting an
+    ``<h2>`` to ``<h3>`` leaves a sidebar that still lists the old sequence and
+    still links the demoted headings: every link resolves, the scroll-spy still
+    highlights, and nothing else in this file complains. The reader gets a
+    contents page for a shape the document no longer has. That is exactly what
+    happened here on 2026-09-15, and it passed the whole suite.
+    """
+    nav = re.search(rf'<nav id="sidebar-{tab}"[^>]*>(.*?)</nav>', _MARKUP, re.S)
+    pane = re.search(
+        rf'<div id="tab-{tab}"[^>]*>(.*?)(?=\n    <div id="tab-|\n  </main>)', _MARKUP, re.S
+    )
+    assert nav and pane
+
+    linked = re.findall(r'href="#([^"]+)"', nav.group(1))
+    headings = re.findall(r'<h2 id="([^"]+)"', pane.group(1))
+    assert linked == headings, (
+        f"sidebar-{tab} lists {linked}\n"
+        f"but tab-{tab} has h2s {headings}\n"
+        "the sidebar is a contents page for a shape the document no longer has"
+    )
 
 
 def test_every_code_tab_group_has_one_pane_per_button() -> None:
