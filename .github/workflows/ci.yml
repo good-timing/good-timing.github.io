@@ -1,0 +1,31 @@
+# The website had no CI at all until 2026-09-15.
+#
+# That is defensible for eight hand-edited files right up until a rule spans
+# them — and "the diagrams are one system" is such a rule: it is invisible in
+# any single diagram and only exists across the set. A rule with nothing
+# running it is a comment.
+#
+# Deliberately minimal. No build, no linter, no formatter, no npm: the site's
+# "no build system" property is the thing being protected, not worked around.
+# This installs pytest and runs the checks in tests/, and nothing else.
+#
+# It does NOT gate the deploy. GitHub Pages publishes `master` on push and this
+# workflow does not sit in front of that, so a red run is a signal, not a
+# brake. Making it a gate is a separate decision about who can publish.
+name: ci
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install pytest
+      - run: pytest tests/ -q
