@@ -274,8 +274,7 @@
       <div class="sidebar-group">
         <p class="sidebar-label">Baton Console</p>
         <a href="#console-overview" class="sidebar-link">Overview</a>
-        <a href="#console-how" class="sidebar-link">How it works</a>
-        <a href="#console-respond" class="sidebar-link">Respond &amp; prioritize</a>
+        <a href="#console-dashboard" class="sidebar-link">What you see</a>
         <a href="#console-access" class="sidebar-link">Access &amp; security</a>
       </div>
     </nav>
@@ -429,7 +428,7 @@ def search_orders(customer: str) -&gt; dict:
       <div class="card">
         <p class="stage-eyebrow"><span class="step">Stage 3</span> &nbsp;·&nbsp; Act</p>
         <h3>Baton Console &nbsp;&middot;&nbsp; hosted</h3>
-        <p>The paid tier. It collects events across every customer and session, dedupes and ranks the friction into trends such as your top unmet demands and silent-failure rates, then routes issues to your team and sends the resolution back into the customer&#39;s agent. <a href="#console" style="color:var(--brand)">Console reference →</a></p>
+        <p>The paid tier. It collects events across every customer and session and ranks the friction into what to fix first: your recurring errors, the tools that fail most, what your surface costs in tokens, and the sessions that ended badly. <a href="#console" style="color:var(--brand)">Console reference →</a></p>
       </div>
 
       <h2 id="how-it-fits">How it fits together</h2>
@@ -995,53 +994,35 @@ install_baton(mcp, VendorConfig(dsn="https://baton_pk_...@baton.goodtiming.ai/te
     <div id="tab-console" hidden>
       <p class="stage-eyebrow"><span class="step">Stage 3 · Act</span> &nbsp;·&nbsp; turn the signal into a roadmap</p>
       <h2 id="console-overview">Overview</h2>
-      <p>The proxy and the SDK capture friction for free. The Baton Console is the hosted, paid tier that collects those events across every customer and every session and turns them into something you can act on. It does two things a single local report can&#39;t: it shows the friction across your whole customer base, and it lets your team respond back into the customer&#39;s agent.</p>
-      <p>The following diagram illustrates how one Console gathers many customers:</p>
-      <div class="diagram">
-        <svg viewBox="0 50 680 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="con-t con-d">
-          <title id="con-t">Baton Console</title>
-          <desc id="con-d">The Baton Console collects sessions from many customers, dedupes and ranks them into trends, and routes issues to your team, who respond back into the customer's agent.</desc>
-          <defs>
-            <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--brand)"/></marker>
-            <marker id="ar2d" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--mute-2)"/></marker>
-          </defs>
-          <text x="112" y="78" text-anchor="middle" font-family="var(--mono)" font-size="8.5" letter-spacing="0.1em" fill="var(--mute-2)">SESSIONS · MANY CUSTOMERS</text>
-          <rect x="30" y="88" width="165" height="40" rx="10" fill="var(--page)" stroke="var(--line)" stroke-width="1.1"/>
-          <text x="112" y="113" text-anchor="middle" font-family="var(--sans)" font-size="12.5" fill="var(--ink)">customer A · agent</text>
-          <rect x="30" y="134" width="165" height="40" rx="10" fill="var(--page)" stroke="var(--line)" stroke-width="1.1"/>
-          <text x="112" y="159" text-anchor="middle" font-family="var(--sans)" font-size="12.5" fill="var(--ink)">customer B · agent</text>
-          <rect x="30" y="180" width="165" height="40" rx="10" fill="var(--page)" stroke="var(--line)" stroke-width="1.1"/>
-          <text x="112" y="205" text-anchor="middle" font-family="var(--sans)" font-size="12.5" fill="var(--ink)">customer C · agent</text>
-          <line x1="199" y1="108" x2="262" y2="140" stroke="var(--mute-2)" stroke-width="1.4" marker-end="url(#ar2d)"/>
-          <line x1="199" y1="154" x2="262" y2="154" stroke="var(--mute-2)" stroke-width="1.4" marker-end="url(#ar2d)"/>
-          <line x1="199" y1="200" x2="262" y2="168" stroke="var(--mute-2)" stroke-width="1.4" marker-end="url(#ar2d)"/>
-          <rect x="266" y="88" width="190" height="132" rx="14" fill="var(--brand-wash)" stroke="var(--brand)" stroke-width="1.6"/>
-          <text x="361" y="130" text-anchor="middle" font-family="var(--sans)" font-size="17" font-weight="700" fill="var(--brand)">Baton Console</text>
-          <text x="361" y="158" text-anchor="middle" font-family="var(--mono)" font-size="11" fill="var(--ink)">aggregate · dedupe</text>
-          <text x="361" y="176" text-anchor="middle" font-family="var(--mono)" font-size="11" fill="var(--ink)">rank · trends</text>
-          <text x="361" y="200" text-anchor="middle" font-family="var(--mono)" font-size="8.5" fill="var(--mute)">analytics + responses</text>
-          <line x1="460" y1="154" x2="501" y2="154" stroke="var(--brand)" stroke-width="2" marker-end="url(#ar2)"/>
-          <rect x="505" y="88" width="147" height="132" rx="14" fill="var(--page)" stroke="var(--line)" stroke-width="1.1"/>
-          <text x="578" y="148" text-anchor="middle" font-family="var(--sans)" font-size="15" font-weight="600" fill="var(--ink)">Your team</text>
-          <text x="578" y="168" text-anchor="middle" font-family="var(--mono)" font-size="8.5" fill="var(--mute)">build · fix · answer</text>
-          <path d="M578 222 C 520 292, 300 292, 198 216" fill="none" stroke="var(--brand)" stroke-width="1.8" marker-end="url(#ar2)"/>
-          <text x="380" y="300" text-anchor="middle" font-family="var(--sans)" font-size="12.5" fill="var(--ink)">response flows back into the customer&#39;s agent</text>
-          <text x="380" y="317" text-anchor="middle" font-family="var(--mono)" font-size="8.5" letter-spacing="0.1em" fill="var(--brand)">SUPPORT</text>
-        </svg>
-      </div>
+      <p>The proxy and the SDK capture friction for free. The Baton Console is the hosted, paid tier that collects those events across every customer and every session and turns them into something you can act on. It does what a single local report can&#39;t: it shows the friction across your whole customer base, ranked, with the evidence behind every number one click away.</p>
       <ul>
-        <li><strong>Many customers, one view.</strong> Sessions arrive from every customer running your server and are deduped and ranked together, so you read demand rather than transcripts.</li>
-        <li><strong>The Console is the only Baton-owned box here</strong>. Your team and your customers' agents are yours.</li>
-        <li><strong>The response goes back the way it came</strong>, into the customer's agent, which is what makes the first reply a fix rather than a question.</li>
+        <li><strong>Many customers, one view.</strong> Sessions arrive from every customer running your server and are grouped together, so you read demand rather than transcripts.</li>
+        <li><strong>Every output is text you copy.</strong> Baton drafts the fix and hands it to you. It does not open tickets, message your team, or reach back into a customer&#39;s agent. Nothing ships without you.</li>
       </ul>
 
-      <h2 id="console-how">How it works</h2>
-      <p>Every event your proxy or SDK emits to an <code>https://</code> sink lands in the Console under your tenant. There it&#39;s deduped across customers and ranked into trends, so you see the demand, not one transcript at a time.</p>
-      <div class="card"><h3>See the friction across every customer</h3><p>The Console dedupes and ranks the friction into trends: your top unmet demands, your silent-failure rate by tool, what to build next. A roadmap, not a single transcript.</p></div>
+      <h2 id="console-dashboard">What you see</h2>
+      <p>Four tabs, one filter bar across all of them. Every number is a link: click it and you land on the sessions behind it with the filter already applied.</p>
 
-      <h2 id="console-respond">Respond &amp; prioritize</h2>
-      <p>Analytics tell you what to build. When something&#39;s worth a human right now, the Console closes the loop.</p>
-      <div class="card"><h3>Respond when you want</h3><p>When something&#39;s worth a human, the Console hands your team the fully-described issue and sends the resolution back into the customer&#39;s agent. That&#39;s where support lives: the first response is a fix, not a question.</p></div>
+      <h3 id="console-tab-overview">The Overview tab</h3>
+      <p>How agents experience your server, on one screen. Four stat tiles chosen for what your traffic actually has: sessions, tasks, identified users, the share of tool calls that returned an error, sessions containing a failure, reports filed by agents.</p>
+      <p>Below them, four categories with a count each &mdash; recurring errors, token costs, high-friction sessions, and tools whose calls fail more than 20% of the time &mdash; then the three most recent sessions worth a person&#39;s attention. A server card lists your tools, the surface hash and when it was last seen, and warns you if your server sends no <code>initialize</code> instructions, because then every agent connects with zero guidance from you.</p>
+
+      <h3 id="console-tab-insights">The Insights tab</h3>
+      <p>Five panels, each one a list of things you could go fix this week.</p>
+      <div class="card-grid">
+        <div class="card"><h3>High-friction sessions</h3><p>Four counts: the last tool call failed, a tool failed and never succeeded again in that task, any call failed at all, and sessions you rated low. A session can sit in more than one.</p></div>
+        <div class="card"><h3>Recurring errors</h3><p>Errors that repeat across sessions, grouped into one pattern per tool with ids and quoted values ignored. Each row names where the fix belongs: the tool description, the error message, the implementation, or account config.</p></div>
+        <div class="card"><h3>Token costs</h3><p>What your surface costs every session before anyone calls anything. Tool definitions that are never called, mandated fetches, and responses large enough to push earlier results out of the agent&#39;s context.</p></div>
+        <div class="card"><h3>Tool error rates</h3><p>Every tool ranked by how often its calls come back as errors, with p50 and p95 latency and the error codes, plus the tools nothing has called.</p></div>
+      </div>
+      <p>The fifth is <strong>Filed feedback</strong>: what agents told you they needed and could not get, in their own words, through the annotation tool. That lane only fills when the agent chooses to report, so it is the smallest and often the most direct.</p>
+
+      <h3 id="console-tab-sessions">The Sessions tab</h3>
+      <p>The session list, filtered and paged. Open one and you get its tasks, the calls inside each task, and two lanes of markers: what the agent filed, and what Baton detected. Click a marker and the call list narrows to exactly the calls it counted, so a number always shows its evidence.</p>
+      <p>Run <strong>Explain</strong> on a session and a model reads it and writes what the user was trying to do and how it went, including a satisfaction rating. You can flag a session to come back to, or exclude it from your numbers, though exclusion requires a written reason, which is what makes it defensible to whoever reads the number next.</p>
+
+      <h3 id="console-tab-live">The Live tab</h3>
+      <p>Every event as it arrives, newest first, refreshed every couple of seconds. One row shape, no highlighting, no interpretation: this is the raw stream, for watching your own setup work while you drive an agent at it. Events show up within seconds. Interpretation belongs on the other three tabs.</p>
 
       <h2 id="console-access">Access &amp; security</h2>
       <p>The Console is hosted by us and auditable by you. Your data is single-tenant, and every event is logged and inspectable, so you can see exactly what each agent sent, when, and why. Scrubbing runs before anything leaves your machine: emails, phone numbers, card numbers, keys and tokens are redacted at the SDK, on by default. What you don&#39;t capture can never reach us. It is pattern matching, not a guarantee: free text inside a tool argument or result is sent as written, so decide what your tools hand back.</p>
