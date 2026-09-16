@@ -359,8 +359,9 @@ def search_orders(customer: str) -&gt; dict:
           <p>In the same entry &mdash; not your shell. The client starts the proxy and passes it a fixed environment allowlist (six names on macOS and Linux), so an exported <code>BATON_EVENT_SINK</code> never reaches it.</p>
           <pre>"env": { "BATON_EVENT_SINK": "file:///tmp/baton-proxy.jsonl" }</pre>
           <p class="stepline">Step 3 <span>&middot; use it</span></p>
-          <p>Drive a few tool calls from your client. Or let <code>scan</code> do it: it runs a headless agent against the server and writes a report.</p>
-          <pre>uvx baton-proxy scan --config my-server</pre>
+          <p>Drive a few tool calls from your client.</p>
+          <p><code>scan</code> is a different route rather than a continuation of this one. Point it at an entry you have <strong>not</strong> wrapped: it wraps one temporarily, drives a headless agent at it, and writes its own report. It refuses an entry that already launches the proxy, and it ignores the sink from Step 2 in favour of a temporary file of its own.</p>
+          <pre>uvx baton-proxy scan --config &lt;server-name&gt;</pre>
           <p class="stepline">Step 4 <span>&middot; verify</span></p>
           <p>A <code>surface_snapshot</code> lands at startup, then a pair per call. One <code>tool_call_start</code>, formatted:</p>
           <pre class="pre-output">{
@@ -1163,6 +1164,20 @@ install_baton(mcp, VendorConfig(dsn="https://baton_pk_...@baton.goodtiming.ai/te
       const target = document.getElementById(hash);
       if (target) requestAnimationFrame(() => target.scrollIntoView());
     }
+    // ⚠ KNOWN WART, left alone deliberately. A bare tab name (#sdk, #gateway,
+    // …) matches no element, so nothing scrolls: a reader 1200px down the
+    // Overview who clicks "Gateway reference →" gets the right pane at the
+    // wrong offset. Measured 2026-09-16, and an attempted fix did NOT hold —
+    // recording what was learned so a retry does not start from zero:
+    //   * `scroll-behavior:smooth` is set on `:root`.
+    //   * `window.scrollTo(0, 0)` is a NO-OP here. So is `{behavior:"auto"}`,
+    //     and so is `documentElement.scrollTop = 0`.
+    //   * Only `window.scrollTo({top: 0, behavior: "instant"})` moves it —
+    //     verified standalone, 774 → 0.
+    //   * That same call inside `requestAnimationFrame` here still left the
+    //     offset at 1200, so something restores it after the pane swap. That
+    //     is the thread to pull.
+    // Strictly better than before either way: the pane used to not switch.
   }
   applyHash();
   window.addEventListener('hashchange', applyHash);
