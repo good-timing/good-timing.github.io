@@ -101,6 +101,16 @@
     .copy-btn { position: absolute; top: 10px; right: 12px; font-family: var(--mono); font-size: 10.5px; color: var(--mute-2); background: #fff; border: 1px solid var(--line); border-radius: 5px; padding: 2px 8px; cursor: pointer; transition: color 0.15s, border-color 0.15s; }
     .copy-btn:hover { color: var(--brand); border-color: var(--brand); }
 
+    /* What the command PRINTS, paired to the command above it. A reader can
+       tell whether they succeeded only if they know what success looks like,
+       and every leading API doc shows it. Visually subordinate on purpose:
+       recessed, no border, labelled, and with no copy button — copying an
+       output block is never the thing you want, and the button would make it
+       look like one more thing to paste. */
+    .pre-output { background: none; border: none; border-left: 2px solid var(--line); border-radius: 0; padding: 2px 0 2px 16px; margin: -0.5rem 0 1.25rem; color: var(--mute); font-size: 12px; }
+    .pre-output::before { content: 'Output'; display: block; font-size: 10px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--mute-2); margin-bottom: 6px; }
+    .pre-output .copy-btn { display: none; }
+
     /* ---------- tables, cards, callouts ---------- */
     .docs-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 0.75rem 0 1.5rem; }
     .docs-table th { text-align: left; font-size: 10px; font-weight: 400; letter-spacing: 0.09em; text-transform: uppercase; color: var(--mute-2); padding: 0 16px 9px 0; border-bottom: 1px solid var(--line); }
@@ -109,6 +119,12 @@
     .docs-table tr:last-child td { border-bottom: none; }
     .card { border: 1px solid var(--line); border-radius: 12px; background: var(--card); padding: 18px 20px; margin-bottom: 12px; box-shadow: 0 1px 2px rgba(17,24,39,0.04); }
     .card h3 { margin-top: 0; margin-bottom: 6px; }
+    /* Where to go after a path works. Two columns so the choices read as
+       siblings rather than a ranked list; one column under 760px, with the
+       override in the existing media query at the foot of this block. */
+    .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0.75rem 0 1.5rem; }
+    .card-grid .card { margin-bottom: 0; }
+    .card-grid .card p { font-size: 13px; color: var(--ink-3); margin: 0; }
     .note { border: 1px solid var(--mark); border-radius: 9px; background: var(--brand-wash); padding: 12px 16px; margin: 1rem 0; font-size: 13.5px; color: var(--ink-2); }
     .note strong { color: var(--brand-ink); }
     .diagram { border: 1px solid var(--line); border-radius: 14px; background: var(--card); padding: 22px; margin: 1rem 0 1.5rem; overflow-x: auto; }
@@ -146,6 +162,17 @@
     .code-tab-btn.active { color: var(--brand); font-weight: 600; }
     .code-tab-btn code { color: inherit; background: none; padding: 0; font-size: inherit; }
     .code-tabs > pre { margin: 0; border-radius: 0 0 10px 10px; border-top: none; }
+    /* A pane that is more than one code block: a quickstart step has prose
+       and a command and what the command prints. The switcher hides panes by
+       position, so a pane has to be ONE direct child of .code-tabs — hence a
+       wrapper rather than loose siblings. */
+    .code-pane { border: 1px solid var(--line); border-top: none; border-radius: 0 0 10px 10px; padding: 18px 20px 4px; }
+    .code-pane > :first-child { margin-top: 0; }
+    .code-pane pre { margin: 0.6rem 0 1rem; }
+    .code-pane .pre-output { margin: -0.6rem 0 1rem; }
+    /* The step number, in the flow of a pane rather than over a section. */
+    .stepline { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--brand); margin: 1.1rem 0 0.35rem; }
+    .stepline span { color: var(--mute-2); }
 
     @media (max-width: 760px) {
       body > nav { height: 60px; padding: 0 16px; }
@@ -161,6 +188,10 @@
       .docs-header-inner { padding: 22px 16px 16px; }
       footer { padding: 28px 16px 40px; }
       .footer-links a { margin-left: 0; margin-right: 14px; }
+      /* Two next-steps cards side by side leave ~150px each at 375px, which
+         wraps every card title. They stack. */
+      .card-grid { grid-template-columns: 1fr; }
+      .code-pane { padding: 14px 14px 2px; }
     }
   </style>
 </head>
@@ -198,9 +229,11 @@
   <aside class="docs-sidebar">
     <nav id="sidebar-overview">
       <div class="sidebar-group">
-        <p class="sidebar-label">Overview</p>
+        <p class="sidebar-label">Start here</p>
         <a href="#what-is-baton" class="sidebar-link">What is Baton</a>
-        <a href="#stages" class="sidebar-link">Test, deploy &amp; act</a>
+        <a href="#start-here" class="sidebar-link">Quickstart</a>
+        <a href="#next-steps" class="sidebar-link">Next steps</a>
+        <a href="#stages" class="sidebar-link">The three capture paths</a>
         <a href="#how-it-fits" class="sidebar-link">How it fits together</a>
       </div>
     </nav>
@@ -262,8 +295,124 @@
       <p>Baton is actionable product analytics for MCP servers. When a customer&#39;s agent calls your server and your API can&#39;t meet the request, you often get a 200 with an empty body or a vague error — the customer&#39;s intent vanishes with no ticket and no trace. Baton captures that friction at the moment it happens: what the customer was trying to do, the call the agent made, what it expected, and what it got.</p>
       <p>You instrument your server once. Whatever agent your customers use — Claude, Cursor, ChatGPT — keeps working exactly as before.</p>
 
-      <h2 id="stages">Test, deploy, act</h2>
-      <p>Most teams move through three stages. The first two are free and open source and capture the signal; the third is the paid Console, where you act on it. You only need one of the three capture paths.</p>
+      <h2 id="start-here">Quickstart</h2>
+      <p>Pick the one that matches what you run. All three emit the same events in the same wire format to the same sinks, so the choice is about where the code goes, not what you get. Nothing below needs an account, and nothing leaves your machine.</p>
+      <div class="code-tabs">
+        <div class="code-tab-bar">
+          <button class="code-tab-btn active">Your own MCP server</button>
+          <button class="code-tab-btn">Someone else&#39;s server</button>
+          <button class="code-tab-btn">A fleet behind a gateway</button>
+        </div>
+
+        <div class="code-pane">
+          <p><strong>baton-sdk</strong> goes inside a server you own, and captures your real customers. Requires Python 3.11+.</p>
+          <p class="stepline">Step 1 <span>&middot; install</span></p>
+          <pre>pip install "baton-sdk[fastmcp]&gt;=0.8.8"</pre>
+          <p class="stepline">Step 2 <span>&middot; instrument</span></p>
+          <p>Two lines: the import, and the call. Tools registered before or after it are both captured.</p>
+          <pre>from fastmcp import FastMCP
+from baton import install_baton, VendorConfig
+
+mcp = FastMCP("Acme Knowledge Base")
+install_baton(mcp, VendorConfig(
+    vendor_id="acme-kb",
+    tenant_id="acme",
+    vendor_display_name="Acme Knowledge Base",
+))
+
+@mcp.tool
+def search_orders(customer: str) -&gt; dict:
+    return {"order_id": "o_123", "status": "shipped"}</pre>
+          <p class="stepline">Step 3 <span>&middot; run it</span></p>
+          <p>Leave out <code>sink</code> and events go to stderr as JSON Lines, one per line.</p>
+          <pre>python server.py 2&gt;events.jsonl</pre>
+          <p class="stepline">Step 4 <span>&middot; verify</span></p>
+          <p>One tool call produces three events — <code>tool_call_start</code>, <code>tool_call_end</code>, and a <code>surface_snapshot</code> describing the server. The first, formatted:</p>
+          <pre class="pre-output">{
+  "event_id": "01a0a8cb-d94f-74bd-8cb5-53a4287d53a3",
+  "tenant_id": "acme",
+  "vendor_id": "acme-kb",
+  "session_id": "sdk-01a0a8cb-d946-721f-8291-60f3a785e7c6",
+  "sequence_number": 1,
+  "captured_at": "2026-09-16T05:58:46.863008Z",
+  "sdk_version": "0.8.8",
+  "agent_runtime": "mcp",
+  "call_id": "01a0a8cb-d94e-7160-b1e5-0e5e1b1a94e7",
+  "event_type": "tool_call_start",
+  "payload": {
+    "tool_name": "search_orders",
+    "params": {"customer": "acme"},
+    "call_intent": null,
+    "call_expected": null
+  }
+}</pre>
+          <p><code>call_intent</code> and <code>call_expected</code> are null here because the call came from a script. When a real agent makes it, they carry what the agent was trying to do — see <a href="#mcp-integration" style="color:var(--brand)">MCP integration</a>.</p>
+        </div>
+
+        <div class="code-pane" hidden>
+          <p><strong>baton-proxy</strong> wraps a server you did not write, as a subprocess. Use it to see what Baton captures before instrumenting anything. Requires Python 3.11+, and nothing to install.</p>
+          <p class="stepline">Step 1 <span>&middot; wrap the server</span></p>
+          <p>Put the proxy in front of the command your MCP client already runs. <code>uvx</code> fetches it per run.</p>
+          <pre>uvx baton-proxy -- python server.py</pre>
+          <p class="stepline">Step 2 <span>&middot; choose where events go</span></p>
+          <pre>export BATON_EVENT_SINK="file:///tmp/baton-proxy.jsonl"</pre>
+          <p class="stepline">Step 3 <span>&middot; use it</span></p>
+          <p>Drive a few tool calls from your client. Or let <code>scan</code> do it: it runs a headless agent against the server and writes a report.</p>
+          <pre>uvx baton-proxy scan --config my-server</pre>
+          <p class="stepline">Step 4 <span>&middot; verify</span></p>
+          <p>A <code>surface_snapshot</code> lands at startup, then a pair per call. One <code>tool_call_start</code>, formatted:</p>
+          <pre class="pre-output">{
+  "event_id": "002e63d4-deb4-417f-a2e7-31f9ed391e93",
+  "event_type": "tool_call_start",
+  "session_id": "b191b36a-5cdd-405e-ade1-8f92b6a7e58e",
+  "sequence_number": 1,
+  "captured_at": "2026-09-16T05:59:53.739264Z",
+  "tenant_id": "local",
+  "vendor_id": "local",
+  "sdk_version": "baton-proxy/0.6.8",
+  "agent_runtime": "mcp-proxy",
+  "payload": {
+    "tool_name": "search_orders",
+    "params": {"customer": "acme"}
+  }
+}</pre>
+          <p>The wrapped server is untouched: it receives the arguments it would have received unwrapped. What changes is the advertised schema, which gains the <a href="#intent-params" style="color:var(--brand)">intent parameters</a>, and the tool list, which gains <code>baton_annotate</code>.</p>
+        </div>
+
+        <div class="code-pane" hidden>
+          <p><strong>The gateway path</strong> captures every MCP server behind your gateway at once. Neither your clients nor your backend servers change, and no server ships a release.</p>
+          <p class="stepline">Step 1 <span>&middot; run the processor</span></p>
+          <p>Baton runs beside the gateway and is called on its external-processor hook for MCP. It never becomes a hop in the traffic path.</p>
+          <p class="stepline">Step 2 <span>&middot; point the hook at it</span></p>
+          <p>Configure the hook fail-open, so a Baton outage costs you the event and not the call.</p>
+          <p class="stepline">Step 3 <span>&middot; verify</span></p>
+          <p>Events are the same envelope the other two paths emit, carrying the gateway&#39;s own identity for the caller.</p>
+          <div class="note">This path is configured against your gateway rather than installed from a registry, so there is no copy-paste command here and no captured output — the shape depends on which gateway you run. <a href="#gateway" style="color:var(--brand)">Gateway reference →</a> has what it needs, and we will set it up with you.</div>
+        </div>
+      </div>
+
+      <h2 id="next-steps">Next steps</h2>
+      <div class="card-grid">
+        <div class="card">
+          <h3>Send events to the Console</h3>
+          <p>The quickstart writes to your machine. One DSN string swaps the sink for the hosted Console, where friction is deduped and ranked across every customer. <a href="#console" style="color:var(--brand)">Console →</a></p>
+        </div>
+        <div class="card">
+          <h3>Capture intent, not just calls</h3>
+          <p>The intent parameters are how a call carries <em>why</em> it was made. They are what turns an event log into a roadmap. <a href="#intent-params" style="color:var(--brand)">Intent parameters →</a></p>
+        </div>
+        <div class="card">
+          <h3>Choose a sink</h3>
+          <p>stderr, a file, an <code>https://</code> collector of your own, or several at once. <a href="#sinks" style="color:var(--brand)">Sinks →</a></p>
+        </div>
+        <div class="card">
+          <h3>Check what gets scrubbed</h3>
+          <p>Payloads run through a pattern-based scrubber before they reach any sink. Read what it does and does not catch. <a href="#pii" style="color:var(--brand)">PII scrubbing →</a></p>
+        </div>
+      </div>
+
+      <h2 id="stages">The three capture paths</h2>
+      <p>Each path emits the same events; the difference is who drives them and where the code lives. You only need one.</p>
       <div class="card">
         <p class="stage-eyebrow"><span class="step">Stage 1</span> &nbsp;·&nbsp; Test</p>
         <h3><code>baton-proxy</code> &nbsp;&middot;&nbsp; free, open source</h3>
@@ -272,7 +421,7 @@
       <div class="card">
         <p class="stage-eyebrow"><span class="step">Stage 2</span> &nbsp;·&nbsp; Deploy</p>
         <h3><code>baton-sdk</code> &nbsp;&middot;&nbsp; free, open source</h3>
-        <p>See friction from your <strong>actual customers</strong>. They won&#39;t install the proxy, so you instrument your side: wrap your MCP server with the SDK (two lines), or use the Library API path if you ship via Skills and don&#39;t have an MCP server. Same wire format, same sinks. If you run many MCP servers behind a gateway, capture at the gateway instead and cover all of them at once. <a href="#sdk" style="color:var(--brand)">SDK reference →</a> &nbsp;&middot;&nbsp; <a href="#gateway" style="color:var(--brand)">Gateway reference →</a></p>
+        <p>See friction from your <strong>actual customers</strong>. They won&#39;t install the proxy, so you instrument your side: wrap your MCP server with the SDK, or use the Library API path if you ship via Skills and don&#39;t have an MCP server. Same wire format, same sinks. If you run many MCP servers behind a gateway, capture at the gateway instead and cover all of them at once. <a href="#sdk" style="color:var(--brand)">SDK reference →</a> &nbsp;&middot;&nbsp; <a href="#gateway" style="color:var(--brand)">Gateway reference →</a></p>
       </div>
       <div class="card">
         <p class="stage-eyebrow"><span class="step">Stage 3</span> &nbsp;·&nbsp; Act</p>
@@ -288,8 +437,11 @@
     <div id="tab-proxy" hidden>
       <p class="stage-eyebrow"><span class="step">Stage 1 · Test</span> &nbsp;·&nbsp; sample friction yourself</p>
       <h2 id="proxy-overview">Overview</h2>
-      <p>baton-proxy wraps any stdio MCP server and captures friction events. From Claude&#39;s perspective it <em>is</em> the MCP server; the real server is its child process. Your server receives the arguments it would have received unwrapped: the proxy adds two intent parameters to each tool&#39;s advertised schema and strips them from every call before forwarding.</p>
-      <div class="note"><strong>Requirements:</strong> Python 3.11+ · run via <code>uvx</code> (no install) or <code>pipx</code> · <code>scan</code> needs a server already configured in Claude (<code>~/.claude.json</code>) · stdio MCP servers only — HTTP/SSE isn&#39;t supported yet.</div>
+      <p>baton-proxy wraps an MCP server and captures friction events. From Claude&#39;s perspective it <em>is</em> the MCP server; the real server is either its child process or the endpoint it forwards to. Your server receives the arguments it would have received unwrapped: the proxy adds three intent parameters to each tool&#39;s advertised schema and strips them from every call before forwarding.</p>
+      <p>Two upstream forms. A <strong>stdio</strong> server is named after <code>--</code> and run as a subprocess; a <strong>remote</strong> Streamable-HTTP server is named with <code>--url</code>, with <code>BATON_UPSTREAM_AUTH_TOKEN</code> sent upstream as a bearer token. They are mutually exclusive.</p>
+      <pre>uvx baton-proxy -- python server.py               # stdio, as a subprocess
+uvx baton-proxy --url https://mcp.example.com/mcp  # remote, as a bridge</pre>
+      <div class="note"><strong>Requirements:</strong> Python 3.11+ · run via <code>uvx</code> (no install) or <code>pipx</code> · <code>scan</code> needs a server already configured in Claude (<code>~/.claude.json</code>).</div>
       <p>The following diagram illustrates how the proxy sits between Claude and your server:</p>
       <div class="diagram">
         <svg viewBox="0 50 680 256" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="diag-t diag-d">
@@ -379,14 +531,16 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
   }
 }</pre>
       <h2 id="intent-params">Intent parameters</h2>
-      <p>This is how the proxy captures <em>why</em> a call was made, not just what happened. At <code>tools/list</code> it adds two optional string parameters to every upstream tool&#39;s advertised schema. The agent fills them in as it composes each call, and the proxy strips them at <code>tools/call</code> before forwarding.</p>
+      <p>This is how the proxy captures <em>why</em> a call was made, not just what happened. At <code>tools/list</code> it adds three string parameters to every upstream tool&#39;s advertised schema. The agent fills them in as it composes each call, and the proxy strips them at <code>tools/call</code> before forwarding.</p>
       <table class="docs-table">
         <thead><tr><th>Parameter</th><th>Captured as</th></tr></thead>
         <tbody>
           <tr><td><code>user_goal</code></td><td><code>tool_call_start.payload.call_intent</code></td></tr>
           <tr><td><code>expected_result</code></td><td><code>tool_call_start.payload.call_expected</code>, omitted when the agent did not fill it in</td></tr>
+          <tr><td><code>overall_task</code></td><td><code>tool_call_start.payload.call_workflow</code> — the task label sessions are grouped by, so it is only useful when the agent repeats the same string across a task</td></tr>
         </tbody>
       </table>
+      <p>In the default mode, <code>user_goal</code> is the one advertised in each tool&#39;s <code>required</code> list. That is advertisement only: a call that omits it is served exactly as it would be unwrapped, and <code>call_intent</code> is simply null. Measured on proxy 0.6.8, a wrapped tool&#39;s schema lists <code>["customer", "user_goal"]</code> as required where the unwrapped one listed <code>["customer"]</code>.</p>
       <p>A parameter description reaches the model at the moment it composes the call, on every client. Some clients drop <code>InitializeResult.instructions</code> entirely, so instructions alone are not a reliable channel. A tool that already declares a parameter of that name is left alone: its value is forwarded untouched and never read as intent.</p>
       <div class="note"><strong>Fail-open:</strong> if injection or stripping raises, the message is forwarded unmodified. A bug in intent capture cannot break a tool call.</div>
 
@@ -908,10 +1062,15 @@ install_baton(mcp, VendorConfig(dsn="https://baton_pk_...@baton.goodtiming.ai/te
     headings.forEach(h => currentObserver.observe(h));
   }
 
-  // Inline code-tab switching (FastMCP vs official mcp)
+  // Inline code-tab switching: one library or another, one capture path or
+  // another. A pane is either a bare <pre> (a sample with nothing around it)
+  // or a .code-pane wrapper (a quickstart step: prose, a command, and what
+  // the command prints). Both are matched, and both must be DIRECT children —
+  // panes are hidden by position, so a nested <pre> inside a .code-pane must
+  // not be counted as a pane of its own.
   document.querySelectorAll('.code-tabs').forEach(container => {
     const btns = container.querySelectorAll('.code-tab-btn');
-    const codePanes = container.querySelectorAll(':scope > pre');
+    const codePanes = container.querySelectorAll(':scope > pre, :scope > .code-pane');
     btns.forEach((btn, i) => {
       btn.addEventListener('click', () => {
         btns.forEach((b, j) => { b.classList.toggle('active', j === i); codePanes[j].hidden = j !== i; });
