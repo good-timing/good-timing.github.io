@@ -251,3 +251,31 @@ def test_every_code_tab_group_has_one_pane_per_button() -> None:
         # Only DIRECT children count, which is what ``:scope >`` selects.
         panes = len(re.findall(r"\n        <(?:pre|div class=\"code-pane\")", group))
         assert buttons == panes, f"code-tabs group has {buttons} buttons and {panes} panes"
+
+
+def test_a_hash_change_reopens_the_tab_it_points_into() -> None:
+    """A same-page link into ANOTHER tab has to switch panes on CLICK.
+
+    ⚠ This is a PRESENCE check, and the weakest test in this file. It reads the
+    script text — everything else here strips ``<script>`` first — so it proves
+    the handler is registered, not that it works. The behaviour was verified in
+    a browser on 2026-09-16, both directions:
+
+    * before: clicking Overview's "MCP integration" card set ``location.hash``
+      to ``#mcp-integration`` and the visible pane stayed ``tab-overview``.
+    * after: the visible pane became ``tab-sdk``.
+
+    That is the defect it guards. ``tabForHash`` ran once at load, so a link
+    into a ``hidden`` pane changed the hash and nothing else — the browser
+    cannot scroll to a target inside a hidden element, and the switcher was not
+    listening. It worked after a reload, which is why it read as a mis-click
+    rather than a bug, and why the anchor tests above are all green on it: they
+    model the reload.
+
+    Re-verify in a browser if this is ever rewritten. A grep cannot tell you
+    that ``applyHash`` still opens the right pane.
+    """
+    assert "addEventListener('hashchange'" in _HTML, (
+        "no hashchange handler: a link from one tab into another changes the "
+        "hash and does nothing visible until the reader reloads"
+    )

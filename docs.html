@@ -330,25 +330,34 @@ def search_orders(customer: str) -&gt; dict:
   "captured_at": "2026-09-16T05:58:46.863008Z",
   "sdk_version": "0.8.8",
   "agent_runtime": "mcp",
+  "principal_id": null,
   "call_id": "01a0a8cb-d94e-7160-b1e5-0e5e1b1a94e7",
+  "runtime_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28", ...},
   "event_type": "tool_call_start",
   "payload": {
     "tool_name": "search_orders",
     "params": {"customer": "acme"},
     "call_intent": null,
-    "call_expected": null
+    "call_expected": null,
+    "call_workflow": null,
+    "intent_source": null
   }
 }</pre>
-          <p><code>call_intent</code> and <code>call_expected</code> are null here because the call came from a script. When a real agent makes it, they carry what the agent was trying to do — see <a href="#mcp-integration" style="color:var(--brand)">MCP integration</a>.</p>
+          <p><strong>Abridged.</strong> <code>runtime_meta</code> carries the client&#39;s whole handshake block, and a few transport fields are left out. Every key shown is one the SDK emits, with the values from that run.</p>
+          <p>The four intent fields are null here because the call came from a script, not an agent. When an agent makes it, <code>call_intent</code> and <code>call_expected</code> carry what it was trying to do, <code>call_workflow</code> the wider task, and <code>intent_source</code> records which route supplied them — <code>injected_param</code> for a value the agent typed into an injected parameter, unset when it came from an annotation call — see <a href="#mcp-integration" style="color:var(--brand)">MCP integration</a>.</p>
         </div>
 
         <div class="code-pane" hidden>
           <p><strong>baton-proxy</strong> wraps a server you did not write, as a subprocess. Use it to see what Baton captures before instrumenting anything. Requires Python 3.11+, and nothing to install.</p>
           <p class="stepline">Step 1 <span>&middot; wrap the server</span></p>
-          <p>Put the proxy in front of the command your MCP client already runs. <code>uvx</code> fetches it per run.</p>
-          <pre>uvx baton-proxy -- python server.py</pre>
+          <p>Put the proxy in front of the command your MCP client already runs, in that client's config. <code>uvx</code> fetches it per run.</p>
+          <pre>{
+  "command": "uvx",
+  "args": ["baton-proxy", "--", "python", "server.py"]
+}</pre>
           <p class="stepline">Step 2 <span>&middot; choose where events go</span></p>
-          <pre>export BATON_EVENT_SINK="file:///tmp/baton-proxy.jsonl"</pre>
+          <p>In the same entry &mdash; not your shell. The client starts the proxy and passes it a fixed environment allowlist (six names on macOS and Linux), so an exported <code>BATON_EVENT_SINK</code> never reaches it.</p>
+          <pre>"env": { "BATON_EVENT_SINK": "file:///tmp/baton-proxy.jsonl" }</pre>
           <p class="stepline">Step 3 <span>&middot; use it</span></p>
           <p>Drive a few tool calls from your client. Or let <code>scan</code> do it: it runs a headless agent against the server and writes a report.</p>
           <pre>uvx baton-proxy scan --config my-server</pre>
@@ -433,7 +442,7 @@ def search_orders(customer: str) -&gt; dict:
       <p>baton-proxy wraps an MCP server and captures friction events. From Claude&#39;s perspective it <em>is</em> the MCP server; the real server is either its child process or the endpoint it forwards to. Your server receives the arguments it would have received unwrapped: the proxy adds three intent parameters to each tool&#39;s advertised schema and strips them from every call before forwarding.</p>
       <p>Two upstream forms. A <strong>stdio</strong> server is named after <code>--</code> and run as a subprocess; a <strong>remote</strong> Streamable-HTTP server is named with <code>--url</code>, with <code>BATON_UPSTREAM_AUTH_TOKEN</code> sent upstream as a bearer token. They are mutually exclusive.</p>
       <pre>uvx baton-proxy -- python server.py               # stdio, as a subprocess
-uvx baton-proxy --url https://mcp.example.com/mcp  # remote, as a bridge</pre>
+uvx baton-proxy --url "https://mcp.example.com/mcp"  # remote, as a bridge</pre>
       <div class="note"><strong>Requirements:</strong> Python 3.11+ · run via <code>uvx</code> (no install) or <code>pipx</code> · <code>scan</code> needs a server already configured in Claude (<code>~/.claude.json</code>).</div>
       <p>The following diagram illustrates how the proxy sits between Claude and your server:</p>
       <div class="diagram">
@@ -1137,14 +1146,26 @@ install_baton(mcp, VendorConfig(dsn="https://baton_pk_...@baton.goodtiming.ai/te
     }
     return 'overview';
   }
-  const initialHash = location.hash.replace('#', '');
-  const startTab = tabForHash(initialHash);
-  const isSection = initialHash && initialHash !== startTab;
-  switchTab(startTab, !isSection);
-  if (isSection) {
-    const target = document.getElementById(initialHash);
-    if (target) requestAnimationFrame(() => target.scrollIntoView());
+  // Resolve location.hash to a tab, open it, and scroll to the section.
+  //
+  // Called on load AND on hashchange. Until 2026-09-16 it ran on load only,
+  // and a same-page link into another tab therefore did nothing visible: the
+  // hash changed, but the pane stayed `hidden` and the browser cannot scroll
+  // to a target inside it. The Overview's Next-steps cards are exactly those
+  // links, so the page's main call to action was dead on click and worked
+  // after a reload — which is also why no test caught it.
+  function applyHash() {
+    const hash = location.hash.replace('#', '');
+    const tab = tabForHash(hash);
+    const isSection = hash && hash !== tab;
+    switchTab(tab, !isSection);
+    if (isSection) {
+      const target = document.getElementById(hash);
+      if (target) requestAnimationFrame(() => target.scrollIntoView());
+    }
   }
+  applyHash();
+  window.addEventListener('hashchange', applyHash);
 </script>
 
 </body>
