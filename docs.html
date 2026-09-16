@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Fathom - beautiful, simple website analytics -->
+<script src="https://cdn.usefathom.com/script.js" data-site="NUDNHGRI" defer></script>
+<!-- / Fathom -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Docs — Baton</title>
@@ -1118,5 +1121,14 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
   window.addEventListener('hashchange', applyHash);
 </script>
 
+<script>
+/* One listener for every Get started link, present and future: the press that
+   leaves this site for the console is the last thing we can count here, and
+   the console's own funnel picks the person up on the other side. */
+document.addEventListener('click', function (e) {
+  var a = e.target.closest('a[href*="baton.goodtiming.ai"]');
+  if (a && window.fathom) { fathom.trackEvent('get started'); }
+});
+</script>
 </body>
 </html>
