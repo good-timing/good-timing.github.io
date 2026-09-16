@@ -43,8 +43,33 @@ def _registry(url: str) -> dict:
     try:
         with urllib.request.urlopen(url, timeout=15) as r:  # noqa: S310 - fixed https hosts
             return json.load(r)
+    except urllib.error.HTTPError as exc:
+        # Caught FIRST, and it has to be: ``HTTPError`` SUBCLASSES ``URLError``,
+        # so the clause below used to swallow it. A 404 became
+        # skip("registry unreachable") and the name tests could not fail for a
+        # typo'd package — the one outcome their docstrings forbid. Measured
+        # 2026-09-16 against a bogus scoped name.
+        #
+        # An answer is reachability. 4xx is a verdict about the name we
+        # printed; 5xx is the registry having a bad day and is not ours.
+        if exc.code >= 500:
+            pytest.skip(f"registry error {exc.code}: {url}")
+        pytest.fail(f"registry answered {exc.code} for {url}")
     except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
         pytest.skip(f"registry unreachable: {exc}")
+
+
+@pytest.mark.network
+def test_a_name_the_registry_does_not_know_fails_rather_than_skipping() -> None:
+    """The guard on ``_registry``'s except ORDER, which is load-bearing.
+
+    Without it the three network tests above are decorative: they would report
+    green against any name at all. Asserted here rather than trusted, because
+    the bug was invisible — a skipped test and a passing test both read as "not
+    failing" in the run summary.
+    """
+    with pytest.raises(pytest.fail.Exception):
+        _registry("https://registry.npmjs.org/@goodtiming/baton-sdk-does-not-exist")
 
 
 def test_the_page_still_has_install_lines_to_check() -> None:

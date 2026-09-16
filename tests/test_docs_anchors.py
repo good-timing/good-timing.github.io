@@ -17,15 +17,38 @@ file:
   release — editing the README does not retract it. ``baton-console`` renders
   two links into its own pages. Those hashes are a published interface.
 
-The external set below is MEASURED, not assumed:
+The external set below is MEASURED, not assumed. It is a UNION of two sources,
+and the 09-15 measurement read only the second of them:
 
-    grep -rhoE 'docs\\.html#[a-z0-9-]+' ~/workplace/website ~/workplace/baton*/README.md \\
-        ~/workplace/baton-console/backend/src | sort | uniq -c
+1. **What the registries serve RIGHT NOW.** A description is frozen at release,
+   so pypi.org still carries the pre-thinning README until the next one ships.
+   That has to be read from the registry, not from a checkout::
 
-run 2026-09-15. A style note had listed ``#without-dsn`` and ``#pii`` here;
-neither is linked from anywhere, and it had missed ``#gateway-identity``,
-``#sdk`` and ``#proxy`` — including the two console hits, i.e. a whole second
-repo. Re-run the grep rather than trusting this comment if the set matters.
+       python3 -c "import json,urllib.request,re; d=json.load(urllib.request.urlopen(
+           'https://pypi.org/pypi/baton-sdk/json')); print(sorted(set(re.findall(
+           r'docs\\.html#([a-z0-9-]+)', d['info']['description']))))"
+
+2. **What the working trees will publish at the NEXT release**, plus the
+   console, which deploys on merge::
+
+       grep -rhoE 'docs\\.html#[a-z0-9-]+' \\
+           ~/workplace/baton/README.md ~/workplace/baton-ts/README.md \\
+           ~/workplace/baton-proxy/README.md \\
+           ~/workplace/baton-console/backend/src | sort -u
+
+⚠ **Do not glob ``~/workplace/baton*/README.md``** — that is what 09-15 ran,
+and it matches a dozen worktree clones of these same repos
+(``baton-spec-push``, ``baton-principal``, ``baton-ts-transport``, …). A stale
+copy of one README then reads as an independent publishing surface.
+
+Re-measured 2026-09-16, and two earlier readings were wrong:
+
+* A style note had listed ``#without-dsn`` and ``#pii`` as linked from nowhere.
+  True on 09-15, false minutes later — the thinned READMEs publish both.
+* ``#sdk`` and ``#proxy`` were attributed below to ``baton/README.md``. They
+  are **the console's**: ``auth/routes.py`` lines 460 and 465. Live PyPI 0.8.8
+  carries only ``#off-switch`` and ``#vendorconfig``, so that README never
+  published them.
 """
 
 from __future__ import annotations
@@ -53,13 +76,25 @@ _MARKUP = re.sub(r"<script\b.*?</script>", "", _HTML, flags=re.S)
 _IDS = set(re.findall(r'\sid="([^"]+)"', _MARKUP))
 _INTERNAL = set(re.findall(r'href="#([^"]+)"', _MARKUP))
 
-# Hashes other repositories link to. See the module docstring for the grep.
+# Hashes other repositories link to. See the module docstring for the two
+# measurements this is the union of. Re-measured 2026-09-16.
 _PUBLISHED = {
+    # Deployed on merge — not frozen, but not ours to rename either.
     "gateway-identity": "baton-console auth/routes.py + dashboard/strings.py",
-    "vendorconfig": "baton/README.md (published to PyPI)",
-    "off-switch": "baton/README.md (published to PyPI)",
-    "sdk": "baton/README.md (published to PyPI)",
-    "proxy": "baton/README.md (published to PyPI)",
+    "sdk": "baton-console auth/routes.py:465",
+    "proxy": "baton-console auth/routes.py:460, baton-proxy/README.md",
+    # FROZEN on pypi.org until 0.8.9 ships, whatever the checkout now says.
+    # ``#vendorconfig`` is the specimen: the thinned README dropped it and the
+    # live 0.8.8 description still serves it.
+    "vendorconfig": "PyPI baton-sdk 0.8.8 (dropped by the thinned README)",
+    "off-switch": "PyPI baton-sdk 0.8.8, baton/README.md, baton-ts/README.md",
+    # Added by the thinned READMEs — live at the NEXT release, not yet.
+    "without-dsn": "baton/README.md, baton-ts/README.md (next release)",
+    "pii": "baton/README.md, baton-ts/README.md, baton-proxy/README.md (next release)",
+    "configuration": "baton-proxy/README.md (next release)",
+    # The one with no safety net: npm will publish this link, and it exists
+    # only on this branch. Deploy the site before TS 0.3.7 ships.
+    "typescript": "baton-ts/README.md (next release) — NOT on live docs.html yet",
 }
 
 
