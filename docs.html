@@ -27,7 +27,7 @@
     }
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; scroll-padding-top: 90px; }
-    body { font-family: var(--sans); background: var(--page); color: var(--ink); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    body { font-family: var(--sans); background: var(--page); color: var(--ink); line-height: 1.6; -webkit-font-smoothing: antialiased; padding-top: 72px; }
     a { color: inherit; text-decoration: none; }
 
     /* ---------- top nav ---------- */
@@ -58,10 +58,9 @@
     .btn:hover { filter: brightness(1.06); }
 
     /* ---------- header + tabs ---------- */
-    .docs-header { padding: 88px 0 0; background: var(--card); border-bottom: 1px solid var(--line); }
-    .docs-header-inner { max-width: 1100px; margin: 0 auto; padding: 28px 32px 18px; }
-    .docs-title { font-size: 29px; font-weight: 700; letter-spacing: -0.022em; margin-bottom: 16px; }
-    /* wrap: five tabs do not fit a phone on one line, and a tab that is
+    .docs-header { position: sticky; top: 72px; z-index: 90; background: var(--card); border-bottom: 1px solid var(--line); }
+    .docs-header-inner { max-width: 1100px; margin: 0 auto; padding: 11px 32px; }
+        /* wrap: five tabs do not fit a phone on one line, and a tab that is
        off the edge of a page that scrolls sideways is a tab nobody
        finds. Same shape as the front door's chip row. */
     .docs-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -72,7 +71,7 @@
     /* ---------- sidebar ---------- */
     .docs-wrap { display: flex; max-width: 1100px; margin: 0 auto; padding: 0 32px; gap: 48px; }
     .docs-sidebar { width: 180px; flex-shrink: 0; padding: 36px 0; }
-    .docs-sidebar nav { position: sticky; top: 90px; }
+    .docs-sidebar nav { position: sticky; top: 150px; }
     .sidebar-group { margin-bottom: 24px; }
     .sidebar-label { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--mute-2); margin-bottom: 8px; }
     .sidebar-link { display: block; font-size: 13px; color: var(--mute); padding: 3px 0; transition: color 0.12s; }
@@ -81,7 +80,12 @@
 
     /* ---------- prose ---------- */
     .docs-content { flex: 1; min-width: 0; padding: 36px 0 80px; }
-    .docs-content h2 { font-size: 22px; font-weight: 600; letter-spacing: -0.015em; color: var(--ink); margin: 3rem 0 0.85rem; padding-top: 0.5rem; scroll-margin-top: 90px; }
+    .docs-content h2 { font-size: 22px; font-weight: 600; letter-spacing: -0.015em; color: var(--ink); margin: 3rem 0 0.85rem; padding-top: 0.5rem; }
+    /* Every linkable target, not just h2. The tab row is sticky and ends 129px
+       down, so a target that lands at the viewport top sits BEHIND it. Caught
+       on #gateway-identity, an h3 the console links twice from its sign-in
+       flow: it landed at 90px, under the bar, with nothing reporting it. */
+    .docs-content :is(h2, h3, h4)[id], .docs-content [id] { scroll-margin-top: 60px; }
     .docs-content h2:first-child { margin-top: 0; }
     .docs-content h3 { font-size: 16px; font-weight: 600; color: var(--ink); margin: 1.8rem 0 0.5rem; }
     .docs-content p { color: var(--ink-3); font-size: 14.5px; line-height: 1.7; margin-bottom: 0.75rem; }
@@ -89,7 +93,6 @@
     .docs-content li { color: var(--ink-3); font-size: 14.5px; line-height: 1.65; margin-bottom: 0.35rem; }
     .docs-content strong { color: var(--ink); font-weight: 600; }
     .stage-eyebrow { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--brand); margin-bottom: 10px; }
-    .stage-eyebrow .step { color: var(--mute-2); }
     .docs-content > div > .stage-eyebrow:first-child { margin-top: 0; margin-bottom: 4px; }
     .stage-eyebrow + h2 { margin-top: 0; }
     .card .stage-eyebrow { margin-bottom: 6px; }
@@ -123,6 +126,7 @@
        siblings rather than a ranked list; one column under 760px, with the
        override in the existing media query at the foot of this block. */
     .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0.75rem 0 1.5rem; }
+    .card-grid.three-up { grid-template-columns: repeat(3, 1fr); }
     .card-grid .card { margin-bottom: 0; }
     .card-grid .card p { font-size: 13px; color: var(--ink-3); margin: 0; }
     .note { border: 1px solid var(--mark); border-radius: 9px; background: var(--brand-wash); padding: 12px 16px; margin: 1rem 0; font-size: 13.5px; color: var(--ink-2); }
@@ -184,13 +188,17 @@
       .nav-brand-sub { display: none; }
       .docs-wrap { flex-direction: column; padding: 0 16px; gap: 0; }
       .docs-sidebar { display: none; }
-      .docs-header { padding-top: 74px; }
-      .docs-header-inner { padding: 22px 16px 16px; }
+      /* The nav is 60px here, not 72, so BOTH the clearance and the sticky
+         offset have to follow it. Left at 72 the tab row floats 12px below
+         the bar and the page shows through the gap as you scroll. */
+      body { padding-top: 60px; }
+      .docs-header { top: 60px; }
+      .docs-header-inner { padding: 10px 16px; }
       footer { padding: 28px 16px 40px; }
       .footer-links a { margin-left: 0; margin-right: 14px; }
       /* Two next-steps cards side by side leave ~150px each at 375px, which
          wraps every card title. They stack. */
-      .card-grid { grid-template-columns: 1fr; }
+      .card-grid, .card-grid.three-up { grid-template-columns: 1fr; }
       .code-pane { padding: 14px 14px 2px; }
     }
   </style>
@@ -214,12 +222,9 @@
 
 <div class="docs-header">
   <div class="docs-header-inner">
-    <h1 class="docs-title">Docs</h1>
     <div class="docs-tabs">
       <button class="tab-btn active" data-tab="overview">Overview</button>
-      <button class="tab-btn" data-tab="proxy">Proxy</button>
-      <button class="tab-btn" data-tab="sdk">SDK</button>
-      <button class="tab-btn" data-tab="gateway">Gateway</button>
+      <button class="tab-btn" data-tab="deploy">Deploy</button>
       <button class="tab-btn" data-tab="console">Console</button>
     </div>
   </div>
@@ -231,24 +236,12 @@
       <div class="sidebar-group">
         <p class="sidebar-label">Start here</p>
         <a href="#what-is-baton" class="sidebar-link">What is Baton</a>
-        <a href="#start-here" class="sidebar-link">Quickstart</a>
+        <a href="#start-here" class="sidebar-link">Which path is mine</a>
         <a href="#next-steps" class="sidebar-link">Next steps</a>
-        <a href="#stages" class="sidebar-link">The three capture paths</a>
-        <a href="#how-it-fits" class="sidebar-link">How it fits together</a>
       </div>
     </nav>
-    <nav id="sidebar-proxy" hidden>
-      <div class="sidebar-group">
-        <p class="sidebar-label">baton-proxy</p>
-        <a href="#proxy-overview" class="sidebar-link">Overview</a>
-        <a href="#install" class="sidebar-link">Install</a>
-        <a href="#quick-start" class="sidebar-link">Quickstart</a>
-        <a href="#configuration" class="sidebar-link">Configuration</a>
-        <a href="#proxy-captures" class="sidebar-link">What it captures</a>
-        <a href="#trust" class="sidebar-link">Trust &amp; security</a>
-      </div>
-    </nav>
-    <nav id="sidebar-sdk" hidden>
+    
+        <nav id="sidebar-deploy" hidden>
       <div class="sidebar-group">
         <p class="sidebar-label">baton-sdk</p>
         <a href="#sdk-overview" class="sidebar-link">Overview</a>
@@ -259,8 +252,7 @@
         <a href="#typescript" class="sidebar-link">TypeScript</a>
         <a href="#pii" class="sidebar-link">PII scrubbing</a>
       </div>
-    </nav>
-    <nav id="sidebar-gateway" hidden>
+    
       <div class="sidebar-group">
         <p class="sidebar-label">gateway</p>
         <a href="#gateway-overview" class="sidebar-link">Overview</a>
@@ -269,7 +261,18 @@
         <a href="#gateway-captures" class="sidebar-link">What it captures</a>
         <a href="#gateway-failopen" class="sidebar-link">Trust &amp; security</a>
       </div>
+    
+      <div class="sidebar-group">
+        <p class="sidebar-label">baton-proxy</p>
+        <a href="#proxy-overview" class="sidebar-link">Overview</a>
+        <a href="#install" class="sidebar-link">Install</a>
+        <a href="#quick-start" class="sidebar-link">Quickstart</a>
+        <a href="#configuration" class="sidebar-link">Configuration</a>
+        <a href="#proxy-captures" class="sidebar-link">What it captures</a>
+        <a href="#trust" class="sidebar-link">Trust &amp; security</a>
+      </div>
     </nav>
+    
     <nav id="sidebar-console" hidden>
       <div class="sidebar-group">
         <p class="sidebar-label">Baton Console</p>
@@ -287,124 +290,32 @@
       <p>Baton is actionable product analytics for MCP servers. When a customer&#39;s agent calls your server and your API can&#39;t meet the request, you often get a 200 with an empty body or a vague error. The customer&#39;s intent vanishes with no ticket and no trace. Baton captures that friction at the moment it happens: what the customer was trying to do, the call the agent made, what it expected, and what it got.</p>
       <p>You instrument your server once. Whatever agent your customers use (Claude, Cursor, ChatGPT) keeps working exactly as before.</p>
 
-      <h2 id="start-here">Quickstart</h2>
-      <p>Pick the one that matches what you run. All three emit the same events in the same wire format to the same sinks, so the choice is about where the code goes, not what you get. Nothing below needs an account, and nothing leaves your machine.</p>
-      <div class="code-tabs">
-        <div class="code-tab-bar">
-          <button class="code-tab-btn active">Your own MCP server</button>
-          <button class="code-tab-btn">Someone else&#39;s server</button>
-          <button class="code-tab-btn">A fleet behind a gateway</button>
+      <h2 id="start-here">Which path is mine</h2>
+      <p>Three ways to capture. They emit the same events in the same wire format to the same sinks, so the choice is about where the code goes, not what you get. You only need one.</p>
+      <div class="card-grid three-up">
+        <div class="card">
+          <h3><code>baton-sdk</code></h3>
+          <p>A server you own. Goes inside it and captures your real customers. Python or TypeScript. <a href="#mcp-integration" style="color:var(--brand)">Quickstart &rarr;</a></p>
         </div>
-
-        <div class="code-pane">
-          <p><strong>baton-sdk</strong> goes inside a server you own, and captures your real customers. Requires Python 3.11+.</p>
-          <p class="stepline">Step 1 <span>&middot; install</span></p>
-          <pre>pip install "baton-sdk[fastmcp]&gt;=0.8.8"</pre>
-          <p class="stepline">Step 2 <span>&middot; instrument</span></p>
-          <p>One import and one call. The DSN is a single string from <strong>/account</strong> that packs your workspace, this server and the key that binds them, so nothing else needs configuring. Tools registered before or after the call are both captured.</p>
-          <pre>from fastmcp import FastMCP
-from baton import install_baton
-
-mcp = FastMCP("Acme Knowledge Base")
-install_baton(mcp, dsn="https://baton_pk_...@baton.goodtiming.ai/ten_.../acme-kb")
-
-@mcp.tool
-def search_orders(customer: str) -&gt; dict:
-    return {"order_id": "o_123", "status": "shipped"}</pre>
-          <p class="stepline">Step 3 <span>&middot; run it</span></p>
-          <pre>python server.py</pre>
-          <p class="stepline">Step 4 <span>&middot; verify</span></p>
-          <p>Drive a tool call from your MCP client. One call produces three events, a <code>tool_call_start</code>, a <code>tool_call_end</code> and a <code>surface_snapshot</code> describing the server, and they appear on the Console&#39;s Live tab as they arrive. <a href="#console" style="color:var(--brand)">Console reference →</a></p>
-
-          <h3 id="sdk-no-key">Trying it without a key</h3>
-          <p>Name the parts instead of passing a DSN and the events go to stderr as JSON Lines, so you can read exactly what Baton captures before you sign up for anything. A DSN and an explicit <code>sink</code> are mutually exclusive, so this is the form to use when you want the events locally.</p>
-          <pre>from baton import install_baton, VendorConfig
-
-install_baton(mcp, VendorConfig(
-    vendor_id="acme-kb",
-    tenant_id="acme",
-    vendor_display_name="Acme Knowledge Base",
-))</pre>
-          <pre>python server.py 2&gt;events.jsonl</pre>
-          <p>The first event, formatted:</p>
-          <pre class="pre-output">{
-  "event_id": "01a0a8cb-d94f-74bd-8cb5-53a4287d53a3",
-  "tenant_id": "acme",
-  "vendor_id": "acme-kb",
-  "session_id": "sdk-01a0a8cb-d946-721f-8291-60f3a785e7c6",
-  "sequence_number": 1,
-  "captured_at": "2026-09-16T05:58:46.863008Z",
-  "sdk_version": "0.8.8",
-  "agent_runtime": "mcp",
-  "principal_id": null,
-  "call_id": "01a0a8cb-d94e-7160-b1e5-0e5e1b1a94e7",
-  "runtime_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28", ...},
-  "event_type": "tool_call_start",
-  "payload": {
-    "tool_name": "search_orders",
-    "params": {"customer": "acme"},
-    "call_intent": null,
-    "call_expected": null,
-    "call_workflow": null,
-    "intent_source": null
-  }
-}</pre>
-          <p><strong>Abridged.</strong> <code>runtime_meta</code> is the <code>_meta</code> block the client attaches to each request, per call rather than per session, and a few transport fields are left out. Every key shown is one the SDK emits, with the values from that run.</p>
-          <p>The four intent fields are null here because the call came from a script, not an agent. When an agent makes it, <code>call_intent</code> and <code>call_expected</code> carry what it was trying to do, <code>call_workflow</code> the wider task, and <code>intent_source</code> reads <code>injected_param</code> once any of them is filled, marking the value as one the agent typed into an injected parameter rather than one carried by an annotation call. See <a href="#mcp-integration" style="color:var(--brand)">MCP integration</a>, or <a href="#without-dsn" style="color:var(--brand)">Without a DSN</a> for the full set of fields.</p>
+        <div class="card">
+          <h3>Gateway</h3>
+          <p>Many servers behind a gateway. Capture once, in front of all of them, without touching any. <a href="#gateway-start" style="color:var(--brand)">Quickstart &rarr;</a></p>
         </div>
-
-        <div class="code-pane" hidden>
-          <p><strong>baton-proxy</strong> wraps a server you did not write, as a subprocess. Use it to see what Baton captures before instrumenting anything. Requires Python 3.11+, and nothing to install.</p>
-          <p class="stepline">Step 1 <span>&middot; wrap the server</span></p>
-          <p>Put the proxy in front of the command your MCP client already runs, in that client's config. <code>uvx</code> fetches it per run.</p>
-          <pre>{
-  "command": "uvx",
-  "args": ["baton-proxy", "--", "python", "server.py"]
-}</pre>
-          <p class="stepline">Step 2 <span>&middot; choose where events go</span></p>
-          <p>In the same entry, not your shell. The client starts the proxy and passes it a fixed environment allowlist (six names on macOS and Linux), so an exported <code>BATON_EVENT_SINK</code> never reaches it.</p>
-          <pre>"env": { "BATON_EVENT_SINK": "file:///tmp/baton-proxy.jsonl" }</pre>
-          <p class="stepline">Step 3 <span>&middot; use it</span></p>
-          <p>Drive a few tool calls from your client.</p>
-          <p><code>scan</code> is a different route rather than a continuation of this one. Point it at an entry you have <strong>not</strong> wrapped: it wraps one temporarily, drives a headless agent at it, and writes its own report. It refuses an entry that already launches the proxy, and it ignores the sink from Step 2 in favour of a temporary file of its own.</p>
-          <pre>uvx baton-proxy scan --config &lt;server-name&gt;</pre>
-          <p class="stepline">Step 4 <span>&middot; verify</span></p>
-          <p>A <code>surface_snapshot</code> lands at startup, then a pair per call. One <code>tool_call_start</code>, formatted:</p>
-          <pre class="pre-output">{
-  "event_id": "002e63d4-deb4-417f-a2e7-31f9ed391e93",
-  "event_type": "tool_call_start",
-  "session_id": "b191b36a-5cdd-405e-ade1-8f92b6a7e58e",
-  "sequence_number": 1,
-  "captured_at": "2026-09-16T05:59:53.739264Z",
-  "tenant_id": "local",
-  "vendor_id": "local",
-  "sdk_version": "baton-proxy/0.6.8",
-  "agent_runtime": "mcp-proxy",
-  "payload": {
-    "tool_name": "search_orders",
-    "params": {"customer": "acme"}
-  }
-}</pre>
-          <p>The wrapped server is untouched: it receives the arguments it would have received unwrapped. What changes is the advertised schema, which gains the <a href="#intent-params" style="color:var(--brand)">intent parameters</a>, and the tool list, which gains <code>baton_annotate</code>.</p>
-        </div>
-
-        <div class="code-pane" hidden>
-          <p><strong>The gateway path</strong> captures every MCP server behind your gateway at once. Neither your clients nor your backend servers change, and no server ships a release.</p>
-          <p class="stepline">Step 1 <span>&middot; run the processor</span></p>
-          <p>Baton runs beside the gateway and is called on its external-processor hook for MCP. It never becomes a hop in the traffic path.</p>
-          <p class="stepline">Step 2 <span>&middot; point the hook at it</span></p>
-          <p>Configure the hook fail-open, so a Baton outage costs you the event and not the call.</p>
-          <p class="stepline">Step 3 <span>&middot; verify</span></p>
-          <p>Events are the same envelope the other two paths emit, carrying the gateway&#39;s own identity for the caller.</p>
-          <div class="note">This path is configured against your gateway rather than installed from a registry, so there is no copy-paste command here and no captured output; the shape depends on which gateway you run. <a href="#gateway" style="color:var(--brand)">Gateway reference →</a> has what it needs, and we will set it up with you.</div>
+        <div class="card">
+          <h3><code>baton-proxy</code></h3>
+          <p>A server you don&#39;t own, or your own before you change any code. Wraps it from outside. <a href="#quick-start" style="color:var(--brand)">Quickstart &rarr;</a></p>
         </div>
       </div>
+      <p>Instrumenting is two lines. Here is the SDK path in full:</p>
+      <pre>from baton import install_baton
 
+install_baton(mcp, dsn="https://baton_pk_...@baton.goodtiming.ai/ten_.../acme-kb")</pre>
+      <p>The DSN is one string from <strong>/account</strong> holding your workspace, this server and the key that binds them, so nothing else needs configuring. You can also run without a key and read the events on your own machine first. <a href="#choosing" style="color:var(--brand)">Choosing paths &rarr;</a></p>
       <h2 id="next-steps">Next steps</h2>
       <div class="card-grid">
         <div class="card">
           <h3>Send events to the Console</h3>
-          <p>The quickstart writes to your machine. One DSN string swaps the sink for the hosted Console, where friction is deduped and ranked across every customer. <a href="#console" style="color:var(--brand)">Console →</a></p>
+          <p>Every path can write to your own machine instead. One DSN string swaps the sink for the hosted Console, where friction is deduped and ranked across every customer. <a href="#console" style="color:var(--brand)">Console →</a></p>
         </div>
         <div class="card">
           <h3>Capture intent, not just calls</h3>
@@ -420,207 +331,24 @@ install_baton(mcp, VendorConfig(
         </div>
       </div>
 
-      <h2 id="stages">The three capture paths</h2>
-      <p>Each path emits the same events; the difference is who drives them and where the code lives. You only need one.</p>
-      <div class="card">
-        <p class="stage-eyebrow"><span class="step">Stage 1</span> &nbsp;·&nbsp; Test</p>
-        <h3><code>baton-proxy</code> &nbsp;&middot;&nbsp; free, open source</h3>
-        <p>Get a taste of the kinds of friction Baton surfaces, with no rebuild. The friction comes from <strong>you</strong> running it against your own MCP server, either by driving a few tool calls yourself or automatically with the <code>scan</code> command, which runs a headless agent and writes a report. Nothing leaves your machine. <a href="#proxy" style="color:var(--brand)">Proxy reference →</a></p>
-      </div>
-      <div class="card">
-        <p class="stage-eyebrow"><span class="step">Stage 2</span> &nbsp;·&nbsp; Deploy</p>
-        <h3><code>baton-sdk</code> &nbsp;&middot;&nbsp; free, open source</h3>
-        <p>See friction from your <strong>actual customers</strong>. They won&#39;t install the proxy, so you instrument your side: wrap your MCP server with the SDK, or use the Library API path if you ship via Skills and don&#39;t have an MCP server. Same wire format, same sinks. If you run many MCP servers behind a gateway, capture at the gateway instead and cover all of them at once. <a href="#sdk" style="color:var(--brand)">SDK reference →</a> &nbsp;&middot;&nbsp; <a href="#gateway" style="color:var(--brand)">Gateway reference →</a></p>
-      </div>
-      <div class="card">
-        <p class="stage-eyebrow"><span class="step">Stage 3</span> &nbsp;·&nbsp; Act</p>
-        <h3>Baton Console &nbsp;&middot;&nbsp; hosted</h3>
-        <p>It collects events across every customer and session and ranks the friction into what to fix first: your recurring errors, the tools that fail most, what your surface costs in tokens, and the sessions that ended badly. <a href="#console" style="color:var(--brand)">Console reference →</a></p>
-      </div>
-
-      <h2 id="how-it-fits">How it fits together</h2>
-      <p>The three capture paths emit the exact same events to a sink you choose; the difference is who drives them and where they live. The proxy is <strong>you</strong>, sampling your own server. The SDK is baked into your server (or your Skill), capturing real <strong>customer</strong> traffic. The gateway path sits one level up, in front of a fleet of servers you did not have to touch. Either way, the Baton Console is where that signal becomes a ranked roadmap your team can act on.</p>
-      <p style="color:var(--mute-2);font-size:12.5px">Each section has an architecture diagram: the <a href="#proxy" style="color:var(--brand)">Proxy</a>, <a href="#sdk" style="color:var(--brand)">SDK</a> and <a href="#gateway" style="color:var(--brand)">Gateway</a> pages show how capture works; the <a href="#console" style="color:var(--brand)">Console</a> page shows how it comes together across customers.</p>
     </div>
 
-    <div id="tab-proxy" hidden>
-      <p class="stage-eyebrow"><span class="step">Stage 1 · Test</span> &nbsp;·&nbsp; sample friction yourself</p>
-      <h2 id="proxy-overview">Overview</h2>
-      <p>baton-proxy wraps an MCP server and captures friction events. From Claude&#39;s perspective it <em>is</em> the MCP server; the real server is either its child process or the endpoint it forwards to. Your server receives the arguments it would have received unwrapped: the proxy adds three intent parameters to each tool&#39;s advertised schema and strips them from every call before forwarding.</p>
-      <p>Two upstream forms. A <strong>stdio</strong> server is named after <code>--</code> and run as a subprocess; a <strong>remote</strong> Streamable-HTTP server is named with <code>--url</code>, with <code>BATON_UPSTREAM_AUTH_TOKEN</code> sent upstream as a bearer token. They are mutually exclusive.</p>
-      <pre>uvx baton-proxy -- python server.py               # stdio, as a subprocess
-uvx baton-proxy --url "https://mcp.example.com/mcp"  # remote, as a bridge</pre>
-      <div class="note"><strong>Requirements:</strong> Python 3.11+ · run via <code>uvx</code> (no install) or <code>pipx</code> · <code>scan</code> needs a server already configured in Claude (<code>~/.claude.json</code>).</div>
-      <p>The following diagram illustrates how the proxy sits between Claude and your server:</p>
-      <div class="diagram">
-        <svg viewBox="0 50 680 256" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="diag-t diag-d">
-          <title id="diag-t">baton-proxy architecture</title>
-          <desc id="diag-d">Claude talks to baton-proxy, which spawns your MCP server as a child process and forwards its traffic, stripping the intent parameters it added before the call reaches the server. Per tool call the proxy emits events to three sinks: stderr, a file, and the Baton Console.</desc>
-          <defs>
-            <marker id="diag-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--brand)"/></marker>
-            <marker id="diag-drop" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--mute-2)"/></marker>
-          </defs>
-          <rect x="28" y="64" width="140" height="60" rx="12" fill="var(--page)" stroke="var(--line)" stroke-width="1.1"/>
-          <text x="98" y="90" text-anchor="middle" font-family="var(--sans)" font-size="15" font-weight="600" fill="var(--ink)">Claude</text>
-          <text x="98" y="107" text-anchor="middle" font-family="var(--mono)" font-size="9" fill="var(--mute)">your MCP client</text>
-          <line x1="170" y1="94" x2="234" y2="94" stroke="var(--brand)" stroke-width="2" marker-start="url(#diag-arrow)" marker-end="url(#diag-arrow)"/>
-          <text x="202" y="84" text-anchor="middle" font-family="var(--mono)" font-size="8.5" fill="var(--mute)">MCP</text>
-          <rect x="236" y="64" width="150" height="60" rx="12" fill="var(--brand-wash)" stroke="var(--brand)" stroke-width="1.3"/>
-          <text x="311" y="90" text-anchor="middle" font-family="var(--sans)" font-size="15" font-weight="600" fill="var(--ink)">baton-proxy</text>
-          <text x="311" y="107" text-anchor="middle" font-family="var(--mono)" font-size="8.5" fill="var(--brand-ink)">traffic passes through</text>
-          <line x1="388" y1="94" x2="452" y2="94" stroke="var(--brand)" stroke-width="2" marker-start="url(#diag-arrow)" marker-end="url(#diag-arrow)"/>
-          <text x="420" y="84" text-anchor="middle" font-family="var(--mono)" font-size="8.5" fill="var(--mute)">spawns</text>
-          <rect x="454" y="64" width="176" height="60" rx="12" fill="var(--page)" stroke="var(--line)" stroke-width="1.1"/>
-          <text x="542" y="90" text-anchor="middle" font-family="var(--sans)" font-size="14.5" font-weight="600" fill="var(--ink)">your MCP server</text>
-          <text x="542" y="107" text-anchor="middle" font-family="var(--mono)" font-size="8.5" fill="var(--mute)">unchanged · child process</text>
-          <line x1="311" y1="124" x2="311" y2="176" stroke="var(--brand)" stroke-width="1.6"/>
-          <text x="326" y="151" text-anchor="start" font-family="var(--mono)" font-size="8.5" fill="var(--mute)">emits per tool call</text>
-          <line x1="105" y1="176" x2="525" y2="176" stroke="var(--brand)" stroke-width="1.6"/>
-          <line x1="105" y1="176" x2="105" y2="205" stroke="var(--mute-2)" stroke-width="1.4" marker-end="url(#diag-drop)"/>
-          <line x1="311" y1="176" x2="311" y2="205" stroke="var(--mute-2)" stroke-width="1.4" marker-end="url(#diag-drop)"/>
-          <line x1="525" y1="176" x2="525" y2="205" stroke="var(--brand)" stroke-width="1.6" marker-end="url(#diag-arrow)"/>
-          <rect x="25" y="208" width="160" height="56" rx="11" fill="var(--page)" stroke="var(--line)" stroke-width="1.1"/>
-          <text x="105" y="234" text-anchor="middle" font-family="var(--mono)" font-size="12.5" fill="var(--ink)">stderr</text>
-          <text x="105" y="250" text-anchor="middle" font-family="var(--mono)" font-size="8.5" fill="var(--mute-2)">default sink</text>
-          <rect x="211" y="208" width="200" height="56" rx="11" fill="var(--page)" stroke="var(--line)" stroke-width="1.1"/>
-          <text x="311" y="234" text-anchor="middle" font-family="var(--mono)" font-size="12.5" fill="var(--ink)">file</text>
-          <text x="311" y="250" text-anchor="middle" font-family="var(--mono)" font-size="8.5" fill="var(--mute-2)">/tmp/baton-proxy.jsonl</text>
-          <rect x="437" y="208" width="176" height="56" rx="11" fill="var(--brand-wash)" stroke="var(--mark)" stroke-width="1.1"/>
-          <text x="525" y="233" text-anchor="middle" font-family="var(--sans)" font-size="12.5" font-weight="600" fill="var(--ink)">Baton Console</text>
-          <text x="525" y="250" text-anchor="middle" font-family="var(--mono)" font-size="8.5" fill="var(--brand-ink)">https · hosted</text>
-          <text x="319" y="293" text-anchor="middle" font-family="var(--mono)" font-size="8.5" fill="var(--mute-2)">tool_call_start · tool_call_end · tool_call_error</text>
-        </svg>
-      </div>
-      <ul>
-        <li><strong>The proxy is the server, as far as Claude is concerned.</strong> Your real server runs as its child process and receives the arguments it would have received unwrapped.</li>
-        <li><strong>Green marks what Baton owns</strong>, here the proxy and the Console. Everything neutral is yours or your client's, and none of it changes.</li>
-        <li><strong>Three sinks, one event.</strong> The same envelope goes to stderr, a file, and an <code>https://</code> collector; which ones are live is configuration.</li>
-      </ul>
-      <h2 id="install">Install</h2>
-      <p>For a one-off <code>scan</code>, install nothing: <code>uvx</code> runs it on demand.</p>
-      <pre>uvx baton-proxy scan --config &lt;server-name&gt;</pre>
-      <p>To wrap a server permanently in Claude&#39;s config, put <code>baton-proxy</code> on your PATH so the config can invoke it directly:</p>
-      <pre>pipx install baton-proxy</pre>
-      <p style="color:var(--mute-2);font-size:12.5px">Plain <code>pip install baton-proxy</code> works if you manage your own Python env. Requires Python 3.11+. Currently 0.x. The wire format is stable and additive-only until v1.0; see the <a href="https://github.com/good-timing/baton-proxy/releases" target="_blank" rel="noopener" style="color:var(--brand)">releases</a>.</p>
-      <h2 id="quick-start">Quickstart</h2>
-      <p>Replace your MCP server entry in Claude&#39;s config. The only change is wrapping your existing command:</p>
-      <pre>// Before
-{ "command": "npx", "args": ["@vendor/mcp-server"] }
+    
 
-// After. Events go to stderr + /tmp/baton-proxy.jsonl
-{ "command": "baton-proxy", "args": ["--", "npx", "@vendor/mcp-server"] }</pre>
-      <p>Restart Claude and drive a few tool calls. Then see what happened:</p>
-      <pre>// In conversation, ask Claude:
-"Show me the friction report for this session."
+    
 
-// Or inspect raw:
-cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
-      <p>To ship events to a Console, add four env vars:</p>
-      <pre>{
-  "command": "baton-proxy",
-  "args": ["--", "npx", "@vendor/mcp-server"],
-  "env": {
-    "BATON_EVENT_SINK":    "https://console.example.com",
-    "BATON_TENANT_ID":     "your-tenant",
-    "BATON_API_KEY":       "bk_live_...",
-    "BATON_CONSENT_TOKEN": "customer-consented"
-  }
-}</pre>
-      <h3 id="scan">scan</h3>
-      <p>Preview friction on a server you already have configured, with no permanent install and no change to your Claude config.</p>
-      <pre>uvx baton-proxy scan --config my-server</pre>
-      <p><code>scan</code> reads the named entry from <code>~/.claude.json</code>, reuses its credentials, drives a headless agent, and writes <code>./baton-report.md</code>. Events are written to a temp file and deleted after the report, so nothing leaves your machine.</p>
-      <table class="docs-table">
-        <thead><tr><th>Flag</th><th>Description</th></tr></thead>
-        <tbody>
-          <tr><td>--config &lt;name&gt;</td><td>Entry name in <code>~/.claude.json</code> (required).</td></tr>
-          <tr><td>--config-file &lt;path&gt;</td><td>Use a specific config file.</td></tr>
-          <tr><td>--timeout &lt;seconds&gt;</td><td>Bound the run (default: 300s).</td></tr>
-          <tr><td>--out &lt;path&gt;</td><td>Report output path (default: <code>./baton-report.md</code>).</td></tr>
-        </tbody>
-      </table>
-      <h2 id="configuration">Configuration</h2>
-      <p>All knobs are environment variables. Every one has a default, so no config file is needed.</p>
-      <table class="docs-table">
-        <thead><tr><th>Variable</th><th>Default</th><th>Purpose</th></tr></thead>
-        <tbody>
-          <tr><td>BATON_EVENT_SINK</td><td style="font-family:var(--mono);font-size:11.5px;white-space:nowrap">stderr:,file:///tmp/baton-proxy.jsonl</td><td>Where events go. Comma-separated for fan-out. <code>https://…</code> POSTs to <code>{url}/v0/events</code>, <code>file:///path</code> appends JSONL, <code>stderr:</code> writes to stderr.</td></tr>
-          <tr><td>BATON_TENANT_ID</td><td><code>local</code></td><td>Tenant identifier sent on every event.</td></tr>
-          <tr><td>BATON_CONSENT_TOKEN</td><td><code>local</code></td><td>Per-process consent token. Must be replaced before using an <code>https://</code> sink.</td></tr>
-          <tr><td>BATON_API_KEY</td><td>unset</td><td>Bearer token. Required when sink is <code>https://</code>.</td></tr>
-          <tr><td>BATON_VENDOR_ID</td><td><code>local</code></td><td>Labels the install for the operator. A placeholder: <strong>a remote sink refuses to start while it is still <code>local</code></strong>, because the Console buckets friction by vendor.</td></tr>
-          <tr><td>BATON_TENANT_TYPE</td><td><code>vendor</code></td><td><code>vendor</code> ships signal to the wrapped server&#39;s vendor Console; <code>customer</code> ships to the end user&#39;s own tenant, and keeps the report tool alongside an HTTP sink.</td></tr>
-          <tr><td>BATON_INTENT_PARAM</td><td><code>required</code></td><td>Injection mode for the intent parameters. <code>required</code> lists <code>user_goal</code> in the advertised required set; <code>optional</code> does not. That is an advertisement only: nothing validates it and no call fails for omitting it.</td></tr>
-          <tr><td>BATON_PRINCIPAL_ID_HMAC_KEY</td><td>unset</td><td>Per-tenant secret keying the <code>principal_id</code> hash. <strong>Named <code>BATON_USER_ID_HMAC_KEY</code> before 0.6.8</strong>, and no longer read under that name. An install still setting the old one logs a startup warning and captures no <code>principal_id</code>. Hashed at the edge, so no sink sees a raw principal. Unset means <code>principal_id</code> is skipped and events still emit. <strong>Generate it with <code>openssl rand -hex 32</code></strong>. The input space is emails and user ids, small and guessable, so a memorable key is not a weaker pseudonym but none at all: it can be dictionary-attacked back to raw identities.</td></tr>
-          <tr><td>BATON_UPSTREAM_AUTH_TOKEN</td><td>unset</td><td>Credential for the <code>--url</code> bridge, sent upstream as <code>Authorization: Bearer</code>. Ignored by the stdio form.</td></tr>
-          <tr><td>BATON_UPSTREAM_TIMEOUT</td><td><code>60</code></td><td>Read timeout in seconds for the <code>--url</code> bridge.</td></tr>
-          <tr><td>BATON_PROXY_LOG_FILE</td><td>unset</td><td>Path to tee proxy logs to.</td></tr>
-        </tbody>
-      </table>
-      <h3>The three rungs</h3>
-      <table class="docs-table">
-        <thead><tr><th>Rung</th><th>Sink</th><th>Env additions</th></tr></thead>
-        <tbody>
-          <tr><td>1. Default</td><td>stderr + /tmp/baton-proxy.jsonl</td><td style="color:var(--mute-2)">none</td></tr>
-          <tr><td>2. Custom local</td><td>Your path</td><td><code>BATON_EVENT_SINK=file:///your/path.jsonl</code></td></tr>
-          <tr><td>3. Ship to Console</td><td>Hosted</td><td><code>BATON_EVENT_SINK</code> + <code>BATON_API_KEY</code> + <code>BATON_TENANT_ID</code> + <code>BATON_CONSENT_TOKEN</code> + <code>BATON_VENDOR_ID</code></td></tr>
-        </tbody>
-      </table>
-      <div class="note"><strong>Startup guard:</strong> the proxy refuses to start when an <code>https://</code> sink is configured but <code>BATON_API_KEY</code> is unset, or <code>BATON_CONSENT_TOKEN</code> or <code>BATON_VENDOR_ID</code> is still <code>"local"</code>.</div>
-      <h3 id="remote">Remote servers</h3>
-      <p>The proxy also fronts a remote HTTPS MCP server over the Streamable HTTP transport, instead of spawning a subprocess. It stays stdio-facing to Claude and forwards each message as an HTTP POST, streaming the JSON or SSE response back. Injection, emission and correlation are the same code as the subprocess path.</p>
-      <pre>{
-  "command": "baton-proxy",
-  "args": ["--url", "https://mcp.vendor.example.com/mcp"],
-  "env": { "BATON_UPSTREAM_AUTH_TOKEN": "..." }
-}</pre>
-      <p><code>--url</code> and the <code>-- &lt;command&gt;</code> form are mutually exclusive.</p>
-      <div class="note">Bridge scope today: the client-initiated request and response loop only. It does not open the standing GET SSE channel, so server-initiated messages (sampling, elicitation, notifications) are not captured, and requests are serialised. When the upstream is unreachable the handshake degrades to a synthetic healthy response rather than an error, so the client attaches and <code>baton_annotate</code> stays usable instead of the session wedging.</div>
+    
 
-      <h3 id="injected-tools">Injected tools</h3>
-      <p>The proxy adds its own tools to the upstream server&#39;s tool list during the MCP handshake. The upstream server never sees them. <code>baton_annotate</code> is always there; the report tool depends on your sinks.</p>
-      <div class="card"><h3><code>baton_annotate</code></h3><p>Called by Claude (unprompted) when it hits friction. Emits an annotation event with <code>signal_type</code>, <code>intent</code>, <code>suggested_improvement</code>, and optional context. Available in all sink modes.</p></div>
-      <div class="card"><h3><code>baton_session_report</code></h3><p>Called when the customer asks <em>"Show me the friction report for this session."</em> Returns a markdown summary of the session. Needs a <code>file://</code> sink to read from, which the default install has, so a <code>stderr:</code>-only install does not get it. Suppressed when an <code>https://</code> sink is also present, which is the vendor production shape; set <code>BATON_TENANT_TYPE=customer</code> to keep it there.</p></div>
-      <h2 id="proxy-captures">What it captures</h2>
-      <p>Per real tool call, three event types are emitted matching the <a href="https://github.com/good-timing/baton/blob/main/docs/SPEC.md" style="color:var(--brand)">Baton wire format</a>:</p>
-      <table class="docs-table">
-        <thead><tr><th>Event</th><th>Payload fields</th></tr></thead>
-        <tbody>
-          <tr><td>tool_call_start</td><td>tool_name, params</td></tr>
-          <tr><td>tool_call_end</td><td>tool_name, result, duration_ms</td></tr>
-          <tr><td>tool_call_error</td><td>tool_name, error_type, error_body, duration_ms</td></tr>
-        </tbody>
-      </table>
-      <p>Each line in the events file is one JSON object, <code>{ event_type, payload }</code>. A silent failure (a 200 that carried an error) lands like this:</p>
-      <pre>{"event_type":"tool_call_start","payload":{"tool_name":"run_sql","params":{"statement":"ALTER TABLE orders ADD CONSTRAINT fk_customer FOREIGN KEY (customer_id) REFERENCES customers(id)"}}}
-{"event_type":"tool_call_end","payload":{"tool_name":"run_sql","result":"200 OK — body: \"foreign keys are not supported\"","duration_ms":412}}
-{"event_type":"annotation","payload":{"signal_type":"failure","intent":"add a foreign key so an order can't reference a missing customer","suggested_improvement":"reject unsupported DDL with an error instead of a silent 200"}}</pre>
-      <h3 id="intent-params">Intent parameters</h3>
-      <p>This is how the proxy captures <em>why</em> a call was made, not just what happened. At <code>tools/list</code> it adds three string parameters to every upstream tool&#39;s advertised schema. The agent fills them in as it composes each call, and the proxy strips them at <code>tools/call</code> before forwarding.</p>
-      <table class="docs-table">
-        <thead><tr><th>Parameter</th><th>Captured as</th></tr></thead>
-        <tbody>
-          <tr><td><code>user_goal</code></td><td><code>tool_call_start.payload.call_intent</code></td></tr>
-          <tr><td><code>expected_result</code></td><td><code>tool_call_start.payload.call_expected</code>, omitted when the agent did not fill it in</td></tr>
-          <tr><td><code>overall_task</code></td><td><code>tool_call_start.payload.call_workflow</code>. The task label sessions are grouped by, so it is only useful when the agent repeats the same string across a task</td></tr>
-        </tbody>
-      </table>
-      <p>In the default mode, <code>user_goal</code> is the one advertised in each tool&#39;s <code>required</code> list. That is advertisement only: a call that omits it is served exactly as it would be unwrapped, and <code>call_intent</code> is simply null. Measured on proxy 0.6.8, a wrapped tool&#39;s schema lists <code>["customer", "user_goal"]</code> as required where the unwrapped one listed <code>["customer"]</code>.</p>
-      <p>A parameter description reaches the model at the moment it composes the call, on every client. Some clients drop <code>InitializeResult.instructions</code> entirely, so instructions alone are not a reliable channel. A tool that already declares a parameter of that name is left alone: its value is forwarded untouched and never read as intent.</p>
-      <div class="note"><strong>Fail-open:</strong> if injection or stripping raises, the message is forwarded unmodified. A bug in intent capture cannot break a tool call.</div>
+    <div id="tab-deploy" hidden>
+      <div class="code-tabs deploy-paths">
+        <div class="code-tab-bar">
+          <button class="code-tab-btn active">Your own server &middot; SDK</button>
+          <button class="code-tab-btn">A fleet behind a gateway</button>
+          <button class="code-tab-btn">Try without code &middot; proxy</button>
+        </div>
 
-      <h2 id="trust">Trust &amp; security</h2>
-      <ul>
-        <li><strong style="color:var(--ink)">Open source, Apache 2.0.</strong> <a href="https://github.com/good-timing/baton-proxy" style="color:var(--brand)">github.com/good-timing/baton-proxy</a></li>
-        <li><strong style="color:var(--ink)">Fail-open.</strong> A Console outage never breaks the MCP pipe. Emission is enqueued on a background thread.</li>
-        <li><strong style="color:var(--ink)">Outbound-only.</strong> The proxy never accepts inbound connections.</li>
-        <li><strong style="color:var(--ink)">No external dependencies.</strong> Pure stdlib: no pydantic, no httpx.</li>
-        <li><strong style="color:var(--ink)">Credential isolation.</strong> <code>BATON_*</code> vars are filtered from the upstream subprocess env.</li>
-      </ul>
-    </div>
-
-    <div id="tab-sdk" hidden>
-      <p class="stage-eyebrow"><span class="step">Stage 2 · Deploy</span> &nbsp;·&nbsp; capture friction from your customers</p>
+        <div class="code-pane" id="sdk">
+      <p class="stage-eyebrow">capture friction from your customers</p>
       <h2 id="sdk-overview">Overview</h2>
       <p>baton-sdk is native instrumentation for vendors who control their MCP server source. One call wires up capture, annotation, and sink routing, with the same wire format as the proxy and no subprocess hop. Because it lives inside what you ship, it captures friction from your real customers, who never have to install anything.</p>
       <div class="card"><h3>MCP middleware path</h3><p>Your MCP server calls <code>install_baton(mcp, dsn=…)</code>. Two lines. Captures every tool call at the transport boundary and adds the annotation tool. Best for vendors with MCP servers as their primary surface.</p></div>
@@ -916,8 +644,8 @@ from baton.scrub import identity_scrub
 install_baton(mcp, VendorConfig(dsn="https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...", scrubber=identity_scrub))</pre>
     </div>
 
-    <div id="tab-gateway" hidden>
-      <p class="stage-eyebrow"><span class="step">Stage 2 &middot; Deploy</span> &nbsp;&middot;&nbsp; capture a whole fleet at once</p>
+        <div class="code-pane" id="gateway" hidden>
+      <p class="stage-eyebrow">capture a whole fleet at once</p>
       <h2 id="gateway-overview">Overview</h2>
       <p>For fleets of MCP servers. The other two paths instrument one server at a time: the <a href="#sdk" style="color:var(--brand)">SDK</a> goes inside a server you own, the <a href="#proxy" style="color:var(--brand)">proxy</a> wraps a server you do not. This one captures at the gateway itself, so every server behind it is covered at once, and neither your clients nor your backend servers change.</p>
       <p>Baton runs as a processor beside your gateway, on the gateway&#39;s external-processor hook for MCP. Traffic still flows client to gateway to server. Baton sees the MCP messages as they pass and never becomes a hop in the path: it is not a subprocess wrap and not an HTTP bridge.</p>
@@ -998,8 +726,186 @@ install_baton(mcp, VendorConfig(dsn="https://baton_pk_...@baton.goodtiming.ai/te
       <div class="note"><strong>Capture never breaks a tool call.</strong> The gateway is configured in fail-open mode on this hook, so if the Baton processor is slow, restarting or gone, the call goes through and the event is the only thing lost. Observation is best effort by design. Your traffic is not.</div>
     </div>
 
+        <div class="code-pane" id="proxy" hidden>
+      <p class="stage-eyebrow">sample friction yourself</p>
+      <h2 id="proxy-overview">Overview</h2>
+      <p>baton-proxy wraps an MCP server and captures friction events. From Claude&#39;s perspective it <em>is</em> the MCP server; the real server is either its child process or the endpoint it forwards to. Your server receives the arguments it would have received unwrapped: the proxy adds three intent parameters to each tool&#39;s advertised schema and strips them from every call before forwarding.</p>
+      <p>Two upstream forms. A <strong>stdio</strong> server is named after <code>--</code> and run as a subprocess; a <strong>remote</strong> Streamable-HTTP server is named with <code>--url</code>, with <code>BATON_UPSTREAM_AUTH_TOKEN</code> sent upstream as a bearer token. They are mutually exclusive.</p>
+      <pre>uvx baton-proxy -- python server.py               # stdio, as a subprocess
+uvx baton-proxy --url "https://mcp.example.com/mcp"  # remote, as a bridge</pre>
+      <div class="note"><strong>Requirements:</strong> Python 3.11+ · run via <code>uvx</code> (no install) or <code>pipx</code> · <code>scan</code> needs a server already configured in Claude (<code>~/.claude.json</code>).</div>
+      <p>The following diagram illustrates how the proxy sits between Claude and your server:</p>
+      <div class="diagram">
+        <svg viewBox="0 50 680 256" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="diag-t diag-d">
+          <title id="diag-t">baton-proxy architecture</title>
+          <desc id="diag-d">Claude talks to baton-proxy, which spawns your MCP server as a child process and forwards its traffic, stripping the intent parameters it added before the call reaches the server. Per tool call the proxy emits events to three sinks: stderr, a file, and the Baton Console.</desc>
+          <defs>
+            <marker id="diag-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--brand)"/></marker>
+            <marker id="diag-drop" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--mute-2)"/></marker>
+          </defs>
+          <rect x="28" y="64" width="140" height="60" rx="12" fill="var(--page)" stroke="var(--line)" stroke-width="1.1"/>
+          <text x="98" y="90" text-anchor="middle" font-family="var(--sans)" font-size="15" font-weight="600" fill="var(--ink)">Claude</text>
+          <text x="98" y="107" text-anchor="middle" font-family="var(--mono)" font-size="9" fill="var(--mute)">your MCP client</text>
+          <line x1="170" y1="94" x2="234" y2="94" stroke="var(--brand)" stroke-width="2" marker-start="url(#diag-arrow)" marker-end="url(#diag-arrow)"/>
+          <text x="202" y="84" text-anchor="middle" font-family="var(--mono)" font-size="8.5" fill="var(--mute)">MCP</text>
+          <rect x="236" y="64" width="150" height="60" rx="12" fill="var(--brand-wash)" stroke="var(--brand)" stroke-width="1.3"/>
+          <text x="311" y="90" text-anchor="middle" font-family="var(--sans)" font-size="15" font-weight="600" fill="var(--ink)">baton-proxy</text>
+          <text x="311" y="107" text-anchor="middle" font-family="var(--mono)" font-size="8.5" fill="var(--brand-ink)">traffic passes through</text>
+          <line x1="388" y1="94" x2="452" y2="94" stroke="var(--brand)" stroke-width="2" marker-start="url(#diag-arrow)" marker-end="url(#diag-arrow)"/>
+          <text x="420" y="84" text-anchor="middle" font-family="var(--mono)" font-size="8.5" fill="var(--mute)">spawns</text>
+          <rect x="454" y="64" width="176" height="60" rx="12" fill="var(--page)" stroke="var(--line)" stroke-width="1.1"/>
+          <text x="542" y="90" text-anchor="middle" font-family="var(--sans)" font-size="14.5" font-weight="600" fill="var(--ink)">your MCP server</text>
+          <text x="542" y="107" text-anchor="middle" font-family="var(--mono)" font-size="8.5" fill="var(--mute)">unchanged · child process</text>
+          <line x1="311" y1="124" x2="311" y2="176" stroke="var(--brand)" stroke-width="1.6"/>
+          <text x="326" y="151" text-anchor="start" font-family="var(--mono)" font-size="8.5" fill="var(--mute)">emits per tool call</text>
+          <line x1="105" y1="176" x2="525" y2="176" stroke="var(--brand)" stroke-width="1.6"/>
+          <line x1="105" y1="176" x2="105" y2="205" stroke="var(--mute-2)" stroke-width="1.4" marker-end="url(#diag-drop)"/>
+          <line x1="311" y1="176" x2="311" y2="205" stroke="var(--mute-2)" stroke-width="1.4" marker-end="url(#diag-drop)"/>
+          <line x1="525" y1="176" x2="525" y2="205" stroke="var(--brand)" stroke-width="1.6" marker-end="url(#diag-arrow)"/>
+          <rect x="25" y="208" width="160" height="56" rx="11" fill="var(--page)" stroke="var(--line)" stroke-width="1.1"/>
+          <text x="105" y="234" text-anchor="middle" font-family="var(--mono)" font-size="12.5" fill="var(--ink)">stderr</text>
+          <text x="105" y="250" text-anchor="middle" font-family="var(--mono)" font-size="8.5" fill="var(--mute-2)">default sink</text>
+          <rect x="211" y="208" width="200" height="56" rx="11" fill="var(--page)" stroke="var(--line)" stroke-width="1.1"/>
+          <text x="311" y="234" text-anchor="middle" font-family="var(--mono)" font-size="12.5" fill="var(--ink)">file</text>
+          <text x="311" y="250" text-anchor="middle" font-family="var(--mono)" font-size="8.5" fill="var(--mute-2)">/tmp/baton-proxy.jsonl</text>
+          <rect x="437" y="208" width="176" height="56" rx="11" fill="var(--brand-wash)" stroke="var(--mark)" stroke-width="1.1"/>
+          <text x="525" y="233" text-anchor="middle" font-family="var(--sans)" font-size="12.5" font-weight="600" fill="var(--ink)">Baton Console</text>
+          <text x="525" y="250" text-anchor="middle" font-family="var(--mono)" font-size="8.5" fill="var(--brand-ink)">https · hosted</text>
+          <text x="319" y="293" text-anchor="middle" font-family="var(--mono)" font-size="8.5" fill="var(--mute-2)">tool_call_start · tool_call_end · tool_call_error</text>
+        </svg>
+      </div>
+      <ul>
+        <li><strong>The proxy is the server, as far as Claude is concerned.</strong> Your real server runs as its child process and receives the arguments it would have received unwrapped.</li>
+        <li><strong>Green marks what Baton owns</strong>, here the proxy and the Console. Everything neutral is yours or your client's, and none of it changes.</li>
+        <li><strong>Three sinks, one event.</strong> The same envelope goes to stderr, a file, and an <code>https://</code> collector; which ones are live is configuration.</li>
+      </ul>
+      <h2 id="install">Install</h2>
+      <p>For a one-off <code>scan</code>, install nothing: <code>uvx</code> runs it on demand.</p>
+      <pre>uvx baton-proxy scan --config &lt;server-name&gt;</pre>
+      <p>To wrap a server permanently in Claude&#39;s config, put <code>baton-proxy</code> on your PATH so the config can invoke it directly:</p>
+      <pre>pipx install baton-proxy</pre>
+      <p style="color:var(--mute-2);font-size:12.5px">Plain <code>pip install baton-proxy</code> works if you manage your own Python env. Requires Python 3.11+. Currently 0.x. The wire format is stable and additive-only until v1.0; see the <a href="https://github.com/good-timing/baton-proxy/releases" target="_blank" rel="noopener" style="color:var(--brand)">releases</a>.</p>
+      <h2 id="quick-start">Quickstart</h2>
+      <p>Replace your MCP server entry in Claude&#39;s config. The only change is wrapping your existing command:</p>
+      <pre>// Before
+{ "command": "npx", "args": ["@vendor/mcp-server"] }
+
+// After. Events go to stderr + /tmp/baton-proxy.jsonl
+{ "command": "baton-proxy", "args": ["--", "npx", "@vendor/mcp-server"] }</pre>
+      <p>Restart Claude and drive a few tool calls. Then see what happened:</p>
+      <pre>// In conversation, ask Claude:
+"Show me the friction report for this session."
+
+// Or inspect raw:
+cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
+      <p>To ship events to a Console, add four env vars:</p>
+      <pre>{
+  "command": "baton-proxy",
+  "args": ["--", "npx", "@vendor/mcp-server"],
+  "env": {
+    "BATON_EVENT_SINK":    "https://console.example.com",
+    "BATON_TENANT_ID":     "your-tenant",
+    "BATON_API_KEY":       "bk_live_...",
+    "BATON_CONSENT_TOKEN": "customer-consented"
+  }
+}</pre>
+      <h3 id="scan">scan</h3>
+      <p>Preview friction on a server you already have configured, with no permanent install and no change to your Claude config.</p>
+      <pre>uvx baton-proxy scan --config my-server</pre>
+      <p><code>scan</code> reads the named entry from <code>~/.claude.json</code>, reuses its credentials, drives a headless agent, and writes <code>./baton-report.md</code>. Events are written to a temp file and deleted after the report, so nothing leaves your machine.</p>
+      <table class="docs-table">
+        <thead><tr><th>Flag</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>--config &lt;name&gt;</td><td>Entry name in <code>~/.claude.json</code> (required).</td></tr>
+          <tr><td>--config-file &lt;path&gt;</td><td>Use a specific config file.</td></tr>
+          <tr><td>--timeout &lt;seconds&gt;</td><td>Bound the run (default: 300s).</td></tr>
+          <tr><td>--out &lt;path&gt;</td><td>Report output path (default: <code>./baton-report.md</code>).</td></tr>
+        </tbody>
+      </table>
+      <h2 id="configuration">Configuration</h2>
+      <p>All knobs are environment variables. Every one has a default, so no config file is needed.</p>
+      <table class="docs-table">
+        <thead><tr><th>Variable</th><th>Default</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td>BATON_EVENT_SINK</td><td style="font-family:var(--mono);font-size:11.5px;white-space:nowrap">stderr:,file:///tmp/baton-proxy.jsonl</td><td>Where events go. Comma-separated for fan-out. <code>https://…</code> POSTs to <code>{url}/v0/events</code>, <code>file:///path</code> appends JSONL, <code>stderr:</code> writes to stderr.</td></tr>
+          <tr><td>BATON_TENANT_ID</td><td><code>local</code></td><td>Tenant identifier sent on every event.</td></tr>
+          <tr><td>BATON_CONSENT_TOKEN</td><td><code>local</code></td><td>Per-process consent token. Must be replaced before using an <code>https://</code> sink.</td></tr>
+          <tr><td>BATON_API_KEY</td><td>unset</td><td>Bearer token. Required when sink is <code>https://</code>.</td></tr>
+          <tr><td>BATON_VENDOR_ID</td><td><code>local</code></td><td>Labels the install for the operator. A placeholder: <strong>a remote sink refuses to start while it is still <code>local</code></strong>, because the Console buckets friction by vendor.</td></tr>
+          <tr><td>BATON_TENANT_TYPE</td><td><code>vendor</code></td><td><code>vendor</code> ships signal to the wrapped server&#39;s vendor Console; <code>customer</code> ships to the end user&#39;s own tenant, and keeps the report tool alongside an HTTP sink.</td></tr>
+          <tr><td>BATON_INTENT_PARAM</td><td><code>required</code></td><td>Injection mode for the intent parameters. <code>required</code> lists <code>user_goal</code> in the advertised required set; <code>optional</code> does not. That is an advertisement only: nothing validates it and no call fails for omitting it.</td></tr>
+          <tr><td>BATON_PRINCIPAL_ID_HMAC_KEY</td><td>unset</td><td>Per-tenant secret keying the <code>principal_id</code> hash. <strong>Named <code>BATON_USER_ID_HMAC_KEY</code> before 0.6.8</strong>, and no longer read under that name. An install still setting the old one logs a startup warning and captures no <code>principal_id</code>. Hashed at the edge, so no sink sees a raw principal. Unset means <code>principal_id</code> is skipped and events still emit. <strong>Generate it with <code>openssl rand -hex 32</code></strong>. The input space is emails and user ids, small and guessable, so a memorable key is not a weaker pseudonym but none at all: it can be dictionary-attacked back to raw identities.</td></tr>
+          <tr><td>BATON_UPSTREAM_AUTH_TOKEN</td><td>unset</td><td>Credential for the <code>--url</code> bridge, sent upstream as <code>Authorization: Bearer</code>. Ignored by the stdio form.</td></tr>
+          <tr><td>BATON_UPSTREAM_TIMEOUT</td><td><code>60</code></td><td>Read timeout in seconds for the <code>--url</code> bridge.</td></tr>
+          <tr><td>BATON_PROXY_LOG_FILE</td><td>unset</td><td>Path to tee proxy logs to.</td></tr>
+        </tbody>
+      </table>
+      <h3>The three rungs</h3>
+      <table class="docs-table">
+        <thead><tr><th>Rung</th><th>Sink</th><th>Env additions</th></tr></thead>
+        <tbody>
+          <tr><td>1. Default</td><td>stderr + /tmp/baton-proxy.jsonl</td><td style="color:var(--mute-2)">none</td></tr>
+          <tr><td>2. Custom local</td><td>Your path</td><td><code>BATON_EVENT_SINK=file:///your/path.jsonl</code></td></tr>
+          <tr><td>3. Ship to Console</td><td>Hosted</td><td><code>BATON_EVENT_SINK</code> + <code>BATON_API_KEY</code> + <code>BATON_TENANT_ID</code> + <code>BATON_CONSENT_TOKEN</code> + <code>BATON_VENDOR_ID</code></td></tr>
+        </tbody>
+      </table>
+      <div class="note"><strong>Startup guard:</strong> the proxy refuses to start when an <code>https://</code> sink is configured but <code>BATON_API_KEY</code> is unset, or <code>BATON_CONSENT_TOKEN</code> or <code>BATON_VENDOR_ID</code> is still <code>"local"</code>.</div>
+      <h3 id="remote">Remote servers</h3>
+      <p>The proxy also fronts a remote HTTPS MCP server over the Streamable HTTP transport, instead of spawning a subprocess. It stays stdio-facing to Claude and forwards each message as an HTTP POST, streaming the JSON or SSE response back. Injection, emission and correlation are the same code as the subprocess path.</p>
+      <pre>{
+  "command": "baton-proxy",
+  "args": ["--url", "https://mcp.vendor.example.com/mcp"],
+  "env": { "BATON_UPSTREAM_AUTH_TOKEN": "..." }
+}</pre>
+      <p><code>--url</code> and the <code>-- &lt;command&gt;</code> form are mutually exclusive.</p>
+      <div class="note">Bridge scope today: the client-initiated request and response loop only. It does not open the standing GET SSE channel, so server-initiated messages (sampling, elicitation, notifications) are not captured, and requests are serialised. When the upstream is unreachable the handshake degrades to a synthetic healthy response rather than an error, so the client attaches and <code>baton_annotate</code> stays usable instead of the session wedging.</div>
+
+      <h3 id="injected-tools">Injected tools</h3>
+      <p>The proxy adds its own tools to the upstream server&#39;s tool list during the MCP handshake. The upstream server never sees them. <code>baton_annotate</code> is always there; the report tool depends on your sinks.</p>
+      <div class="card"><h3><code>baton_annotate</code></h3><p>Called by Claude (unprompted) when it hits friction. Emits an annotation event with <code>signal_type</code>, <code>intent</code>, <code>suggested_improvement</code>, and optional context. Available in all sink modes.</p></div>
+      <div class="card"><h3><code>baton_session_report</code></h3><p>Called when the customer asks <em>"Show me the friction report for this session."</em> Returns a markdown summary of the session. Needs a <code>file://</code> sink to read from, which the default install has, so a <code>stderr:</code>-only install does not get it. Suppressed when an <code>https://</code> sink is also present, which is the vendor production shape; set <code>BATON_TENANT_TYPE=customer</code> to keep it there.</p></div>
+      <h2 id="proxy-captures">What it captures</h2>
+      <p>Per real tool call, three event types are emitted matching the <a href="https://github.com/good-timing/baton/blob/main/docs/SPEC.md" style="color:var(--brand)">Baton wire format</a>:</p>
+      <table class="docs-table">
+        <thead><tr><th>Event</th><th>Payload fields</th></tr></thead>
+        <tbody>
+          <tr><td>tool_call_start</td><td>tool_name, params</td></tr>
+          <tr><td>tool_call_end</td><td>tool_name, result, duration_ms</td></tr>
+          <tr><td>tool_call_error</td><td>tool_name, error_type, error_body, duration_ms</td></tr>
+        </tbody>
+      </table>
+      <p>Each line in the events file is one JSON object, <code>{ event_type, payload }</code>. A silent failure (a 200 that carried an error) lands like this:</p>
+      <pre>{"event_type":"tool_call_start","payload":{"tool_name":"run_sql","params":{"statement":"ALTER TABLE orders ADD CONSTRAINT fk_customer FOREIGN KEY (customer_id) REFERENCES customers(id)"}}}
+{"event_type":"tool_call_end","payload":{"tool_name":"run_sql","result":"200 OK — body: \"foreign keys are not supported\"","duration_ms":412}}
+{"event_type":"annotation","payload":{"signal_type":"failure","intent":"add a foreign key so an order can't reference a missing customer","suggested_improvement":"reject unsupported DDL with an error instead of a silent 200"}}</pre>
+      <h3 id="intent-params">Intent parameters</h3>
+      <p>This is how the proxy captures <em>why</em> a call was made, not just what happened. At <code>tools/list</code> it adds three string parameters to every upstream tool&#39;s advertised schema. The agent fills them in as it composes each call, and the proxy strips them at <code>tools/call</code> before forwarding.</p>
+      <table class="docs-table">
+        <thead><tr><th>Parameter</th><th>Captured as</th></tr></thead>
+        <tbody>
+          <tr><td><code>user_goal</code></td><td><code>tool_call_start.payload.call_intent</code></td></tr>
+          <tr><td><code>expected_result</code></td><td><code>tool_call_start.payload.call_expected</code>, omitted when the agent did not fill it in</td></tr>
+          <tr><td><code>overall_task</code></td><td><code>tool_call_start.payload.call_workflow</code>. The task label sessions are grouped by, so it is only useful when the agent repeats the same string across a task</td></tr>
+        </tbody>
+      </table>
+      <p>In the default mode, <code>user_goal</code> is the one advertised in each tool&#39;s <code>required</code> list. That is advertisement only: a call that omits it is served exactly as it would be unwrapped, and <code>call_intent</code> is simply null. Measured on proxy 0.6.8, a wrapped tool&#39;s schema lists <code>["customer", "user_goal"]</code> as required where the unwrapped one listed <code>["customer"]</code>.</p>
+      <p>A parameter description reaches the model at the moment it composes the call, on every client. Some clients drop <code>InitializeResult.instructions</code> entirely, so instructions alone are not a reliable channel. A tool that already declares a parameter of that name is left alone: its value is forwarded untouched and never read as intent.</p>
+      <div class="note"><strong>Fail-open:</strong> if injection or stripping raises, the message is forwarded unmodified. A bug in intent capture cannot break a tool call.</div>
+
+      <h2 id="trust">Trust &amp; security</h2>
+      <ul>
+        <li><strong style="color:var(--ink)">Open source, Apache 2.0.</strong> <a href="https://github.com/good-timing/baton-proxy" style="color:var(--brand)">github.com/good-timing/baton-proxy</a></li>
+        <li><strong style="color:var(--ink)">Fail-open.</strong> A Console outage never breaks the MCP pipe. Emission is enqueued on a background thread.</li>
+        <li><strong style="color:var(--ink)">Outbound-only.</strong> The proxy never accepts inbound connections.</li>
+        <li><strong style="color:var(--ink)">No external dependencies.</strong> Pure stdlib: no pydantic, no httpx.</li>
+        <li><strong style="color:var(--ink)">Credential isolation.</strong> <code>BATON_*</code> vars are filtered from the upstream subprocess env.</li>
+      </ul>
+    </div>
+      </div>
+    </div>
+
     <div id="tab-console" hidden>
-      <p class="stage-eyebrow"><span class="step">Stage 3 · Act</span> &nbsp;·&nbsp; turn the signal into a roadmap</p>
+      <p class="stage-eyebrow">turn the signal into a roadmap</p>
       <h2 id="console-overview">Overview</h2>
       <p>The proxy and the SDK capture friction one server at a time. The Baton Console is the hosted service that collects those events across every customer and every session and turns them into something you can act on. It does what a single local report can&#39;t: it shows the friction across your whole customer base, ranked, with the evidence behind every number one click away.</p>
       <ul>
@@ -1051,8 +957,8 @@ install_baton(mcp, VendorConfig(dsn="https://baton_pk_...@baton.goodtiming.ai/te
 
 <script>
   const tabs = document.querySelectorAll('.tab-btn');
-  const panes = { overview: document.getElementById('tab-overview'), proxy: document.getElementById('tab-proxy'), sdk: document.getElementById('tab-sdk'), gateway: document.getElementById('tab-gateway'), console: document.getElementById('tab-console') };
-  const sidebars = { overview: document.getElementById('sidebar-overview'), proxy: document.getElementById('sidebar-proxy'), sdk: document.getElementById('sidebar-sdk'), gateway: document.getElementById('sidebar-gateway'), console: document.getElementById('sidebar-console') };
+  const panes = { overview: document.getElementById('tab-overview'), deploy: document.getElementById('tab-deploy'), console: document.getElementById('tab-console') };
+  const sidebars = { overview: document.getElementById('sidebar-overview'), deploy: document.getElementById('sidebar-deploy'), console: document.getElementById('sidebar-console') };
 
   function switchTab(name, updateHash = true) {
     tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === name));
@@ -1087,7 +993,12 @@ install_baton(mcp, VendorConfig(dsn="https://baton_pk_...@baton.goodtiming.ai/te
   // panes are hidden by position, so a nested <pre> inside a .code-pane must
   // not be counted as a pane of its own.
   document.querySelectorAll('.code-tabs').forEach(container => {
-    const btns = container.querySelectorAll('.code-tab-btn');
+    // ':scope >' matters now that .code-tabs NESTS: the Deploy tab is a
+    // three-path selector whose SDK pane contains the mcp/fastmcp/TS one. An
+    // unscoped query hands the outer container the inner buttons too, so
+    // codePanes[j] is undefined and the click handler throws during setup —
+    // which kills every listener wired after it, not just this group.
+    const btns = container.querySelectorAll(':scope > .code-tab-bar > .code-tab-btn');
     const codePanes = container.querySelectorAll(':scope > pre, :scope > .code-pane');
     btns.forEach((btn, i) => {
       btn.addEventListener('click', () => {
@@ -1143,6 +1054,26 @@ install_baton(mcp, VendorConfig(dsn="https://baton_pk_...@baton.goodtiming.ai/te
   // to a target inside it. The Overview's Next-steps cards are exactly those
   // links, so the page's main call to action was dead on click and worked
   // after a reload — which is also why no test caught it.
+  // Reveal the inner path pane a target sits in, if any.
+  //
+  // The Deploy tab holds three .code-pane children, and switchTab only toggles
+  // the OUTER pane. Without this a link from PyPI to #configuration opens
+  // Deploy with the SDK path showing and the target still `hidden` — the
+  // browser cannot scroll to it, so the reader lands at the top of the wrong
+  // path and nothing reports it. Clicking the owning button reuses the page's
+  // one switcher rather than toggling `hidden` behind its back, so the button
+  // state and the pane state cannot drift apart.
+  function revealPathFor(target) {
+    const pane = target && target.closest('.code-pane');
+    if (!pane) return;
+    const container = pane.closest('.code-tabs');
+    if (!container) return;
+    const panes = [...container.querySelectorAll(':scope > pre, :scope > .code-pane')];
+    const btns = container.querySelectorAll('.code-tab-btn');
+    const i = panes.indexOf(pane);
+    if (i >= 0 && btns[i] && !btns[i].classList.contains('active')) btns[i].click();
+  }
+
   function applyHash() {
     const hash = location.hash.replace('#', '');
     const tab = tabForHash(hash);
@@ -1150,7 +1081,23 @@ install_baton(mcp, VendorConfig(dsn="https://baton_pk_...@baton.goodtiming.ai/te
     switchTab(tab, !isSection);
     if (isSection) {
       const target = document.getElementById(hash);
-      if (target) requestAnimationFrame(() => target.scrollIntoView());
+      revealPathFor(target);
+      // `behavior: "instant"` is load-bearing, not a preference. `:root` sets
+      // `scroll-behavior: smooth`, and under it a programmatic scroll here is
+      // silently DROPPED: measured 2026-09-16, `scrollIntoView()` left scrollY
+      // at 0 with the target 9475px down, while the same call with "instant"
+      // moved it and put the target 180px from the top.
+      //
+      // It only looked fine before because the BROWSER's own fragment jump did
+      // the scrolling and this call did nothing. Once a target can sit inside a
+      // hidden path pane the browser has nothing to jump to, so the no-op
+      // stops being invisible.
+      //
+      // Called SYNCHRONOUSLY, and that is the other half. Measured the same
+      // day: the identical call inside requestAnimationFrame is a no-op, with
+      // one frame or two, while calling it directly moves the offset. The
+      // reveal above is synchronous, so there is nothing left to wait for.
+      if (target) target.scrollIntoView({ behavior: "instant" });
     }
     // ⚠ KNOWN WART, left alone deliberately. A bare tab name (#sdk, #gateway,
     // …) matches no element, so nothing scrolls: a reader 1200px down the
