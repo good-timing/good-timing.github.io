@@ -301,25 +301,32 @@
           <p class="stepline">Step 1 <span>&middot; install</span></p>
           <pre>pip install "baton-sdk[fastmcp]&gt;=0.8.8"</pre>
           <p class="stepline">Step 2 <span>&middot; instrument</span></p>
-          <p>Two lines: the import, and the call. Tools registered before or after it are both captured.</p>
+          <p>One import and one call. The DSN is a single string from <strong>/account</strong> that packs your workspace, this server and the key that binds them, so nothing else needs configuring. Tools registered before or after the call are both captured.</p>
           <pre>from fastmcp import FastMCP
-from baton import install_baton, VendorConfig
+from baton import install_baton
 
 mcp = FastMCP("Acme Knowledge Base")
-install_baton(mcp, VendorConfig(
-    vendor_id="acme-kb",
-    tenant_id="acme",
-    vendor_display_name="Acme Knowledge Base",
-))
+install_baton(mcp, dsn="https://baton_pk_...@baton.goodtiming.ai/ten_.../acme-kb")
 
 @mcp.tool
 def search_orders(customer: str) -&gt; dict:
     return {"order_id": "o_123", "status": "shipped"}</pre>
           <p class="stepline">Step 3 <span>&middot; run it</span></p>
-          <p>Leave out <code>sink</code> and events go to stderr as JSON Lines, one per line.</p>
-          <pre>python server.py 2&gt;events.jsonl</pre>
+          <pre>python server.py</pre>
           <p class="stepline">Step 4 <span>&middot; verify</span></p>
-          <p>One tool call produces three events: <code>tool_call_start</code>, <code>tool_call_end</code>, and a <code>surface_snapshot</code> describing the server. The first, formatted:</p>
+          <p>Drive a tool call from your MCP client. One call produces three events, a <code>tool_call_start</code>, a <code>tool_call_end</code> and a <code>surface_snapshot</code> describing the server, and they appear on the Console&#39;s Live tab as they arrive. <a href="#console" style="color:var(--brand)">Console reference →</a></p>
+
+          <h3 id="sdk-no-key">Trying it without a key</h3>
+          <p>Name the parts instead of passing a DSN and the events go to stderr as JSON Lines, so you can read exactly what Baton captures before you sign up for anything. A DSN and an explicit <code>sink</code> are mutually exclusive, so this is the form to use when you want the events locally.</p>
+          <pre>from baton import install_baton, VendorConfig
+
+install_baton(mcp, VendorConfig(
+    vendor_id="acme-kb",
+    tenant_id="acme",
+    vendor_display_name="Acme Knowledge Base",
+))</pre>
+          <pre>python server.py 2&gt;events.jsonl</pre>
+          <p>The first event, formatted:</p>
           <pre class="pre-output">{
   "event_id": "01a0a8cb-d94f-74bd-8cb5-53a4287d53a3",
   "tenant_id": "acme",
@@ -343,7 +350,7 @@ def search_orders(customer: str) -&gt; dict:
   }
 }</pre>
           <p><strong>Abridged.</strong> <code>runtime_meta</code> is the <code>_meta</code> block the client attaches to each request, per call rather than per session, and a few transport fields are left out. Every key shown is one the SDK emits, with the values from that run.</p>
-          <p>The four intent fields are null here because the call came from a script, not an agent. When an agent makes it, <code>call_intent</code> and <code>call_expected</code> carry what it was trying to do, <code>call_workflow</code> the wider task, and <code>intent_source</code> reads <code>injected_param</code> once any of them is filled, marking the value as one the agent typed into an injected parameter rather than one carried by an annotation call. See <a href="#mcp-integration" style="color:var(--brand)">MCP integration</a>.</p>
+          <p>The four intent fields are null here because the call came from a script, not an agent. When an agent makes it, <code>call_intent</code> and <code>call_expected</code> carry what it was trying to do, <code>call_workflow</code> the wider task, and <code>intent_source</code> reads <code>injected_param</code> once any of them is filled, marking the value as one the agent typed into an injected parameter rather than one carried by an annotation call. See <a href="#mcp-integration" style="color:var(--brand)">MCP integration</a>, or <a href="#without-dsn" style="color:var(--brand)">Without a DSN</a> for the full set of fields.</p>
         </div>
 
         <div class="code-pane" hidden>
