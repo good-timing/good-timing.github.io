@@ -343,8 +343,8 @@ def search_orders(customer: str) -&gt; dict:
     "intent_source": null
   }
 }</pre>
-          <p><strong>Abridged.</strong> <code>runtime_meta</code> carries the client&#39;s whole handshake block, and a few transport fields are left out. Every key shown is one the SDK emits, with the values from that run.</p>
-          <p>The four intent fields are null here because the call came from a script, not an agent. When an agent makes it, <code>call_intent</code> and <code>call_expected</code> carry what it was trying to do, <code>call_workflow</code> the wider task, and <code>intent_source</code> records which route supplied them — <code>injected_param</code> for a value the agent typed into an injected parameter, unset when it came from an annotation call — see <a href="#mcp-integration" style="color:var(--brand)">MCP integration</a>.</p>
+          <p><strong>Abridged.</strong> <code>runtime_meta</code> is the <code>_meta</code> block the client attaches to each request &mdash; per call, not per session &mdash; and a few transport fields are left out. Every key shown is one the SDK emits, with the values from that run.</p>
+          <p>The four intent fields are null here because the call came from a script, not an agent. When an agent makes it, <code>call_intent</code> and <code>call_expected</code> carry what it was trying to do, <code>call_workflow</code> the wider task, and <code>intent_source</code> reads <code>injected_param</code> once any of them is filled, marking the value as one the agent typed into an injected parameter rather than one carried by an annotation call — see <a href="#mcp-integration" style="color:var(--brand)">MCP integration</a>.</p>
         </div>
 
         <div class="code-pane" hidden>
