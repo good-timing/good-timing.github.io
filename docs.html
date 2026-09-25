@@ -880,13 +880,14 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
         <tbody>
           <tr><td>tool_call_start</td><td>tool_name, params</td></tr>
           <tr><td>tool_call_end</td><td>tool_name, result, duration_ms</td></tr>
-          <tr><td>tool_call_error</td><td>tool_name, error_type, error_body, duration_ms</td></tr>
+          <tr><td>tool_call_error</td><td>tool_name, error_type, error_body, duration_ms, and <code>result</code> &mdash; the full response body, on the shape below</td></tr>
         </tbody>
       </table>
-      <p>Each line in the events file is one JSON object, <code>{ event_type, payload }</code>. A silent failure (a 200 that carried an error) lands like this:</p>
+      <p>Each line in the events file is one JSON object, <code>{ event_type, payload }</code>. A failure the server returned rather than raised &mdash; MCP files one as a <em>successful</em> 200 whose body sets <code>isError</code> &mdash; lands like this:</p>
       <pre>{"event_type":"tool_call_start","payload":{"tool_name":"run_sql","params":{"statement":"ALTER TABLE orders ADD CONSTRAINT fk_customer FOREIGN KEY (customer_id) REFERENCES customers(id)"}}}
-{"event_type":"tool_call_end","payload":{"tool_name":"run_sql","result":"200 OK — body: \"foreign keys are not supported\"","duration_ms":412}}
+{"event_type":"tool_call_error","payload":{"tool_name":"run_sql","error_type":"tool_error","error_body":"foreign keys are not supported","result":{"content":[{"type":"text","text":"foreign keys are not supported"}],"isError":true},"duration_ms":412}}
 {"event_type":"annotation","payload":{"signal_type":"failure","intent":"add a foreign key so an order can't reference a missing customer","suggested_improvement":"reject unsupported DDL with an error instead of a silent 200"}}</pre>
+      <div class="note"><strong>This is the case the event type exists for.</strong> The call succeeded at the protocol level and failed at the product level, so classifying on exceptions alone counts it as a success. <code>error_type</code> is the literal <code>tool_error</code> rather than an exception class, because there is no exception; <code>result</code> carries the whole response body, because the reason lives inside it and a flat <code>error_body</code> string would be all that survived. Proxy 0.6.11 and later; the Python SDK from 0.8.10 and the TypeScript SDK from 0.4.0 classify the same shape the same way. The <a href="#gateway" style="color:var(--brand)">gateway</a> path also files it as <code>tool_call_error</code>, and is the one path that does not carry <code>result</code>.</div>
       <h3 id="intent-params">Intent parameters</h3>
       <p>This is how the proxy captures <em>why</em> a call was made, not just what happened. At <code>tools/list</code> it adds three string parameters to every upstream tool&#39;s advertised schema. The agent fills them in as it composes each call, and the proxy strips them at <code>tools/call</code> before forwarding.</p>
       <table class="docs-table">
