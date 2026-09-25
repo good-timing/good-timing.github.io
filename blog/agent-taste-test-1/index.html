@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta property="og:title" content="An agent tuned the same slow query on 3 Postgres MCP servers. It had notes.">
+<meta property="og:description" content="We gave one agent one slow query and the same one-line ask on Supabase, Neon and Postgres MCP Pro, wrapped each in Baton, and wrote down what it said. 143 to 513 seconds, 7 of 9 runs built an index nobody asked for.">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://goodtiming.ai/baton-share-wide.png">
+<meta property="og:image:width" content="2400">
+<meta property="og:image:height" content="1260">
+<meta property="og:url" content="https://goodtiming.ai/blog/agent-taste-test-1/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://goodtiming.ai/baton-share-wide.png">
+<!-- Fathom - beautiful, simple website analytics -->
+<script src="https://cdn.usefathom.com/script.js" data-site="NUDNHGRI" defer></script>
+<!-- / Fathom -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>An agent tuned the same slow query on 3 Postgres MCP servers. It had notes.</title>
+  <meta name="description" content="We gave one agent one slow query and the same one-line ask on Supabase, Neon and Postgres MCP Pro, wrapped each in Baton, and wrote down what it said. 143 to 513 seconds, 7 of 9 runs built an index nobody asked for.">
+  <link rel="canonical" href="https://goodtiming.ai/blog/agent-taste-test-1/">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230ca678'/%3E%3Crect x='10' y='28' width='44' height='8' rx='4' fill='%230b0c10' transform='rotate(-30 32 32)'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Design tokens lifted from docs.html, so the blog, the docs and the
+         front door read as one system. */
+      --page: #f7f8fa; --card: #fff; --line: #e5e7eb; --line-soft: #f1f3f5;
+      --ink: #111827; --ink-2: #1f2937; --ink-3: #4b5563;
+      --mute: #6b7280; --mute-2: #9ca3af;
+      --blue: #3651d4; --blue-soft: #eef2ff; --blue-edge: #c7d2fe;
+      --brand: #0ca678;           /* LOCKED 9/1/26: emerald, the brand colour */
+      --mark: #bdeeda;            /* LOCKED 9/1/26: the highlight wash, derived from emerald */
+      --brand-ink: #0b7d5c;
+      --brand-wash: #eafaf3;
+      --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--sans); background: var(--page); color: var(--ink); line-height: 1.6; -webkit-font-smoothing: antialiased; padding-top: 72px; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ---------- top nav (verbatim from docs.html) ---------- */
+    body > nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      height: 72px; box-sizing: border-box;
+      padding: 0 max(20px, calc((100% - 1240px) / 2));
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(255,255,255,0.88); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; letter-spacing: -0.01em; line-height: 1.2; color: var(--ink); }
+    .nav-brand-mark { width: 25px; height: 25px; flex-shrink: 0; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230ca678'/%3E%3Crect x='10' y='28' width='44' height='8' rx='4' fill='%230b0c10' transform='rotate(-30 32 32)'/%3E%3C/svg%3E") center/contain no-repeat; }
+    .nav-brand-sub { color: var(--mute-2); font-weight: 400; font-size: 12px; margin-left: 3px; }
+    .nav-right { display: flex; align-items: center; gap: 20px; }
+    .nav-link { color: var(--ink-3); font-size: 13.5px; font-weight: 500; line-height: 1.2; transition: color 0.15s; }
+    .nav-link:hover { color: var(--ink); }
+    .nav-link.active { color: var(--brand); font-weight: 600; }
+    .nav-github { color: var(--mute-2); display: inline-flex; align-items: center; transition: color 0.15s; }
+    .nav-github svg { display: block; }
+    .nav-github:hover { color: var(--ink); }
+    .btn { display: inline-flex; align-items: center; white-space: nowrap; padding: 9px 20px; border-radius: 10px; font-size: 14px; font-weight: 600; line-height: 1.2; cursor: pointer; transition: filter 0.18s; border: 1px solid transparent; color: #fff; background: var(--brand); text-decoration: none; }
+    .btn:hover { filter: brightness(1.06); }
+
+    /* ---------- article ---------- */
+    .post { max-width: 760px; margin: 0 auto; padding: 56px 32px 80px; }
+    .post-kicker { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--brand); margin-bottom: 14px; }
+    .post-kicker a:hover { text-decoration: underline; }
+    .post h1 { font-size: 36px; line-height: 1.18; font-weight: 700; letter-spacing: -0.022em; color: var(--ink); margin-bottom: 16px; }
+    .post-byline { font-size: 14px; color: var(--mute); margin-bottom: 40px; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
+    .post-byline strong { color: var(--ink-2); font-weight: 500; }
+    .post h2 { font-size: 24px; font-weight: 600; letter-spacing: -0.015em; color: var(--ink); margin: 3rem 0 0.9rem; }
+    .post p { color: var(--ink-2); font-size: 17px; line-height: 1.7; margin-bottom: 1.1rem; }
+    .post p a, .post li a, .post figcaption a { color: var(--blue); }
+    .post p a:hover, .post li a:hover { text-decoration: underline; }
+    .post ol, .post ul { margin: 0.25rem 0 1.25rem 1.4rem; }
+    .post li { color: var(--ink-2); font-size: 17px; line-height: 1.65; margin-bottom: 0.3rem; }
+    .post strong { color: var(--ink); font-weight: 600; }
+    .post em { color: var(--ink-2); }
+    code { font-family: var(--mono); font-size: 0.86em; color: var(--ink-2); background: var(--line-soft); padding: 1px 5px; border-radius: 4px; }
+    pre { background: #f6f8fa; border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; font-family: var(--mono); font-size: 12.5px; color: var(--ink-2); overflow-x: auto; margin: 0.75rem 0 1.25rem; line-height: 1.65; }
+    pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+
+    /* What Baton captured, quoted: a left rule in the brand colour and the
+       agent's own words in the body size, one step smaller. */
+    .post blockquote { border-left: 3px solid var(--brand); background: var(--card); border-radius: 0 10px 10px 0; padding: 12px 18px; margin: 0.25rem 0 1.25rem; }
+    .post blockquote p { font-size: 15.5px; color: var(--ink-2); margin-bottom: 0.4rem; }
+    .post blockquote p:last-child { margin-bottom: 0; }
+    .post blockquote code { background: #fdecec; color: #b42318; }
+
+    .post-table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 0.75rem 0 1.5rem; background: var(--card); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+    .post-table th { text-align: left; font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mute); padding: 10px 14px; border-bottom: 1px solid var(--line); background: #fbfbfc; }
+    .post-table td { padding: 9px 14px; border-bottom: 1px solid var(--line-soft); color: var(--ink-2); vertical-align: top; }
+    .post-table tr:last-child td { border-bottom: none; }
+    .table-wrap { overflow-x: auto; }
+
+    /* Figures break out of the text column so console captures show at the
+       product's own type size; the width attribute on each img is its 1x size. */
+    figure { width: min(1080px, 100vw - 32px); margin: 0.75rem 0 1.75rem 50%; transform: translateX(-50%); }
+    figure img { display: block; max-width: 100%; height: auto; margin: 0 auto; border: 1px solid var(--line); border-radius: 10px; background: var(--card); }
+    figcaption { font-size: 13.5px; color: var(--mute); line-height: 1.5; margin: 8px auto 0; max-width: 760px; }
+
+    details { border: 1px solid var(--line); border-radius: 10px; background: var(--card); padding: 12px 16px; margin: 2rem 0 0; }
+    summary { cursor: pointer; font-size: 14.5px; font-weight: 500; color: var(--ink-2); }
+    details p { font-size: 15px; margin-top: 0.75rem; }
+    details pre { margin-bottom: 0.25rem; }
+
+    /* ---------- footer (verbatim from docs.html) ---------- */
+    footer { padding: 36px 32px 48px; border-top: 1px solid var(--line); background: var(--card); }
+    .footer-row { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; color: var(--mute-2); font-size: 12.5px; }
+    .footer-brand { color: var(--mute); }
+    .footer-brand strong { color: var(--ink); font-weight: 600; }
+    .footer-links a { color: var(--mute); margin-left: 18px; }
+    .footer-links a:hover { color: var(--ink); }
+
+    @media (max-width: 760px) {
+      body > nav { height: 60px; padding: 0 16px; }
+      .nav-home { display: none; }
+      .nav-right { gap: 14px; }
+      .nav-brand-sub { display: none; }
+      body { padding-top: 60px; }
+      .post { padding: 32px 16px 56px; }
+      .post h1 { font-size: 28px; }
+      .post p, .post li { font-size: 16px; }
+      .post-table { font-size: 13px; }
+      .post-table th, .post-table td { padding: 8px 10px; }
+      footer { padding: 28px 16px 40px; }
+      .footer-links a { margin-left: 0; margin-right: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-brand">
+    <span class="nav-brand-mark" aria-hidden="true"></span>
+    <span>Baton <span class="nav-brand-sub">by Good Timing</span></span>
+  </a>
+  <div class="nav-right">
+    <a href="/" class="nav-link nav-home">Home</a>
+    <a href="/docs.html" class="nav-link">Docs</a>
+    <a href="/blog/" class="nav-link active">Blog</a>
+    <a href="https://github.com/good-timing" class="nav-github" aria-label="Baton on GitHub" target="_blank" rel="noopener">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.54-3.88-1.54-.52-1.34-1.28-1.69-1.28-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.3-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18.92-.26 1.91-.39 2.89-.39.98 0 1.97.13 2.89.39 2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.76.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.4-5.25 5.69.41.36.78 1.07.78 2.17v3.22c0 .31.21.67.8.56C20.71 21.39 24 17.08 24 12 24 5.65 18.85.5 12.5.5h-.5z"/></svg>
+    </a>
+    <a href="https://baton.goodtiming.ai/" class="btn">Get started</a>
+  </div>
+</nav>
+
+<article class="post">
+  <div class="post-kicker"><a href="/blog/">Agent taste test #1</a></div>
+  <h1>An agent tuned the same slow query on 3 Postgres MCP servers. It had notes.</h1>
+  <div class="post-byline"><strong>Dave Eyler, Good Timing</strong> &nbsp;&middot;&nbsp; [PLACEHOLDER: publish date]</div>
+<p>Agents are the new users of your product. They don't fill out surveys, but they are happy to tell you what they think, if you know how to ask. We gave one a slow query, told it to make it 10 times faster on <a href="https://github.com/supabase/mcp">Supabase</a>, <a href="https://github.com/neondatabase/mcp-server-neon">Neon</a> and <a href="https://github.com/crystaldba/postgres-mcp">Postgres MCP Pro</a>, and wrote down what it said along the way.</p>
+<p>We used the same agent (Claude Code on Claude Opus 5), the same data, the same query and the same one-line ask on all 3: make it at least 10 times faster. We wrapped each server in <a href="https://goodtiming.ai">Baton</a>, which we make. It records what the agent was trying to do on every call and gives it a place to file a complaint.</p>
+<h2>The task</h2>
+<p>The agent gets the query and one sentence: <em>"This query takes 34 seconds. Make it at least 10 times faster."</em> The data is Formula 1 lap times, 1.6 million rows, and the query finds the best lap for drivers of one nationality. <strong>This query has an easy fix.</strong> It's slow because of a correlated subquery that runs once per row. Pull it out into one grouped pass and it drops from 34 seconds to under a fifth of a second. The full query is at the bottom.</p>
+<h2>Results: All over the place</h2>
+<p>Every run eventually got the fast query, but how they achieved it and how long it took varied widely.</p>
+<div class="table-wrap"><table class="post-table">
+<thead>
+<tr>
+<th>MCP Server</th>
+<th>Run</th>
+<th>Agent time (s)</th>
+<th>Ran the slow query</th>
+<th>Built an index</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Supabase</td>
+<td>1</td>
+<td>513 s</td>
+<td>4 times</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>Supabase</td>
+<td>2</td>
+<td>218 s</td>
+<td>3 times</td>
+<td>no</td>
+</tr>
+<tr>
+<td>Supabase</td>
+<td>3</td>
+<td>211 s</td>
+<td>1 time</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>Neon</td>
+<td>1</td>
+<td>309 s</td>
+<td>2 times</td>
+<td>yes, 2 of them</td>
+</tr>
+<tr>
+<td>Neon</td>
+<td>2</td>
+<td>290 s</td>
+<td>1 time</td>
+<td>no</td>
+</tr>
+<tr>
+<td>Postgres MCP Pro</td>
+<td>1</td>
+<td>159 s</td>
+<td>1 time</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>Postgres MCP Pro</td>
+<td>2</td>
+<td>224 s</td>
+<td>2 times</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>Postgres MCP Pro</td>
+<td>3</td>
+<td>196 s</td>
+<td>2 times</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>Postgres MCP Pro</td>
+<td>4</td>
+<td>143 s</td>
+<td>1 time</td>
+<td>yes</td>
+</tr>
+</tbody>
+</table></div>
+<p>Time to complete ranged from 143 seconds to 513, and the original slow query was run anywhere from 1 to 4 times. Most runs shipped an index, which you probably don't want unless you're required not to change the query, and we gave no such requirement. There were also some deep-sea expeditions to verify the results, which we'll cover in the next section.</p>
+<h2>Reliable results start with knowing what the agent was doing</h2>
+<p>At this point, many people shrug. Agents, who knows why they do what they do. Non-determinism, and so on. We can do better, because Baton lets us see inside their heads.</p>
+<p>There are 3 problems:</p>
+<ol>
+<li>Extra runs of the slow query</li>
+<li>Building an index</li>
+<li>Verification of results</li>
+</ol>
+<p><strong>1. Extra runs of the slow query.</strong> One run of the original is unavoidable; the agent needs a number. The extra runs are the problem. The first run was usually <code>EXPLAIN ANALYZE</code>, which gives it the time but not the results, so the agent ran it again to get them. We know because in Baton we see:</p>
+<figure><img src="img/supabase-baseline-card.png" alt="Supabase run 1 in Baton, the call at 1m 36s." width="844" loading="lazy"><figcaption>Supabase run 1 in Baton, the call at 1m 36s.</figcaption></figure>
+<p>That was Supabase run 1, 35.8 seconds. Neon run 1 did the same, for 63 seconds. Supabase run 2, 38 seconds. It's a sensible instinct that costs at least 1 extra execution of a query that we are optimizing because it's taking too long, so this can be expensive. In the server's log it is 1 more <code>execute_sql</code>, indistinguishable from the first.</p>
+<p><strong>2. Building an index.</strong> All 3 servers built one, 7 of 9 runs in total, and none needed to, because a rewrite is sufficient. Neon run 1 says why it did:</p>
+<blockquote>
+<p><strong>intent:</strong> Measure how much the new index alone speeds up the unmodified query.</p>
+</blockquote>
+<p>This agent decided that no code changes was the important thing, which makes sense, because we never told it otherwise.</p>
+<p><strong>3. Verification of results.</strong> After rewriting, the agent checked that the new query gives the same answer as the old one. It did that by running the old 34-second query again, for all 800 drivers instead of one. On Supabase run 1 that timed out twice, 241 seconds of a 513-second session:</p>
+<blockquote>
+<p><strong>intent:</strong> Prove the rewritten query returns identical results to the original across many drivers.</p>
+</blockquote>
+<p>Then it built an index, just so the check could finish:</p>
+<blockquote>
+<p><strong>intent:</strong> Add a covering index so per-driver laptime lookups stop scanning the entire 1.6M-row index</p>
+<p><strong>expected:</strong> Index created without blocking writes</p>
+</blockquote>
+<p>The check passed in 14 seconds, and the index shipped with the fix. Checking the fix cost more than the fix, and left something behind.</p>
+<p>That is where the time went: extra runs of the slow query, an index nobody asked for, and verifying results by running the slow query yet again. All 3 are the agent filling in what we never told it. This would have been very difficult to figure out with server logs alone, but with the intents from Baton, we can easily identify the root cause, and how to fix it.</p>
+<h2>Our version</h2>
+<p>We want a reliable query tuning experience, so we <a href="https://github.com/good-timing/postgres-mcp-tune">forked Postgres MCP Pro</a> and added one tool, <code>tune_query</code>. Everything else in the server is untouched.</p>
+<p>It takes the query and 2 flags, may the query text change and may indexes be added, which default to yes and no.</p>
+<p>It runs the query once and returns the plan, the timing, the result rows and a hash of the full result together. There's nothing left to run the original for. And it returns the exact statement to hash a rewrite the same way, so verifying a rewrite is a comparison of 2 hashes instead of a re-run of the original.</p>
+<p>The response ends with the rule that applies to the flags. With rewrite allowed and index not: "Rewrite only. Do not create indexes. Verify with verify_sql; do not re-run the original."</p>
+<p>3 runs, same one-line ask, rewrite allowed, no index:</p>
+<div class="table-wrap"><table class="post-table">
+<thead>
+<tr>
+<th>Run</th>
+<th>Agent time (s)</th>
+<th>Ran the slow query</th>
+<th>Built an index</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>124 s</td>
+<td>1 time</td>
+<td>no</td>
+</tr>
+<tr>
+<td>2</td>
+<td>179 s</td>
+<td>1 time</td>
+<td>no</td>
+</tr>
+<tr>
+<td>3</td>
+<td>132 s</td>
+<td>1 time</td>
+<td>no</td>
+</tr>
+</tbody>
+</table></div>
+<p>Every run ran the slow query once, no run built an index, and none went back to the original to verify. 124 to 179 seconds, against 143 to 513 for the stock servers.</p>
+<figure><img src="img/stock-vs-tune-query.png" alt="Supabase run 1 and the fork&#x27;s run 1 in Baton, one line per call." width="1136" loading="lazy"><figcaption>Supabase run 1 and the fork's run 1 in Baton, one line per call.</figcaption></figure>
+<p>Nothing in that tool is clever. It settles the one question the agent was guessing at, it hands over the baseline so the agent doesn't go back for it, and it puts the rule in the response the agent is already reading instead of in a description it skimmed at startup.</p>
+<h2>More customer feedback from the agent</h2>
+<p>The agent also had a tool for filing a complaint when a server got in its way, and it used it a few times. Here are 2 worth passing along.</p>
+<p><strong>1. A feature request for a timeout on Neon.</strong> On a long verification query the agent added a <code>timeout</code> argument that <code>run_sql</code> doesn't have. Neon rejected it, the agent dropped it and ran the query with no cap. Baton flags an argument a tool rejects as unknown as a feature request, because that is what it is: the agent asking for a parameter.</p>
+<figure><img src="img/neon-feature-gap-detected.png" alt="The Neon session in Baton with the feature gap filter on: the one call, its intent, and the argument the tool rejected." width="866" loading="lazy"><figcaption>The Neon session in Baton with the feature gap filter on: the one call, its intent, and the argument the tool rejected.</figcaption></figure>
+<p><strong>2. Maintenance commands can't run on Postgres MCP Pro.</strong> It wraps every statement in a transaction, and Postgres refuses to run <code>VACUUM</code> or <code>CREATE INDEX CONCURRENTLY</code> inside one. The agent hit that after building its index, shipped without confirming the index-only scan it had built the index for, and filed:</p>
+<figure><img src="img/pgmcppro-agent-filed.png" alt="The agent&#x27;s filing on Postgres MCP Pro, as Baton shows it: execute_sql wraps every statement in a transaction block, so VACUUM and CREATE INDEX CONCURRENTLY fail; it asks for autocommit mode or a maintenance tool." width="846" loading="lazy"><figcaption>The agent's filing on Postgres MCP Pro, as Baton shows it: execute_sql wraps every statement in a transaction block, so VACUUM and CREATE INDEX CONCURRENTLY fail; it asks for autocommit mode or a maintenance tool.</figcaption></figure>
+<p>That is the agent's text, unedited. The server's error rate for the session reads 0%, because the refusals came back inside normal-looking responses. Supabase and Neon both run those statements fine.</p>
+<h2>The first of many agent taste tests</h2>
+<p>An agent sat down with 3 Postgres servers, did the same job on each, and told us exactly where each one made it work harder than it had to. Nobody interviewed it. It said all of this on the way through, and it will say it about your server too.</p>
+<p>We want to run more taste tests, and not just on databases. Jira against Linear. Granola against Otter. There are so many possibilities.</p>
+<p>If you build an MCP server, wrap it with Baton and the agent will say the same about yours. Setup is one command for Claude Code, or a prompt for any other agent, at <a href="https://baton.goodtiming.ai">baton.goodtiming.ai</a>.</p>
+<p>You can help us pick the next matchup. Reply wherever you found this, or email dave@goodtiming.ai, with 2 servers and one job to be done. The one with the most votes is the next post, and if you build one of the servers, you get the agent's notes before it goes up.</p>
+<details>
+<summary>The data and the query</summary>
+
+The data is the `formula_1` database from [BIRD Mini-Dev](https://bird-bench.github.io/), with the `laptimes` table grown to 1.6 million rows. The query:
+
+
+<pre><code class="language-sql">SELECT d.forename || ' ' || d.surname AS driver,
+       MIN(l.milliseconds) AS best_ms,
+       MIN(l.time) FILTER (WHERE l.milliseconds = (SELECT MIN(l2.milliseconds)
+                                                    FROM public.laptimes l2
+                                                    WHERE l2.driverid = d.driverid)) AS best_lap,
+       COUNT(*) FILTER (WHERE l.milliseconds &lt; 120000) AS laps_under_2min
+FROM public.drivers d
+JOIN public.laptimes l ON l.driverid = d.driverid
+WHERE d.nationality = 'Indonesian'
+GROUP BY d.driverid, d.forename, d.surname
+ORDER BY best_ms;
+</code></pre>
+
+
+</details>
+</article>
+
+<footer>
+  <div class="footer-row">
+    <div class="footer-brand"><strong>Baton</strong> by Good Timing, Inc. &nbsp;&middot;&nbsp; &copy; 2026</div>
+    <div class="footer-links">
+      <a href="/privacy.html">Privacy</a>
+      <a href="/terms.html">Terms</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* One listener for every Get started link, present and future: the press that
+   leaves this site for the console is the last thing we can count here, and
+   the console's own funnel picks the person up on the other side. */
+document.addEventListener('click', function (e) {
+  var a = e.target.closest('a[href*="baton.goodtiming.ai"]');
+  if (a && window.fathom) { fathom.trackEvent('get started'); }
+});
+</script>
+</body>
+</html>
