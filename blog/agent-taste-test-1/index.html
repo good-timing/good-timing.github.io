@@ -355,6 +355,35 @@ document.addEventListener('click', function (e) {
   var a = e.target.closest('a[href*="baton.goodtiming.ai"]');
   if (a && window.fathom) { fathom.trackEvent('get started'); }
 });
+
+/* Tell the console where this reader came from. The console only ever sees the
+   hop from this page, so every reader of the post would arrive as "came from
+   goodtiming.ai". This reads the channel off the referrer or a utm_source and
+   puts it on the Get started links as ?src=<channel>; the console's funnel
+   keeps it. Nothing here identifies a person: the value is a channel name. */
+(function () {
+  var src = '';
+  try { src = new URL(location.href).searchParams.get('utm_source') || ''; } catch (e) {}
+  if (!src) {
+    var h = '';
+    try { h = document.referrer ? new URL(document.referrer).hostname.toLowerCase() : ''; } catch (e) {}
+    if (!h || h === location.hostname) src = '';
+    else if (/(^|\.)ycombinator\.com$/.test(h)) src = 'hn';
+    else if (/(^|\.)linkedin\.com$|(^|\.)lnkd\.in$/.test(h)) src = 'linkedin';
+    else if (/(^|\.)t\.co$|(^|\.)twitter\.com$|(^|\.)x\.com$/.test(h)) src = 'x';
+    else if (/(^|\.)reddit\.com$/.test(h)) src = 'reddit';
+    else src = h.replace(/^www\./, '');
+  }
+  src = src.toLowerCase().replace(/[^a-z0-9._-]/g, '').slice(0, 40);
+  if (!src) return;
+  var links = document.querySelectorAll('a[href*="baton.goodtiming.ai"]');
+  for (var i = 0; i < links.length; i++) {
+    try {
+      var u = new URL(links[i].href);
+      if (!u.searchParams.get('src')) { u.searchParams.set('src', src); links[i].href = u.toString(); }
+    } catch (e) {}
+  }
+})();
 </script>
 </body>
 </html>
