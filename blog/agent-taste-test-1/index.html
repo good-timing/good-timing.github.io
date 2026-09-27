@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta property="og:title" content="An agent tuned the same slow query on 3 Postgres MCP servers. It had notes.">
+<meta property="og:title" content="We asked an agent to tune 1 slow query on 3 Postgres MCP servers. It had notes.">
 <meta property="og:description" content="We gave one agent one slow query and the same one-line ask on Supabase, Neon and Postgres MCP Pro, wrapped each in Baton, and wrote down what it said. 143 to 513 seconds, 7 of 9 runs built an index nobody asked for.">
 <meta property="og:type" content="article">
 <meta property="og:image" content="https://goodtiming.ai/baton-share-wide.png">
@@ -15,7 +15,7 @@
 <!-- / Fathom -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>An agent tuned the same slow query on 3 Postgres MCP servers. It had notes.</title>
+  <title>We asked an agent to tune 1 slow query on 3 Postgres MCP servers. It had notes.</title>
   <meta name="description" content="We gave one agent one slow query and the same one-line ask on Supabase, Neon and Postgres MCP Pro, wrapped each in Baton, and wrote down what it said. 143 to 513 seconds, 7 of 9 runs built an index nobody asked for.">
   <link rel="canonical" href="https://goodtiming.ai/blog/agent-taste-test-1/">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230ca678'/%3E%3Crect x='10' y='28' width='44' height='8' rx='4' fill='%230b0c10' transform='rotate(-30 32 32)'/%3E%3C/svg%3E">
@@ -151,8 +151,8 @@
 
 <article class="post">
   <div class="post-kicker"><a href="/blog/">Agent taste test #1</a></div>
-  <h1>An agent tuned the same slow query on 3 Postgres MCP servers. It had notes.</h1>
-  <div class="post-byline"><strong>Dave Eyler, Good Timing</strong> &nbsp;&middot;&nbsp; [PLACEHOLDER: publish date]</div>
+  <h1>We asked an agent to tune 1 slow query on 3 Postgres MCP servers. It had notes.</h1>
+  <div class="post-byline"><strong>Dave Eyler, Good Timing</strong> &nbsp;&middot;&nbsp; September 29, 2026</div>
 <p>Agents are the new users of your product. They don't fill out surveys, but they are happy to tell you what they think, if you know how to ask. We gave one a slow query, told it to make it 10 times faster on <a href="https://github.com/supabase/mcp">Supabase</a>, <a href="https://github.com/neondatabase/mcp-server-neon">Neon</a> and <a href="https://github.com/crystaldba/postgres-mcp">Postgres MCP Pro</a>, and wrote down what it said along the way.</p>
 <p>We used the same agent (Claude Code on Claude Opus 5), the same data, the same query and the same one-line ask on all 3: make it at least 10 times faster. We wrapped each server in <a href="https://goodtiming.ai">Baton</a>, which we make. It records what the agent was trying to do on every call and gives it a place to file a complaint.</p>
 <h2>The task</h2>
@@ -238,7 +238,7 @@
 <p>Time to complete ranged from 143 seconds to 513, and the original slow query was run anywhere from 1 to 4 times. Most runs shipped an index, which you probably don't want unless you're required not to change the query, and we gave no such requirement. There were also some deep-sea expeditions to verify the results, which we'll cover in the next section.</p>
 <h2>Reliable results start with knowing what the agent was doing</h2>
 <p>At this point, many people shrug. Agents, who knows why they do what they do. Non-determinism, and so on. We can do better, because Baton lets us see inside their heads.</p>
-<p>There are 3 problems:</p>
+<p>The agent ran into 3 types of problems:</p>
 <ol>
 <li>Extra runs of the slow query</li>
 <li>Building an index</li>
@@ -246,13 +246,13 @@
 </ol>
 <p><strong>1. Extra runs of the slow query.</strong> One run of the original is unavoidable; the agent needs a number. The extra runs are the problem. The first run was usually <code>EXPLAIN ANALYZE</code>, which gives it the time but not the results, so the agent ran it again to get them. We know because in Baton we see:</p>
 <figure><img src="img/supabase-baseline-card.png" alt="Supabase run 1 in Baton, the call at 1m 36s." width="844" loading="lazy"><figcaption>Supabase run 1 in Baton, the call at 1m 36s.</figcaption></figure>
-<p>That was Supabase run 1, 35.8 seconds. Neon run 1 did the same, for 63 seconds. Supabase run 2, 38 seconds. It's a sensible instinct that costs at least 1 extra execution of a query that we are optimizing because it's taking too long, so this can be expensive. In the server's log it is 1 more <code>execute_sql</code>, indistinguishable from the first.</p>
+<p>The agent ran the query with this intent many times across the runs, including Supabase runs 1 and 2 and Neon run 1, and each time it cost over 35 seconds. It's a sensible instinct that costs at least 1 extra execution of a query that we are optimizing because it's taking too long, so this can be expensive. In the server's log it is 1 more <code>execute_sql</code>, indistinguishable from the first.</p>
 <p><strong>2. Building an index.</strong> All 3 servers built one, 7 of 9 runs in total, and none needed to, because a rewrite is sufficient. Neon run 1 says why it did:</p>
 <blockquote>
 <p><strong>intent:</strong> Measure how much the new index alone speeds up the unmodified query.</p>
 </blockquote>
-<p>This agent decided that no code changes was the important thing, which makes sense, because we never told it otherwise.</p>
-<p><strong>3. Verification of results.</strong> After rewriting, the agent checked that the new query gives the same answer as the old one. It did that by running the old 34-second query again, for all 800 drivers instead of one. On Supabase run 1 that timed out twice, 241 seconds of a 513-second session:</p>
+<p>This agent decided that no code changes was the important thing, which is understandable, because we never told it otherwise.</p>
+<p><strong>3. Verification of results.</strong> After rewriting, the agent checked that the new query gives the same answer as the old one. It did that by running the old 34-second query again, for all 800 race drivers instead of one. On Supabase run 1 that timed out twice, 241 seconds of a 513-second session:</p>
 <blockquote>
 <p><strong>intent:</strong> Prove the rewritten query returns identical results to the original across many drivers.</p>
 </blockquote>
@@ -303,16 +303,16 @@
 <figure><img src="img/stock-vs-tune-query.png" alt="Supabase run 1 and the fork&#x27;s run 1 in Baton, one line per call." width="1136" loading="lazy"><figcaption>Supabase run 1 and the fork's run 1 in Baton, one line per call.</figcaption></figure>
 <p>Nothing in that tool is clever. It settles the one question the agent was guessing at, it hands over the baseline so the agent doesn't go back for it, and it puts the rule in the response the agent is already reading instead of in a description it skimmed at startup.</p>
 <h2>More customer feedback from the agent</h2>
-<p>The agent also had a tool for filing a complaint when a server got in its way, and it used it a few times. Here are 2 worth passing along.</p>
-<p><strong>1. A feature request for a timeout on Neon.</strong> On a long verification query the agent added a <code>timeout</code> argument that <code>run_sql</code> doesn't have. Neon rejected it, the agent dropped it and ran the query with no cap. Baton flags an argument a tool rejects as unknown as a feature request, because that is what it is: the agent asking for a parameter.</p>
+<p>Two more things worth passing along, one Baton caught on its own and one the agent filed with the complaint tool it was given.</p>
+<p><strong>1. A feature request for a timeout on Neon.</strong> On a long verification query the agent added a <code>timeout</code> argument that <code>run_sql</code> doesn't have. Neon rejected it, the agent dropped it and ran the query with no cap. Baton flags an argument a tool rejects as unknown as a feature gap, because that is what it is: the agent asking for a parameter.</p>
 <figure><img src="img/neon-feature-gap-detected.png" alt="The Neon session in Baton with the feature gap filter on: the one call, its intent, and the argument the tool rejected." width="866" loading="lazy"><figcaption>The Neon session in Baton with the feature gap filter on: the one call, its intent, and the argument the tool rejected.</figcaption></figure>
 <p><strong>2. Maintenance commands can't run on Postgres MCP Pro.</strong> It wraps every statement in a transaction, and Postgres refuses to run <code>VACUUM</code> or <code>CREATE INDEX CONCURRENTLY</code> inside one. The agent hit that after building its index, shipped without confirming the index-only scan it had built the index for, and filed:</p>
 <figure><img src="img/pgmcppro-agent-filed.png" alt="The agent&#x27;s filing on Postgres MCP Pro, as Baton shows it: execute_sql wraps every statement in a transaction block, so VACUUM and CREATE INDEX CONCURRENTLY fail; it asks for autocommit mode or a maintenance tool." width="846" loading="lazy"><figcaption>The agent's filing on Postgres MCP Pro, as Baton shows it: execute_sql wraps every statement in a transaction block, so VACUUM and CREATE INDEX CONCURRENTLY fail; it asks for autocommit mode or a maintenance tool.</figcaption></figure>
 <p>That is the agent's text, unedited. The server's error rate for the session reads 0%, because the refusals came back inside normal-looking responses. Supabase and Neon both run those statements fine.</p>
 <h2>The first of many agent taste tests</h2>
-<p>An agent sat down with 3 Postgres servers, did the same job on each, and told us exactly where each one made it work harder than it had to. Nobody interviewed it. It said all of this on the way through, and it will say it about your server too.</p>
+<p>An agent sat down with 3 Postgres MCP servers, did the same job on each, and told us exactly where each one made it work harder than it had to. Nobody interviewed it. It said all of this on the way through, and it will say it about your server too.</p>
 <p>We want to run more taste tests, and not just on databases. Jira against Linear. Granola against Otter. There are so many possibilities.</p>
-<p>If you build an MCP server, wrap it with Baton and the agent will say the same about yours. Setup is one command for Claude Code, or a prompt for any other agent, at <a href="https://baton.goodtiming.ai">baton.goodtiming.ai</a>.</p>
+<p>If you build an MCP server, wrap it with Baton and the agent will say the same about yours. Setup is one prompt for your coding agent, at <a href="https://baton.goodtiming.ai">baton.goodtiming.ai</a>.</p>
 <p>You can help us pick the next matchup. Reply wherever you found this, or email dave@goodtiming.ai, with 2 servers and one job to be done. The one with the most votes is the next post, and if you build one of the servers, you get the agent's notes before it goes up.</p>
 <details>
 <summary>The data and the query</summary>
