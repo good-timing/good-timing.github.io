@@ -358,29 +358,28 @@ document.addEventListener('click', function (e) {
 
 /* Tell the console where this reader came from. The console only ever sees the
    hop from this page, so every reader of the post would arrive as "came from
-   goodtiming.ai". This reads the channel off the referrer or a utm_source and
-   puts it on the Get started links as ?src=<channel>; the console's funnel
-   keeps it. Nothing here identifies a person: the value is a channel name. */
+   goodtiming.ai". This puts ONE of two things on the Get started links so the
+   console can tell them apart: ?utm_source=<word> when the link the reader
+   clicked carried a utm_source (a word we typed into a link we posted), else
+   ?ref=<host> with the site the browser says they came from. No renaming, no
+   lookup table. Nothing here identifies a person. */
 (function () {
-  var src = '';
-  try { src = new URL(location.href).searchParams.get('utm_source') || ''; } catch (e) {}
-  if (!src) {
+  var param = '', val = '';
+  try { val = new URL(location.href).searchParams.get('utm_source') || ''; } catch (e) {}
+  if (val) { param = 'utm_source'; }
+  else {
     var h = '';
     try { h = document.referrer ? new URL(document.referrer).hostname.toLowerCase() : ''; } catch (e) {}
-    if (!h || h === location.hostname) src = '';
-    else if (/(^|\.)ycombinator\.com$/.test(h)) src = 'hn';
-    else if (/(^|\.)linkedin\.com$|(^|\.)lnkd\.in$/.test(h)) src = 'linkedin';
-    else if (/(^|\.)t\.co$|(^|\.)twitter\.com$|(^|\.)x\.com$/.test(h)) src = 'x';
-    else if (/(^|\.)reddit\.com$/.test(h)) src = 'reddit';
-    else src = h.replace(/^www\./, '');
+    h = h.replace(/^www\./, '');
+    if (h && h !== location.hostname && !/(^|\.)goodtiming\.ai$/.test(h)) { param = 'ref'; val = h; }
   }
-  src = src.toLowerCase().replace(/[^a-z0-9._-]/g, '').slice(0, 40);
-  if (!src) return;
+  val = val.toLowerCase().replace(/[^a-z0-9._-]/g, '').slice(0, 64);
+  if (!param || !val) return;
   var links = document.querySelectorAll('a[href*="baton.goodtiming.ai"]');
   for (var i = 0; i < links.length; i++) {
     try {
       var u = new URL(links[i].href);
-      if (!u.searchParams.get('src')) { u.searchParams.set('src', src); links[i].href = u.toString(); }
+      if (!u.searchParams.get('utm_source') && !u.searchParams.get('ref')) { u.searchParams.set(param, val); links[i].href = u.toString(); }
     } catch (e) {}
   }
 })();
