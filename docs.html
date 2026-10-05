@@ -506,11 +506,48 @@ install_baton(mcp, VendorConfig(
           <tr><td>scrubber</td><td><code>Scrubber()</code></td><td>Runs on every payload. Pass <code>identity_scrub</code> to turn scrubbing off, or your own callable. See <a href="#pii" style="color:var(--brand)">PII scrubbing</a>.</td></tr>
           <tr><td>intent_param_mode</td><td><code>"required"</code></td><td>Adds <code>user_goal</code>, <code>expected_result</code> and <code>overall_task</code> to every tool's input schema and removes them before your handler runs. <code>"required"</code> also lists <code>user_goal</code> as required, as an advertisement only: no call fails for omitting it. <code>"optional"</code> leaves it off the required list; <code>"off"</code> adds none.</td></tr>
           <tr><td>proactive_mode</td><td><code>"off"</code></td><td><code>"on"</code> asks the agent to file an annotation before each tool call. Turn it on if <code>intent_param_mode</code> is <code>"off"</code>, or nothing captures intent.</td></tr>
-          <tr><td>principal_id_mode</td><td><code>"hashed"</code></td><td><code>"hashed"</code> sends the principal as an HMAC computed in your process. <code>"raw"</code> sends the identity as-is, into the collector's database.</td></tr>
-          <tr><td>principal_id_hmac_key</td><td><code>BATON_PRINCIPAL_ID_HMAC_KEY</code></td><td>The secret for hashed mode. You hold it; Baton never sees it. Unset leaves <code>principal_id</code> off events. Generate it with <code>openssl rand -hex 32</code>.</td></tr>
-          <tr><td>resolve_principal</td><td>—</td><td>A function, sync or async, that returns the principal (a user, a service account or an organisation) from a call's headers, <code>_meta</code>, tool name and arguments. Checked before the verified access token, and the only way a stdio server reports one.</td></tr>
+          <tr><td>resolve_principal</td><td>—</td><td>A function, sync or async, that says who is behind a call. Unset, no event names anyone. See <a href="#identity" style="color:var(--brand)">Identity</a>.</td></tr>
         </tbody>
       </table>
+      <h3 id="identity">Identity</h3>
+      <p>Baton names the person behind a call only when you tell it who that is. You pass one function, <code>resolve_principal</code>. It gets the call's headers, <code>_meta</code>, tool name, arguments and the verified token's claims, and returns a <code>Principal</code> or <code>None</code>. The SDK sends what the function returns and does nothing else to it: no hashing, no key, no guessing.</p>
+      <p>If your server runs OAuth, two ready-made hooks cover it. Pass one as it is:</p>
+      <pre>from baton import install_baton, VendorConfig, principal_from_oauth_email
+
+install_baton(mcp, VendorConfig(
+    dsn="https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...",
+    resolve_principal=principal_from_oauth_email,   # or principal_from_oauth_sub
+))</pre>
+      <p><code>principal_from_oauth_email</code> uses the token's <code>email</code> claim as the id and the part before <code>@</code> as the name your dashboard shows. <code>principal_from_oauth_sub</code> uses the token's subject. Both return <code>None</code> when the claim is missing. A token exists only on HTTP with auth configured.</p>
+      <p>For anything else, such as a gateway header, an argument or a stdio login, write your own. It is a few lines:</p>
+      <pre>from baton import Principal
+
+def resolve(ctx):
+    employee = (ctx.headers or {}).get("x-forwarded-user")
+    if not employee:
+        return None
+    return Principal(principal_id=employee, display_name=employee.split("@")[0])</pre>
+      <table class="docs-table">
+        <thead><tr><th><code>Principal</code> field</th><th>Default</th><th>What it does</th></tr></thead>
+        <tbody>
+    <tr><td>principal_id</td><td>required</td><td>The id, sent exactly as you return it. Your dashboard groups a person's sessions by it.</td></tr>
+    <tr><td>display_name</td><td><code>None</code></td><td>What your dashboard shows for this person. Without it, the dashboard shows the id.</td></tr>
+    <tr><td>form</td><td><code>"raw"</code></td><td>What the id is. Leave it as <code>"raw"</code> for a real identity. Set <code>"hashed"</code> only when your function hashed the id itself.</td></tr>
+        </tbody>
+      </table>
+      <p><strong style="color:var(--ink)">The id you return is stored by the collector as it is.</strong> Your function decides what is safe to send. If real identities must not leave your side, hash the id in the function and say so:</p>
+      <pre>import hashlib, hmac, os
+from baton import Principal
+
+KEY = os.environ["MY_ID_HASH_KEY"].encode()
+
+def resolve(ctx):
+    sub = (ctx.claims or {}).get("sub")
+    if not sub:
+        return None
+    digest = hmac.new(KEY, sub.encode(), hashlib.sha256).hexdigest()
+    return Principal(principal_id=digest, form="hashed")</pre>
+      <p>A hook that raises, or returns nothing usable, costs that event its person and nothing else: the tool call and the event are unaffected. The two ready-made hooks are short and are the best examples to copy from: <a href="https://github.com/good-timing/baton/blob/main/src/baton/integrations/oauth_hooks.py" style="color:var(--brand)">Python</a>, <a href="https://github.com/good-timing/baton-ts/blob/main/src/integrations/mcp/oauthHooks.ts" style="color:var(--brand)">TypeScript</a>.</p>
       <h3 id="sinks">Sinks</h3>
       <table class="docs-table">
         <thead><tr><th>Sink</th><th>Use case</th></tr></thead>
@@ -642,6 +679,13 @@ withBaton(server, {
   dsn: "https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...",
 });</pre>
       <p>Config fields are the Python names in camelCase (<code>vendorId</code>, <code>tenantId</code>, <code>vendorDisplayName</code>, <code>intentParamMode</code>, <code>scrubber</code>), and a <code>dsn</code> replaces the first three exactly as it does in Python. Tools registered before or after <code>withBaton</code> are both captured, and so are tools added or removed later.</p>
+      <p>Identity works as in Python: pass <code>resolvePrincipal</code>, which returns <code>{ principalId, displayName?, form? }</code> or <code>null</code>. <code>principalFromOAuthEmail</code> and <code>principalFromOAuthSub</code> ship ready-made and read the token's claims from <code>authInfo.extra</code>. See <a href="#identity" style="color:var(--brand)">Identity</a>.</p>
+      <pre>import { withBaton, principalFromOAuthEmail } from "@goodtiming/baton-sdk";
+
+withBaton(server, {
+  dsn: "https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...",
+  resolvePrincipal: principalFromOAuthEmail,
+});</pre>
       <h3>What it captures</h3>
       <p>The same three intent parameters, the same annotation tool, the same <code>surface_snapshot</code>, and the same events. <code>intentParamMode</code> defaults to <code>"required"</code>, which advertises <code>user_goal</code> in each tool&#39;s <code>required</code> list and never enforces it. Measured identical to the Python SDK and the proxy on the currently published versions.</p>
       <p>PII scrubbing is <strong>on by default</strong> here too, a rule-for-rule port of Python&#39;s ruleset. Pass <code>identityScrub</code> to opt out, or your own <code>(value: unknown) =&gt; unknown</code>. Read <a href="#pii" style="color:var(--brand)">what it does and does not catch</a> before relying on it.</p>
