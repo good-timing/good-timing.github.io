@@ -126,9 +126,9 @@
 
   <main>
     <h1>Privacy Policy</h1>
-    <p class="effective-date">Effective date: April 7, 2026</p>
+    <p class="effective-date">Effective date: October 8, 2026</p>
 
-    <p>Thank you for visiting <a href="https://goodtiming.ai/">https://goodtiming.ai/</a> (the "Site") owned and operated by Good Timing, Inc. Good Timing, Inc. ("Good Timing," "we," "us," or "our") provides Baton, a support infrastructure platform for companies building agent-connected products. Baton captures structured context from customer AI agents at the moment something breaks — including intent, tool calls, expected outcomes, observed outcomes, and configuration state — and delivers it to your support team as a structured report. This enables support teams to understand what happened without requiring customers to explain what their agent did.</p>
+    <p>Thank you for visiting <a href="https://goodtiming.ai/">https://goodtiming.ai/</a> (the "Site") owned and operated by Good Timing, Inc. Good Timing, Inc. ("Good Timing," "we," "us," or "our") provides Baton, product analytics for products that AI agents use. Baton captures how AI agents use our customers' products, whether through MCP servers, skills, APIs or other interfaces, including the agent's description of what its user is trying to do, the tool calls it makes and what happened, and shows our customers where their users' agents run into trouble and how to fix it.</p>
 
     <p>When you use our Services, including when you interact with Baton, we collect and use Personal Data as described in this Privacy Policy to operate, secure, and improve our Services and to provide you with the features you request. <strong>By using or accessing our Site in any manner, you acknowledge that you accept the practices and policies outlined below, and you hereby consent that we will collect, use and disclose your information as described in this Privacy Policy.</strong> Remember that your use of Good Timing's Services is at all times subject to our <a href="/terms.html">Terms of Use</a>, which incorporates this Privacy Policy. Any terms we use in this Policy without defining them have the definitions given to them in the Terms of Use.</p>
 
@@ -148,6 +148,7 @@
             <li><a href="#sources">Categories of Sources of Personal Data</a></li>
           </ul>
         </li>
+        <li><a href="#customer-data">Data Our Customers Send Us Through Baton</a></li>
         <li><a href="#how-we-disclose">How We Disclose Your Personal Data</a></li>
         <li><a href="#tracking-tools">Tracking Tools, Advertising and Opt-Out</a></li>
         <li><a href="#data-security">Data Security</a></li>
@@ -158,7 +159,7 @@
     </div>
 
     <h2 id="what-this-policy-covers">What this Privacy Policy Covers</h2>
-    <p>This Privacy Policy covers how we treat Personal Data that we gather when you access or use our Services. "Personal Data" means any information that identifies or relates to a particular individual and also includes information referred to as "personally identifiable information" or "personal information" or "sensitive personal information" under applicable data privacy laws, rules or regulations. This Privacy Policy does not cover the practices of companies we don't own or control or people we don't manage.</p>
+    <p>This Privacy Policy covers how we treat Personal Data that we gather when you access or use our Services. "Personal Data" means any information that identifies or relates to a particular individual and also includes information referred to as "personally identifiable information" or "personal information" or "sensitive personal information" under applicable data privacy laws, rules or regulations. This Privacy Policy does not cover the practices of companies we don't own or control or people we don't manage. When our customers use Baton with their own products, we also process information about their users on our customers' behalf, as described in "<a href="#customer-data">Data Our Customers Send Us Through Baton</a>" below.</p>
 
     <h2 id="personal-data">Personal Data</h2>
 
@@ -196,21 +197,6 @@
               <li>Providing, customizing and improving the Services, including using your inputs to generate responses and perform other requested actions.</li>
               <li>Operating, maintaining, and improving the performance, security, and quality of any features that use artificial intelligence or machine learning.</li>
               <li>If you opt in, using your inputs (in de-identified form where feasible) to test, train, and improve our models and algorithms and to correct errors.</li>
-            </ul>
-          </td>
-          <td>
-            <ul>
-              <li>Service Providers</li>
-            </ul>
-          </td>
-        </tr>
-        <tr>
-          <td><strong>Call and Meeting Conversation Data</strong> such as the audio, video, chat, and screen-sharing content from calls or videoconferences you participate in through our Services, and related metadata (for example, date, time, duration, participants, and meeting title).</td>
-          <td>
-            <ul>
-              <li>Providing, customizing and improving the Services.</li>
-              <li>Creating transcripts, summaries, action items, and other outputs (including those generated using artificial intelligence or machine learning) at your direction.</li>
-              <li>If you opt in, using de-identified or aggregated conversation data to test, train, and improve our models and algorithms.</li>
             </ul>
           </td>
           <td>
@@ -376,6 +362,11 @@
               <li>We may use analytics providers to analyze how you interact and engage with the Services, or third parties may help us provide you with customer support.</li>
             </ul>
           </li>
+          <li>Public Sources
+            <ul>
+              <li>We may collect professional information, such as name, employer, role and public code contributions, from public sources like LinkedIn and GitHub and from business contact data providers, to contact people who may be interested in Baton.</li>
+            </ul>
+          </li>
           <li>Third-Party Credentials
             <ul>
               <li>If you provide your third-party account credentials, such as your email or social network account credentials, to us or otherwise sign in to the Services through a third-party site or service, content and/or information in those accounts will be transmitted into your account with us.</li>
@@ -384,6 +375,29 @@
         </ul>
       </li>
     </ul>
+
+    <h2 id="customer-data">Data Our Customers Send Us Through Baton</h2>
+    <p>Our customers add Baton to their products, such as MCP servers, skills and APIs. Baton then captures how AI agents use those products and sends it to us ("Customer Data"). For Customer Data, we act on our customer's behalf as a service provider. The customer decides whether to use Baton with its products, and is responsible for its own privacy notice to its users. If you use a product that uses Baton and have a question about your information, please contact that company, and we will help them respond.</p>
+    <p>Depending on how the customer configures Baton, Customer Data can include:</p>
+    <table>
+      <thead>
+        <tr><th>What</th><th>Examples</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Tool calls</strong></td><td>The name of the tool the agent called, the arguments it sent, the result the customer's server returned, any error, and how long the call took. Customers using our SDKs can turn off capture of tool results.</td></tr>
+        <tr><td><strong>Intent</strong></td><td>The agent's own description of what its user is trying to do and what it expected to happen. Baton adds fields to the customer's tools and asks the agent to fill them in; a call without them still goes through. It is the agent's summary, not a recording of what the user typed, but it can still contain information the user shared with the agent. Customers using our SDKs can turn these fields off.</td></tr>
+        <tr><td><strong>Agent feedback</strong></td><td>Reports an agent files through Baton's feedback tool when a tool fails or a capability it needs is missing.</td></tr>
+        <tr><td><strong>Session and client details</strong></td><td>Identifiers that group calls into a session, the name and version of the agent client (for example, Claude Code), protocol metadata, and trace identifiers. Also whatever the agent client attaches to each request, which for some clients includes the user's approximate location (city, region and country), locale, device or browser type, and the client's own identifier for the user.</td></tr>
+        <tr><td><strong>End user identifier</strong></td><td>If the customer sets it up, an identifier and display name for the person or account behind a call. The customer chooses whether this is a real identifier or a pseudonym.</td></tr>
+        <tr><td><strong>Server details</strong></td><td>The customer's list of tools and their descriptions.</td></tr>
+      </tbody>
+    </table>
+    <p>Baton sees what an agent sends to and receives from the customer's product, plus what the agent chooses to write in Baton's fields. It is not a recording of the conversation between a user and their agent.</p>
+    <p>Our SDKs and Baton Proxy remove common sensitive values, such as email addresses, phone numbers, payment card numbers, API keys and access tokens, before data leaves the customer's systems. This is on by default, and customers using our SDKs can replace it with their own rules. Automated removal can miss things, so customers remain responsible for what they send.</p>
+    <p>We use Customer Data only to provide the Services to the customer who sent it: to store it, show it in that customer's console, analyze it (for example, grouping calls into sessions, detecting failures, explaining sessions and suggesting fixes), support the customer, keep the Services secure and fix problems. We also create aggregated or de-identified statistics that do not identify the customer or any individual. We do not sell Customer Data, use it for advertising, or use it to train generative AI models.</p>
+    <p>Customer Data is stored with Google Cloud in the United States. Some of our analysis uses AI models from Anthropic, which receives Customer Data for that purpose and is not permitted to train on it.</p>
+    <p>We keep Customer Data while the customer's account is active, unless the customer asks us to delete it sooner. We delete it within 30 days of a deletion request and within 90 days after an account ends. Backup copies expire within 30 days.</p>
+    <p>Our SDKs and Baton Proxy are open source. If a customer runs them and sends data only to its own systems, we do not receive that data.</p>
 
     <h2 id="how-we-disclose">How We Disclose Your Personal Data</h2>
     <p>We disclose your Personal Data to the categories of service providers and other parties listed in this section. Depending on state laws that may be applicable to you, some of these disclosures may constitute a "sale" of your Personal Data. For more information, please refer to the state-specific sections below.</p>
@@ -394,6 +408,7 @@
           <li>Security and fraud prevention consultants.</li>
           <li>Support and customer service vendors.</li>
           <li>Analytics providers regarding web traffic or usage of the Services.</li>
+          <li>AI model providers, which analyze data on our behalf to provide features of the Services.</li>
         </ul>
       </li>
       <li><strong>Advertising Partners.</strong> These parties help us market our services and provide you with other offers that may be of interest to you. They include:
@@ -425,7 +440,7 @@
     <ul>
       <li><strong>Essential Cookies.</strong> Essential Cookies are required for providing you with features or services that you have requested. For example, certain Cookies enable you to log into secure areas of our Services. Disabling these Cookies may make certain features and services unavailable.</li>
       <li><strong>Functional Cookies.</strong> Functional Cookies are used to record your choices and settings regarding our Services, maintain your preferences over time and recognize you when you return to our Services. These Cookies help us to personalize our content for you, greet you by name and remember your preferences (for example, your choice of language or region).</li>
-      <li><strong>Performance/Analytical Cookies.</strong> Performance/Analytical Cookies allow us to understand how visitors use our Services. They do this by collecting information about the number of visitors to the Services, what pages visitors view on our Services and how long visitors are viewing pages on the Services. Performance/Analytical Cookies also help us measure the performance of our advertising campaigns in order to help us improve our campaigns and the Services' content for those who engage with our advertising. For example, Google LLC ("Google") uses cookies in connection with its Google Analytics services. Google's ability to use and disclose information collected by Google Analytics about your visits to the Services is subject to the Google Analytics Terms of Use and the Google Privacy Policy. You have the option to opt-out of Google's use of Cookies by visiting the Google advertising opt-out page at <a href="http://www.google.com/privacy_ads.html" target="_blank" rel="noopener">www.google.com/privacy_ads.html</a> or the Google Analytics Opt-out Browser Add-on at <a href="https://tools.google.com/dlpage/gaoptout/" target="_blank" rel="noopener">https://tools.google.com/dlpage/gaoptout/</a>.</li>
+      <li><strong>Performance/Analytical Cookies.</strong> Performance/Analytical Cookies allow us to understand how visitors use our Services. They do this by collecting information about the number of visitors to the Services, what pages visitors view on our Services and how long visitors are viewing pages on the Services. Performance/Analytical Cookies also help us measure the performance of our advertising campaigns in order to help us improve our campaigns and the Services' content for those who engage with our advertising. For example, we use Fathom Analytics to measure visits to our website, and it does not use cookies.</li>
       <li><strong>Retargeting/Advertising Cookies.</strong> Retargeting/Advertising Cookies collect data about your online activity and identify your interests so that we can provide advertising that we believe is relevant to you. For more information about this, please see the section below titled "Information about Interest-Based Advertisements."</li>
     </ul>
     <p>You can decide whether or not to accept Cookies through your internet browser's settings. Most browsers have an option for turning off the Cookie feature, which will prevent your browser from accepting new Cookies, as well as (depending on the sophistication of your browser software) allow you to decide on acceptance of each new Cookie in a variety of ways. You can also delete all Cookies that are already on your device. If you do this, however, you may have to manually adjust some preferences every time you visit our website and some of the Services and functionalities may not work.</p>
@@ -435,7 +450,7 @@
     <p>We may use session replay technology in order to identify and resolve customer issues, to monitor and analyze how you use our Services, to better understand user behavior, and to improve our Services. By continuing to use the Services, you consent to the use of session replay technology. If you would like to change your settings with respect to session replay technology, you can access your Cookie management settings by clicking <a href="/cookies.html">here</a>.</p>
 
     <h3>Information about Interest-Based Advertisements</h3>
-    <p>We work with third-party ad networks, including third-party ad servers, ad agencies, ad technology vendors and research firms, to serve advertisements on our behalf. These advertisements may be targeted to users who fit certain general profile categories or display certain preferences or behaviors ("Interest-Based Ads"). Information for Interest-Based Ads (including Personal Data) may be provided to us by you, or derived from the usage patterns of particular users on the Services and/or services of third parties. Such information may be gathered through tracking users' activities across time and unaffiliated properties, including when you leave the Services. To accomplish this, we or our service providers may deliver Cookies, including a file (known as a "web beacon") from an ad network to you through the Services. Web beacons allow ad networks to provide anonymized, aggregated auditing, research and reporting for us and for advertisers. Web beacons also enable ad networks to serve targeted advertisements to you when you visit other websites. Web beacons allow ad networks to view, edit or set their own Cookies on your browser, just as if you had requested a web page from their site.</p>
+    <p>We may work with third-party ad networks, including third-party ad servers, ad agencies, ad technology vendors and research firms, to serve advertisements on our behalf. These advertisements may be targeted to users who fit certain general profile categories or display certain preferences or behaviors ("Interest-Based Ads"). Information for Interest-Based Ads (including Personal Data) may be provided to us by you, or derived from the usage patterns of particular users on the Services and/or services of third parties. Such information may be gathered through tracking users' activities across time and unaffiliated properties, including when you leave the Services. To accomplish this, we or our service providers may deliver Cookies, including a file (known as a "web beacon") from an ad network to you through the Services. Web beacons allow ad networks to provide anonymized, aggregated auditing, research and reporting for us and for advertisers. Web beacons also enable ad networks to serve targeted advertisements to you when you visit other websites. Web beacons allow ad networks to view, edit or set their own Cookies on your browser, just as if you had requested a web page from their site.</p>
 
     <h2 id="data-security">Data Security</h2>
     <p>We seek to protect your Personal Data from unauthorized access, use and disclosure using appropriate physical, technical, organizational and administrative security measures based on the type of Personal Data and how we are processing that data. You should also help protect your data by appropriately selecting and protecting your password and/or other sign-on mechanism; limiting access to your computer or device and browser; and signing off after you have finished accessing your account. Although we work to protect the security of your account and other data that we hold in our records, please be aware that no method of transmitting data over the internet or storing data is completely secure.</p>
