@@ -399,6 +399,13 @@
        its content, so the un-wrappable code lines sized the row and the
        whole PAGE scrolled sideways instead of just the sample. */
     .addbody{min-width:0}
+    /* The session row under "Every session, explained": its meta line
+       (id, client, calls, friction chips, satisfaction) does not wrap, and
+       with nothing clipping it the line ran ~350px past a phone screen. That
+       made the whole page wider than the phone, which pushed the header's
+       Sign in and Get started off the right edge. Clip it at its row, the
+       way the console truncates a long row. */
+    .shot .bmeta{overflow:hidden}
   }
 
   /* The nav's own breakpoint, 760px, matching docs.html rather than this
