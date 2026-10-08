@@ -953,6 +953,7 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
         <li><strong style="color:var(--ink)">Outbound-only.</strong> The proxy never accepts inbound connections.</li>
         <li><strong style="color:var(--ink)">No external dependencies.</strong> Pure stdlib: no pydantic, no httpx.</li>
         <li><strong style="color:var(--ink)">Credential isolation.</strong> <code>BATON_*</code> vars are filtered from the upstream subprocess env.</li>
+        <li><strong style="color:var(--ink)">Scrubbed on your machine.</strong> Same rules as the SDK, applied before any event leaves. <a href="#pii" style="color:var(--brand)">PII scrubbing →</a></li>
       </ul>
     </div>
       </div>
