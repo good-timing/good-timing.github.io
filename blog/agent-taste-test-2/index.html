@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta property="og:title" content="We asked an agent to log 40 messages on 3 CRMs through their MCP servers. One took 3x as long and cost 4x as much.">
+<meta property="og:description" content="We gave one agent the same 40 outreach messages to log on Attio, HubSpot and Atomic CRM, wrapped each in Baton, and wrote down what it said. 117 calls on Attio, 10 on Atomic CRM, and the agent told us why.">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://goodtiming.ai/baton-share-wide.png">
+<meta property="og:image:width" content="2400">
+<meta property="og:image:height" content="1260">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://goodtiming.ai/baton-share-wide.png">
+<!-- Fathom - beautiful, simple website analytics -->
+<script src="https://cdn.usefathom.com/script.js" data-site="NUDNHGRI" defer></script>
+<!-- / Fathom -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>We asked an agent to log 40 messages on 3 CRMs through their MCP servers. One took 3x as long and cost 4x as much.</title>
+  <meta name="description" content="We gave one agent the same 40 outreach messages to log on Attio, HubSpot and Atomic CRM, wrapped each in Baton, and wrote down what it said. 117 calls on Attio, 10 on Atomic CRM, and the agent told us why.">
+  <link rel="canonical" href="https://goodtiming.ai/blog/agent-taste-test-2/">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230ca678'/%3E%3Crect x='10' y='28' width='44' height='8' rx='4' fill='%230b0c10' transform='rotate(-30 32 32)'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Design tokens lifted from docs.html, so the blog, the docs and the
+         front door read as one system. */
+      --page: #f7f8fa; --card: #fff; --line: #e5e7eb; --line-soft: #f1f3f5;
+      --ink: #111827; --ink-2: #1f2937; --ink-3: #4b5563;
+      --mute: #6b7280; --mute-2: #9ca3af;
+      --blue: #3651d4; --blue-soft: #eef2ff; --blue-edge: #c7d2fe;
+      --brand: #0ca678;           /* LOCKED 9/1/26: emerald, the brand colour */
+      --mark: #bdeeda;            /* LOCKED 9/1/26: the highlight wash, derived from emerald */
+      --brand-ink: #0b7d5c;
+      --brand-wash: #eafaf3;
+      --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--sans); background: var(--page); color: var(--ink); line-height: 1.6; -webkit-font-smoothing: antialiased; padding-top: 72px; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ---------- top nav (verbatim from docs.html) ---------- */
+    body > nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      height: 72px; box-sizing: border-box;
+      padding: 0 max(20px, calc((100% - 1240px) / 2));
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(255,255,255,0.88); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; letter-spacing: -0.01em; line-height: 1.2; color: var(--ink); }
+    .nav-brand-mark { width: 25px; height: 25px; flex-shrink: 0; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230ca678'/%3E%3Crect x='10' y='28' width='44' height='8' rx='4' fill='%230b0c10' transform='rotate(-30 32 32)'/%3E%3C/svg%3E") center/contain no-repeat; }
+    .nav-brand-sub { color: var(--mute-2); font-weight: 400; font-size: 12px; margin-left: 3px; }
+    .nav-right { display: flex; align-items: center; gap: 20px; }
+    .nav-link { color: var(--ink-3); font-size: 13.5px; font-weight: 500; line-height: 1.2; transition: color 0.15s; }
+    .nav-link:hover { color: var(--ink); }
+    .nav-link.active { color: var(--brand); font-weight: 600; }
+    .nav-github { color: var(--mute-2); display: inline-flex; align-items: center; transition: color 0.15s; }
+    .nav-github svg { display: block; }
+    .nav-github:hover { color: var(--ink); }
+    .btn { display: inline-flex; align-items: center; white-space: nowrap; padding: 9px 20px; border-radius: 10px; font-size: 14px; font-weight: 600; line-height: 1.2; cursor: pointer; transition: filter 0.18s; border: 1px solid transparent; color: #fff; background: var(--brand); text-decoration: none; }
+    .btn:hover { filter: brightness(1.06); }
+
+    /* ---------- article ---------- */
+    .post { max-width: 760px; margin: 0 auto; padding: 56px 32px 80px; }
+    .post-kicker { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--brand); margin-bottom: 14px; }
+    .post-kicker a:hover { text-decoration: underline; }
+    .post h1 { font-size: 36px; line-height: 1.18; font-weight: 700; letter-spacing: -0.022em; color: var(--ink); margin-bottom: 16px; }
+    .post-byline { font-size: 14px; color: var(--mute); margin-bottom: 40px; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
+    .post-byline strong { color: var(--ink-2); font-weight: 500; }
+    .post h2 { font-size: 24px; font-weight: 600; letter-spacing: -0.015em; color: var(--ink); margin: 3rem 0 0.9rem; }
+    .post p { color: var(--ink-2); font-size: 17px; line-height: 1.7; margin-bottom: 1.1rem; }
+    .post p a, .post li a, .post figcaption a { color: var(--blue); }
+    .post p a:hover, .post li a:hover { text-decoration: underline; }
+    .post ol, .post ul { margin: 0.25rem 0 1.25rem 1.4rem; }
+    .post li { color: var(--ink-2); font-size: 17px; line-height: 1.65; margin-bottom: 0.3rem; }
+    .post strong { color: var(--ink); font-weight: 600; }
+    .post em { color: var(--ink-2); }
+    code { font-family: var(--mono); font-size: 0.86em; color: var(--ink-2); background: var(--line-soft); padding: 1px 5px; border-radius: 4px; }
+    pre { background: #f6f8fa; border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; font-family: var(--mono); font-size: 12.5px; color: var(--ink-2); overflow-x: auto; margin: 0.75rem 0 1.25rem; line-height: 1.65; }
+    pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+
+    /* What Baton captured, quoted: a left rule in the brand colour and the
+       agent's own words in the body size, one step smaller. */
+    .post blockquote { border-left: 3px solid var(--brand); background: var(--card); border-radius: 0 10px 10px 0; padding: 12px 18px; margin: 0.25rem 0 1.25rem; }
+    .post blockquote p { font-size: 15.5px; color: var(--ink-2); margin-bottom: 0.4rem; }
+    .post blockquote p:last-child { margin-bottom: 0; }
+    .post blockquote code { background: #fdecec; color: #b42318; }
+
+    .post-table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 0.75rem 0 1.5rem; background: var(--card); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+    .post-table th { text-align: left; font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mute); padding: 10px 14px; border-bottom: 1px solid var(--line); background: #fbfbfc; }
+    .post-table td { padding: 9px 14px; border-bottom: 1px solid var(--line-soft); color: var(--ink-2); vertical-align: top; }
+    .post-table tr:last-child td { border-bottom: none; }
+    .table-wrap { overflow-x: auto; }
+
+    /* Figures break out of the text column so console captures show at the
+       product's own type size; the width attribute on each img is its 1x size. */
+    figure { width: min(1080px, 100vw - 32px); margin: 0.75rem 0 1.75rem 50%; transform: translateX(-50%); }
+    figure img { display: block; max-width: 100%; height: auto; margin: 0 auto; border: 1px solid var(--line); border-radius: 10px; background: var(--card); }
+    figcaption { font-size: 13.5px; color: var(--mute); line-height: 1.5; margin: 8px auto 0; max-width: 760px; }
+
+    details { border: 1px solid var(--line); border-radius: 10px; background: var(--card); padding: 12px 16px; margin: 2rem 0 0; }
+    summary { cursor: pointer; font-size: 14.5px; font-weight: 500; color: var(--ink-2); }
+    details p { font-size: 15px; margin-top: 0.75rem; }
+    details pre { margin-bottom: 0.25rem; white-space: pre-wrap; }
+    .chart-card { max-width: 760px; margin: 0 auto; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 10px 6px 4px; }
+    .chart-card svg { display: block; width: 100%; height: auto; }
+
+    /* ---------- footer (verbatim from docs.html) ---------- */
+    footer { padding: 36px 32px 48px; border-top: 1px solid var(--line); background: var(--card); }
+    .footer-row { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; color: var(--mute-2); font-size: 12.5px; }
+    .footer-brand { color: var(--mute); }
+    .footer-brand strong { color: var(--ink); font-weight: 600; }
+    .footer-links a { color: var(--mute); margin-left: 18px; }
+    .footer-links a:hover { color: var(--ink); }
+
+    @media (max-width: 760px) {
+      body > nav { height: 60px; padding: 0 16px; }
+      .nav-home { display: none; }
+      .nav-right { gap: 14px; }
+      .nav-brand-sub { display: none; }
+      body { padding-top: 60px; }
+      .post { padding: 32px 16px 56px; }
+      .post h1 { font-size: 28px; }
+      .post p, .post li { font-size: 16px; }
+      .post-table { font-size: 13px; }
+      .post-table th, .post-table td { padding: 8px 10px; }
+      footer { padding: 28px 16px 40px; }
+      .footer-links a { margin-left: 0; margin-right: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-brand">
+    <span class="nav-brand-mark" aria-hidden="true"></span>
+    <span>Baton <span class="nav-brand-sub">by Good Timing</span></span>
+  </a>
+  <div class="nav-right">
+    <a href="/" class="nav-link nav-home">Home</a>
+    <a href="/docs.html" class="nav-link">Docs</a>
+    <a href="/blog/" class="nav-link active">Blog</a>
+    <a href="https://github.com/good-timing" class="nav-github" aria-label="Baton on GitHub" target="_blank" rel="noopener">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.54-3.88-1.54-.52-1.34-1.28-1.69-1.28-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.3-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18.92-.26 1.91-.39 2.89-.39.98 0 1.97.13 2.89.39 2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.76.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.4-5.25 5.69.41.36.78 1.07.78 2.17v3.22c0 .31.21.67.8.56C20.71 21.39 24 17.08 24 12 24 5.65 18.85.5 12.5.5h-.5z"/></svg>
+    </a>
+    <a href="https://baton.goodtiming.ai/" class="btn">Get started</a>
+  </div>
+</nav>
+
+<article class="post">
+  <div class="post-kicker"><a href="/blog/">Agent taste test #2</a></div>
+  <h1>We asked an agent to log 40 messages on 3 CRMs through their MCP servers. One took 3x as long and cost 4x as much.</h1>
+  <div class="post-byline"><strong>Dave Eyler, Good Timing</strong> &nbsp;&middot;&nbsp; October 15, 2026</div>
+<p>About 2 minutes into logging 40 messages in Attio, the agent settled into a loop: 1 call to log 1 message, about every 2.4 seconds, 40 times in a row. When it finished, it used the complaint tool we gave it to tell us why.</p>
+<p>If you run an MCP server, every one of those calls is a request to your API and a round trip through the model that your user pays for. On Atomic CRM the same agent did the same job, just as correctly, in 10 calls. HubSpot landed in between.</p>
+<p>We used the same agent (Claude Code on Claude Opus 5.5), the same CRM data and the same 3-sentence ask on <a href="https://docs.attio.com/mcp/overview">Attio</a>, <a href="https://developers.hubspot.com/docs/build-with-ai/remote-mcp-server">HubSpot</a> and <a href="https://github.com/marmelab/atomic-crm-mcp">Atomic CRM</a>, one run each. We wrapped each server in <a href="https://goodtiming.ai">Baton</a>, which we make. It records what the agent was trying to do on every call and gives it a place to file a complaint.</p>
+<h2>The job: 40 messages, 10 new people, 3 new companies</h2>
+<p>The agent got 3 sentences:</p>
+<blockquote><p>I log every outreach message I send in my CRM. Log each of these messages I sent this week. Add anyone who isn't in the CRM yet.</p></blockquote>
+<p>Then the 40 messages, one paragraph each, like this one:</p>
+<blockquote><p>Nico Ellingham, Herongate Finance, Email, Oct 13: Hi Nico, The setup takes about ten minutes and you can remove it with one line. Following up on my note from Thursday, in case it got buried.</p></blockquote>
+<p>Each CRM started with the same 300 companies, 420 people and 740 logged messages. 30 of the 40 people were already there. 10 were not, and 3 of those work at companies that weren't either. So a correct run ends with exactly 40 new log entries, 10 new people and 3 new companies, and we checked each CRM afterwards instead of taking the agent's word.</p>
+<h2>Attio took 117 calls, and Atomic CRM only needed 10</h2>
+<figure><div class="chart-card">
+<svg viewBox="0 0 760 240" role="img" aria-label="Attio logged the 40 messages in 40 calls, Atomic CRM in 1" font-family="Inter, -apple-system, sans-serif" font-size="12">
+<text x="20" y="26" font-size="16" font-weight="600" fill="#111827">Attio logged the 40 messages in 40 calls, Atomic CRM in 1</text>
+<text x="20" y="46" fill="#6b7280">Every call the agent made to each CRM, by seconds into the run. Blue calls logged messages.</text>
+<text x="20" y="104" font-weight="600" fill="#111827">Attio</text>
+<line x1="120.0" x2="657.6" y1="100" y2="100" stroke="#e5e7eb"/>
+<line x1="657.6" x2="657.6" y1="82" y2="118" stroke="#9ca3af" stroke-width="1.5"/>
+<text x="663.6" y="104" fill="#6b7280">done at 240 s</text>
+<text x="20" y="174" font-weight="600" fill="#111827">Atomic CRM</text>
+<line x1="120.0" x2="305.9" y1="170" y2="170" stroke="#e5e7eb"/>
+<line x1="305.9" x2="305.9" y1="152" y2="188" stroke="#9ca3af" stroke-width="1.5"/>
+<text x="311.9" y="174" fill="#6b7280">done at 83 s</text>
+<rect x="141.4" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: list-objects at 10 s</title></rect>
+<rect x="141.4" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: list-lists at 10 s</title></rect>
+<rect x="148.1" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: list-list-attribute-definitions at 13 s</title></rect>
+<rect x="150.4" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: list-attribute-definitions at 14 s</title></rect>
+<rect x="159.3" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: list-records-in-list at 18 s</title></rect>
+<rect x="161.6" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: list-records at 19 s</title></rect>
+<rect x="179.5" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 27 s</title></rect>
+<rect x="192.9" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 33 s</title></rect>
+<rect x="195.2" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 34 s</title></rect>
+<rect x="195.2" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 34 s</title></rect>
+<rect x="197.4" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 35 s</title></rect>
+<rect x="199.6" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 36 s</title></rect>
+<rect x="201.9" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 37 s</title></rect>
+<rect x="204.1" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 38 s</title></rect>
+<rect x="206.4" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 39 s</title></rect>
+<rect x="208.6" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 40 s</title></rect>
+<rect x="210.8" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 41 s</title></rect>
+<rect x="213.1" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 42 s</title></rect>
+<rect x="215.3" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 43 s</title></rect>
+<rect x="217.6" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 44 s</title></rect>
+<rect x="224.3" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 47 s</title></rect>
+<rect x="226.5" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 48 s</title></rect>
+<rect x="228.8" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 49 s</title></rect>
+<rect x="231.0" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 50 s</title></rect>
+<rect x="233.2" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 51 s</title></rect>
+<rect x="235.5" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 52 s</title></rect>
+<rect x="237.7" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 53 s</title></rect>
+<rect x="240.0" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 54 s</title></rect>
+<rect x="242.2" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 55 s</title></rect>
+<rect x="244.4" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 56 s</title></rect>
+<rect x="246.7" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 57 s</title></rect>
+<rect x="248.9" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 58 s</title></rect>
+<rect x="251.2" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 59 s</title></rect>
+<rect x="251.2" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 59 s</title></rect>
+<rect x="257.9" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 62 s</title></rect>
+<rect x="260.1" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 63 s</title></rect>
+<rect x="262.4" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 64 s</title></rect>
+<rect x="264.6" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 65 s</title></rect>
+<rect x="266.8" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 66 s</title></rect>
+<rect x="269.1" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 67 s</title></rect>
+<rect x="271.3" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 68 s</title></rect>
+<rect x="273.6" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 69 s</title></rect>
+<rect x="275.8" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 70 s</title></rect>
+<rect x="278.0" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 71 s</title></rect>
+<rect x="280.3" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 72 s</title></rect>
+<rect x="280.3" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 72 s</title></rect>
+<rect x="181.7" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (company) at 28 s</title></rect>
+<rect x="293.7" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 78 s</title></rect>
+<rect x="296.0" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (company) at 79 s</title></rect>
+<rect x="298.2" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (company) at 80 s</title></rect>
+<rect x="300.4" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (company) at 81 s</title></rect>
+<rect x="302.7" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (company) at 82 s</title></rect>
+<rect x="304.9" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (company) at 83 s</title></rect>
+<rect x="304.9" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (company) at 83 s</title></rect>
+<rect x="307.2" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (company) at 84 s</title></rect>
+<rect x="309.4" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (company) at 85 s</title></rect>
+<rect x="311.6" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (company) at 86 s</title></rect>
+<rect x="313.9" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (company) at 87 s</title></rect>
+<rect x="316.1" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 88 s</title></rect>
+<rect x="336.3" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: get-records-by-ids at 97 s</title></rect>
+<rect x="338.5" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 98 s</title></rect>
+<rect x="340.8" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 99 s</title></rect>
+<rect x="343.0" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: search-records (person) at 100 s</title></rect>
+<rect x="358.7" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: create-record at 107 s</title></rect>
+<rect x="360.9" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: create-record at 108 s</title></rect>
+<rect x="360.9" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: create-record at 108 s</title></rect>
+<rect x="369.9" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: create-record at 112 s</title></rect>
+<rect x="372.1" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: create-record at 113 s</title></rect>
+<rect x="374.4" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: create-record at 114 s</title></rect>
+<rect x="378.8" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: create-record at 116 s</title></rect>
+<rect x="381.1" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: create-record at 117 s</title></rect>
+<rect x="385.6" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: create-record at 119 s</title></rect>
+<rect x="387.8" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: create-record at 120 s</title></rect>
+<rect x="392.3" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: create-record at 122 s</title></rect>
+<rect x="394.5" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: create-record at 123 s</title></rect>
+<rect x="399.0" y="86" width="2" height="28" fill="#c4c8cf"><title>Attio: create-record at 125 s</title></rect>
+<rect x="410.2" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 130 s</title></rect>
+<rect x="416.9" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 133 s</title></rect>
+<rect x="421.4" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 135 s</title></rect>
+<rect x="428.1" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 138 s</title></rect>
+<rect x="432.6" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 140 s</title></rect>
+<rect x="437.1" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 142 s</title></rect>
+<rect x="443.8" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 145 s</title></rect>
+<rect x="448.3" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 147 s</title></rect>
+<rect x="452.8" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 149 s</title></rect>
+<rect x="457.2" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 151 s</title></rect>
+<rect x="468.4" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 156 s</title></rect>
+<rect x="472.9" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 158 s</title></rect>
+<rect x="477.4" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 160 s</title></rect>
+<rect x="484.1" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 163 s</title></rect>
+<rect x="490.8" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 166 s</title></rect>
+<rect x="495.3" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 168 s</title></rect>
+<rect x="499.8" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 170 s</title></rect>
+<rect x="506.5" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 173 s</title></rect>
+<rect x="511.0" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 175 s</title></rect>
+<rect x="515.5" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 177 s</title></rect>
+<rect x="524.4" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 181 s</title></rect>
+<rect x="531.2" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 184 s</title></rect>
+<rect x="535.6" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 186 s</title></rect>
+<rect x="540.1" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 188 s</title></rect>
+<rect x="546.8" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 191 s</title></rect>
+<rect x="551.3" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 193 s</title></rect>
+<rect x="555.8" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 195 s</title></rect>
+<rect x="560.3" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 197 s</title></rect>
+<rect x="567.0" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 200 s</title></rect>
+<rect x="571.5" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 202 s</title></rect>
+<rect x="580.4" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 206 s</title></rect>
+<rect x="584.9" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 208 s</title></rect>
+<rect x="591.6" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 211 s</title></rect>
+<rect x="596.1" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 213 s</title></rect>
+<rect x="600.6" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 215 s</title></rect>
+<rect x="607.3" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 218 s</title></rect>
+<rect x="611.8" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 220 s</title></rect>
+<rect x="616.3" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 222 s</title></rect>
+<rect x="620.8" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 224 s</title></rect>
+<rect x="625.2" y="86" width="2" height="28" fill="#3651d4"><title>Attio: add-record-to-list at 226 s</title></rect>
+<rect x="136.2" y="156" width="2" height="28" fill="#c4c8cf"><title>Atomic CRM: get_schema at 7.7 s</title></rect>
+<rect x="146.3" y="156" width="2" height="28" fill="#c4c8cf"><title>Atomic CRM: query (read) at 12.2 s</title></rect>
+<rect x="148.6" y="156" width="2" height="28" fill="#c4c8cf"><title>Atomic CRM: query (read) at 13.2 s</title></rect>
+<rect x="149.9" y="156" width="2" height="28" fill="#c4c8cf"><title>Atomic CRM: query (read) at 13.8 s</title></rect>
+<rect x="176.6" y="156" width="2" height="28" fill="#c4c8cf"><title>Atomic CRM: query (match all 40 names) at 25.7 s</title></rect>
+<rect x="191.8" y="156" width="2" height="28" fill="#c4c8cf"><title>Atomic CRM: query (read) at 32.5 s</title></rect>
+<rect x="193.8" y="156" width="2" height="28" fill="#c4c8cf"><title>Atomic CRM: query (read) at 33.4 s</title></rect>
+<rect x="204.1" y="156" width="2" height="28" fill="#c4c8cf"><title>Atomic CRM: query (read) at 38.0 s</title></rect>
+<rect x="284.1" y="156" width="2" height="28" fill="#3651d4"><title>Atomic CRM: query (write all 40) at 73.7 s</title></rect>
+<rect x="292.2" y="156" width="2" height="28" fill="#c4c8cf"><title>Atomic CRM: query (verify) at 77.3 s</title></rect>
+<text x="230.9" y="78" text-anchor="middle" fill="#6b7280">40 lookups, 1 name each</text>
+<text x="518.7" y="78" text-anchor="middle" fill="#3651d4">40 calls, 1 message each</text>
+<text x="285.1" y="146" text-anchor="middle" fill="#3651d4">1 call: 40 messages, 10 people, 3 companies</text>
+<text x="120.0" y="222" text-anchor="middle" fill="#6b7280">0 s</text>
+<text x="254.4" y="222" text-anchor="middle" fill="#6b7280">60 s</text>
+<text x="388.8" y="222" text-anchor="middle" fill="#6b7280">120 s</text>
+<text x="523.2" y="222" text-anchor="middle" fill="#6b7280">180 s</text>
+<text x="657.6" y="222" text-anchor="middle" fill="#6b7280">240 s</text>
+</svg>
+</div><figcaption>One mark per call to the CRM's MCP server, from the Baton sessions for Attio run 4 and Atomic CRM run 1, October 13, 2026.</figcaption></figure>
+<div class="table-wrap"><table class="post-table">
+<thead><tr><th>CRM</th><th>Agent time</th><th>Tool calls</th><th>Cost</th><th>Logged correctly</th></tr></thead>
+<tbody>
+<tr><td>Attio</td><td>240 s</td><td>117</td><td>$1.86</td><td>40 of 40</td></tr>
+<tr><td>HubSpot</td><td>177 s</td><td>21</td><td>$1.42</td><td>37 of 40</td></tr>
+<tr><td>Atomic CRM</td><td>83 s</td><td>10</td><td>$0.49</td><td>40 of 40</td></tr>
+</tbody></table></div>
+<p>Tool calls count calls to each CRM's MCP server, including the 1 complaint the agent filed on Attio and on HubSpot. Time and cost are Claude Code's own report for each run.</p>
+<h2>80 of Attio's calls were 2 steps, repeated 40 times each</h2>
+<p>Attio's server log shows 116 successful calls and 0 errors, which looks like healthy traffic. Baton records what the agent meant by each call, and on 80 of them it meant one of 2 things:</p>
+<blockquote><p>intent: Check if this outreach recipient already exists in the CRM.</p><p>intent: Log an outreach message sent this week.</p></blockquote>
+<p>Attio's <code>search-records</code> looks up one name per call, and <code>add-record-to-list</code> logs one entry per call. Neither takes a list, so the agent looked up 40 people one at a time, then logged 40 entries one at a time. Those 80 calls took about 140 of the 240 seconds. When it finished, it filed this:</p>
+<figure><img src="img/attio-log-calls-and-filing.png" alt="Attio run 4 in Baton: the last add-record-to-list calls, each with the intent &#x27;Log an outreach message sent this week.&#x27;, then the agent&#x27;s filing. Observed: There was no batch tool, so logging 40 messages took 40 separate add-record-to-list calls, plus 40 search-records calls to match people. Suggested: Add a batch add-entries-to-list tool, and include the referenced company&#x27;s name alongside its record_id in people search results." width="800" loading="lazy"><figcaption>The end of Attio run 4 in Baton: the last of the 40 identical log calls, then the agent&#x27;s filing.</figcaption></figure>
+<h2>HubSpot cut its tool calls 82%, but its large responses wiped out most of the cost savings</h2>
+<p>HubSpot's tools take lists, and the agent used them. It looked up all 40 people in 1 search, created the 10 new people in 1 call, and logged the 40 notes in 4, because <code>manage_crm_objects</code> takes up to 10 objects per request. Calls fell from Attio's 117 to 21. The bill fell only 24%, from $1.86 to $1.42.</p>
+<p>The rest of the bill is what the calls returned. Every result stays in the conversation and goes back to the model on every later turn. HubSpot's 20 calls returned 145 KB, more than Attio's 116 calls did (112 KB), and 4 of its searches returned 16 to 20 KB each. So HubSpot needed far fewer turns, and each one carried more than 3 times as much:</p>
+<div class="table-wrap"><table class="post-table">
+<thead><tr><th>CRM</th><th>Turns</th><th>Tokens per turn</th><th>Tokens in total</th></tr></thead>
+<tbody>
+<tr><td>Attio</td><td>121</td><td>15,000</td><td>1.81 million</td></tr>
+<tr><td>HubSpot</td><td>26</td><td>50,000</td><td>1.30 million</td></tr>
+<tr><td>Atomic CRM</td><td>12</td><td>30,000</td><td>0.37 million</td></tr>
+</tbody></table></div>
+<p>The agent hit the size problem itself and filed it:</p>
+<figure><img src="img/hubspot-batched-writes-and-filing.png" alt="HubSpot run 1 in Baton: the last 2 manage_crm_objects calls, each expecting 10 notes created, then the agent&#x27;s filing. Observed: the COMMUNICATION object type is not supported, and a contact search returned 61k characters for 200 records even though it asked for only 5 properties. Suggested: support COMMUNICATION, and return only the requested properties or a compact mode." width="800" loading="lazy"><figcaption>The end of HubSpot run 1 in Baton: the last 2 of its 4 note writes, 10 notes each, then the agent&#x27;s filing.</figcaption></figure>
+<h2>The fix: Atomic CRM already does what both agents asked for</h2>
+<p>Atomic CRM's MCP server has 2 tools, <code>get_schema</code> and <code>query</code>, and <code>query</code> runs whatever SQL it's given. The agent matched all 40 names against the CRM in 1 query, then wrote everything in 1 statement. Just before the write, it said <em>"Now creating the 3 missing companies, 10 new contacts, and 40 outreach rows in one statement."</em> All 40 rows landed at the same instant, 74 seconds into the 83-second run.</p>
+<figure><img src="img/atomic-lookup-and-write.png" alt="Atomic CRM run 1 in Baton: a query that matches each recipient to existing contacts and companies, then one query whose intent is &#x27;Add missing companies/contacts and log all 40 outreach messages.&#x27; and whose expected result is &#x27;3 companies, 10 contacts, 40 outreach rows inserted, 0 unmatched.&#x27;" width="800" loading="lazy"><figcaption>Atomic CRM run 1 in Baton: 1 query to match all 40 names, then 1 to write everything.</figcaption></figure>
+<p>Attio doesn't need to hand agents raw SQL to get there. Its agent asked for 2 tools, and HubSpot's run shows the agent uses tools like them when they exist:</p>
+<ol>
+<li><strong>A write that takes a list.</strong> Attio's 40 <code>add-record-to-list</code> calls become 1, and its 13 <code>create-record</code> calls become 2, one for the companies and one for the people.</li>
+<li><strong>A search that takes a list and returns the company's name.</strong> Attio's 56 <code>search-records</code> calls each looked up 1 name. A search that takes a list makes those a few calls, and the company's name beside its id saves the lookups the agent made to confirm each match. Attio's <code>get-records-by-ids</code> does take a list, but of record ids, and the agent only had names.</li>
+</ol>
+<p>HubSpot's agent asked for a third: return only the fields it requested. Atomic CRM already does that, because a SQL query returns exactly the columns it names. Without it, a list saves calls and not much money.</p>
+<h2>At HubSpot's scale, one call per message would cost $128 million a year</h2>
+<p>$1.86 against $0.49 doesn't sound like much. Per message, Attio cost about 3.4 cents, 4 seconds and 2.7 calls more than Atomic CRM. A sales development rep sends 50 to 100 outbound emails a day (<a href="https://syncgtm.com/blog/how-many-activities-should-sales-development-reps-do-daily">SyncGTM</a>), and HubSpot alone had nearly 300,000 customers in early 2026 (<a href="https://insights.munich-startup.de/news/feed/hubspot-hits-300k-customers-with-18-revenue-growth-and-ai-monetisation">Munich Startup</a>). At 50 messages a day for 250 working days, one rep logs 12,500 messages a year. Logging them the Attio way instead of the Atomic CRM way costs:</p>
+<div class="table-wrap"><table class="post-table">
+<thead><tr><th>Extra, the Attio way</th><th>Per rep, per year</th><th>300,000 customers, 1 rep each</th></tr></thead>
+<tbody>
+<tr><td>Agent cost</td><td>about $425</td><td>about $128 million</td></tr>
+<tr><td>Agent time</td><td>about 14 hours</td><td>about 4 million hours</td></tr>
+<tr><td>Calls to the CRM's API</td><td>about 33,000</td><td>about 10 billion</td></tr>
+</tbody></table></div>
+<p>These are straight-line projections from one 40-message run, and the best case for Attio, because its cost per message grows as the conversation gets longer.</p>
+<h2>See what agents ask your server for</h2>
+<p>If you build an MCP server, wrap it with Baton and you get what the agent was trying to do on every call, plus its complaints when your tools make it work harder than it has to. Setup is one prompt for your coding agent, at <a href="https://baton.goodtiming.ai">baton.goodtiming.ai</a>.</p>
+<p>This is our second agent taste test, after <a href="/blog/agent-taste-test-1/">Postgres query tuning</a>. Help us pick the third: reply wherever you found this, or email dave@goodtiming.ai, with 2 servers and one job to be done. If you build one of the servers, you get the agent's notes before the post goes up.</p>
+<details>
+<summary>The data and the prompt</summary>
+<p>The CRM data is invented: 300 companies, 420 people and 740 earlier messages, loaded the same way into each CRM. HubSpot also creates 1 sample company and 2 sample contacts in every new account, and we left them. The messages pitch a made-up product, Tallowmere.</p>
+<p>Each CRM stores a logged message with the same fields (date, channel, status and text): an entry in an Outreach list on Attio, a note with outreach properties on HubSpot, and a row in an outreach table we added to Atomic CRM, which has none of its own.</p>
+<p>The servers are Attio's hosted MCP server (mcp.attio.com), HubSpot's (mcp.hubspot.com), and Atomic CRM's open-source server (<a href="https://github.com/marmelab/atomic-crm-mcp">marmelab/atomic-crm-mcp</a>, commit a34b0b3) running against our own Atomic CRM install. All 3 runs were on October 13, 2026, with Claude Code 2.1.296.</p>
+<p>The prompt, exactly as the agent got it on all 3:</p>
+<pre><code>I log every outreach message I send in my CRM. Log each of these messages I sent this week. Add anyone who isn&#x27;t in the CRM yet.
+
+Ysolde Yardham, Hollowton Analytics, Text, Oct 12: Hi Ysolde, A mutual friend mentioned you were the person to talk to about agents at Hollowton. Our hunch is that most MCP servers lose agents in the first two calls, before anything useful happens.
+
+Finley Cranworth, Dunestead Finance, LinkedIn message, Oct 12: Hi Finley, Thanks again for the time on Monday, the point about auth handoff stuck with me. Following up on my note from Wednesday, in case it got buried. Nobody had noticed because the old name still worked for people reading the docs.
+
+Lane Gosmore, Fencrest Data, SPC Slack, Oct 12: Hi Lane, I can send a sample report so you can see the shape before we talk. Our hunch is that most MCP servers lose agents in the first two calls, before anything useful happens. Would you be open to a 20 minute call next week? I&#x27;d also love feedback on whether tool descriptions is even the right thing to measure.
+
+Yael Stanberg, Lumenbrook Robotics, SPC Slack, Oct 12: Hi Yael, Your server looked well put together, which is why I thought the comparison might be interesting. We publish what we find on public servers, and I&#x27;d rather show you first than surprise you. Our first users are MCP owners at developer tools companies, mostly two to ten engineers on the server.
+
+Sol Yardstone, Vellholm Works, Email, Oct 12: Hi Sol, We just shipped a view that ranks tools by how often agents abandon right after calling them. Tallowmere groups those retries into one session so you can read it like a transcript. A mutual friend mentioned you were the person to talk to about agents at Vellholm.
+
+Finley Draymore, Mossvale Works, LinkedIn message, Oct 12: Hi Finley, Thanks again for the time on Thursday, the point about pagination stuck with me. I&#x27;m building Tallowmere, which shows MCP server owners what agents actually do with their tools.
+
+Jules Brackcombe, Bramridge Systems, Text, Oct 12: Hi Jules, Our first users are MCP owners at developer tools companies, mostly two to ten engineers on the server. Our hunch is that most MCP servers lose agents in the first two calls, before anything useful happens. We don&#x27;t store request bodies by default, only the shape of each call and what came back.
+
+Rafe Fairworth, Marrowbrook Finance, Text, Oct 12: Hi Rafe, We wrap the server with a small SDK, so nothing changes in how Marrowbrook deploys it. I&#x27;m around Wednesday and most of next week if a quick call works.
+
+Harper Pencombe, Nettlefield Cloud, Email, Oct 12: Hi Harper, I&#x27;m around Thursday and most of next week if a quick call works. That kind of thing never shows up as an error, it just shows up as a wrong answer. I&#x27;d also love feedback on whether the search tool is even the right thing to measure. If someone else on the team owns this, I&#x27;d be grateful for a pointer.
+
+Nico Lindcombe, Emberford Finance, GT Slack, Oct 12: Hi Nico, I&#x27;d also love feedback on whether rate limits is even the right thing to measure. That kind of thing never shows up as an error, it just shows up as a wrong answer.
+
+Hollis Stanberg, Yarrowmere Networks, Email, Oct 12: Hi Hollis, We&#x27;re a small team and have been heads down on this since the spring. It turned up a renamed parameter at one company that had been breaking agents for six weeks. We just shipped a view that ranks tools by how often agents abandon right after calling them. Happy to run it against your public server first and send you what we find, no strings.
+
+Kai Bracksley, Yarrowhurst Software, Text, Oct 12: Hi Kai, I&#x27;d value your take even if Tallowmere isn&#x27;t a fit for Yarrowhurst right now. Out of curiosity, how do you hear about agent failures today, support tickets or something else? We&#x27;re a small team and have been heads down on this since the spring. Thanks again for the time on Tuesday, the point about the search tool stuck with me.
+
+Lio Goslow, Umbervale Works, InMail, Oct 12: Hi Lio, We just shipped a view that ranks tools by how often agents abandon right after calling them. If someone else on the team owns this, I&#x27;d be grateful for a pointer. Agents read tool descriptions differently than people do, and that gap is most of what we measure.
+
+Quinn Marington, Hollowmoor Works, Text, Oct 12: Hi Quinn, If someone else on the team owns this, I&#x27;d be grateful for a pointer. I noticed Hollowmoor shipped an MCP server recently and wanted to ask how it&#x27;s going. I&#x27;ve been reading the Hollowmoor docs and the section on auth handoff is unusually clear. I&#x27;ll keep this short since I know your inbox is full.
+
+Indra Penberg, Garnetvale Networks, GT Slack, Oct 12: Hi Indra, We watch real agent sessions and point at the exact call where an agent got stuck or gave up. That kind of thing never shows up as an error, it just shows up as a wrong answer. I&#x27;m around Thursday and most of next week if a quick call works. The setup takes about ten minutes and you can remove it with one line.
+
+Tove Kettlestone, Orrinhaven Systems, GT Slack, Oct 12: Hi Tove, Our hunch is that most MCP servers lose agents in the first two calls, before anything useful happens. The surprising part was that the slowest tool wasn&#x27;t the problem, the second search was. A mutual friend mentioned you were the person to talk to about agents at Orrinhaven.
+
+Mira Draylow, Northlark Finance, LinkedIn message, Oct 12: Hi Mira, We&#x27;re a small team and have been heads down on this since the spring. I&#x27;ve been reading the Northlark docs and the section on error messages is unusually clear. Most teams we talk to can see request counts but not why an agent picked the wrong tool.
+
+Noor Standen, Pellfold Platform, Text, Oct 12: Hi Noor, That shows up as healthy traffic on a dashboard, which is exactly why nobody catches it. If someone else on the team owns this, I&#x27;d be grateful for a pointer. I&#x27;d value your take even if Tallowmere isn&#x27;t a fit for Pellfold right now.
+
+Casey Halberg, Northhaven Cloud, Text, Oct 12: Hi Casey, I noticed Northhaven shipped an MCP server recently and wanted to ask how it&#x27;s going. I&#x27;ve been reading the Northhaven docs and the section on long responses is unusually clear. Happy to run it against your public server first and send you what we find, no strings. We&#x27;ve seen agents call a list endpoint, get a long response, and quietly drop the second page.
+
+Hollis Penberg, Islegate Software, Text, Oct 13: Hi Hollis, We&#x27;re a small team and have been heads down on this since the spring. Tallowmere groups those retries into one session so you can read it like a transcript. The thing we keep seeing is agents retrying the same call three or four times before giving up.
+
+Odile Crancombe, Garnetwell Networks, InMail, Oct 13: Hi Odile, Following up on my note from Tuesday, in case it got buried. I&#x27;m building Tallowmere, which shows MCP server owners what agents actually do with their tools. Attaching the two examples I mentioned, both anonymised.
+
+Wilder Kettlebury, Northby Works, GT Slack, Oct 13: Hi Wilder, Agents read tool descriptions differently than people do, and that gap is most of what we measure. I&#x27;ll keep this short since I know your inbox is full.
+
+Kai Norbury, Corranstead Systems, SPC Slack, Oct 13: Hi Kai, We&#x27;ve seen agents call a list endpoint, get a long response, and quietly drop the second page. We watch real agent sessions and point at the exact call where an agent got stuck or gave up.
+
+Noor Faircombe, Umberridge Software, Text, Oct 13: Hi Noor, I&#x27;ve been reading the Umberridge docs and the section on tool naming is unusually clear. The surprising part was that the slowest tool wasn&#x27;t the problem, the second search was. The setup takes about ten minutes and you can remove it with one line. Either way, congrats on the launch, it looked like a lot of work.
+
+Hollis Cranley, Orrinstead Robotics, LinkedIn message, Oct 13: Hi Hollis, Your server looked well put together, which is why I thought the comparison might be interesting. If someone else on the team owns this, I&#x27;d be grateful for a pointer. Either way, congrats on the launch, it looked like a lot of work.
+
+Zev Radwick, Oakridge Analytics, LinkedIn message, Oct 13: Hi Zev, Nobody had noticed because the old name still worked for people reading the docs. A mutual friend mentioned you were the person to talk to about agents at Oakridge. The setup takes about ten minutes and you can remove it with one line.
+
+Kai Yardworth, Oakcrest Health, Email, Oct 13: Hi Kai, Thanks again for the time on Monday, the point about retries stuck with me. That shows up as healthy traffic on a dashboard, which is exactly why nobody catches it.
+
+Mira Kettlestone, Galehaven Systems, InMail, Oct 13: Hi Mira, We&#x27;ve seen agents call a list endpoint, get a long response, and quietly drop the second page. Either way, congrats on the launch, it looked like a lot of work. Is the MCP server owned by the platform team or by product at Galehaven?
+
+Indra Ashbury, Hollowmere Labs, SPC Slack, Oct 13: Hi Indra, Also happy to just trade notes over chat if that&#x27;s easier than a call. Agents read tool descriptions differently than people do, and that gap is most of what we measure.
+
+Mira Marberg, Sorrelford Platform, GT Slack, Oct 13: Hi Mira, If it&#x27;s useful I can share a short report from a server similar to yours. Our hunch is that most MCP servers lose agents in the first two calls, before anything useful happens.
+
+Nico Bellsley, Orrinford Systems, Email, Oct 13: Hi Nico, Attaching the two examples I mentioned, both anonymised. Thanks again for the time on Thursday, the point about error messages stuck with me. We&#x27;ve seen agents call a list endpoint, get a long response, and quietly drop the second page. I&#x27;ll keep this short since I know your inbox is full.
+
+Avery Yardthorpe, Nettlewell Finance, SPC Slack, Oct 13: Hi Avery, We wrap the server with a small SDK, so nothing changes in how Nettlewell deploys it. If someone else on the team owns this, I&#x27;d be grateful for a pointer. The surprising part was that the slowest tool wasn&#x27;t the problem, the second search was.
+
+Esme Ashstone, Oakstead Software, SPC Slack, Oct 13: Hi Esme, Agents read tool descriptions differently than people do, and that gap is most of what we measure. Also happy to just trade notes over chat if that&#x27;s easier than a call.
+
+Yael Bellthorpe, Sorrelwood Software, Email, Oct 13: Hi Yael, One of them cut their average agent session from nine tool calls to four. No pitch deck, I&#x27;d mostly like to hear how you think about pagination. Thanks again for the time on Thursday, the point about pagination stuck with me. Attaching the two examples I mentioned, both anonymised.
+
+Hollis Gosstone, Bramfield Software, GT Slack, Oct 13: Hi Hollis, A mutual friend mentioned you were the person to talk to about agents at Bramfield. Also happy to just trade notes over chat if that&#x27;s easier than a call. I&#x27;ve been reading the Bramfield docs and the section on long responses is unusually clear.
+
+Galen Radsley, Northmere Data, GT Slack, Oct 13: Hi Galen, I&#x27;m around Thursday and most of next week if a quick call works. Totally fine if the timing is wrong, I know launches eat every week. That kind of thing never shows up as an error, it just shows up as a wrong answer.
+
+Nico Ellingham, Herongate Finance, Email, Oct 13: Hi Nico, The setup takes about ten minutes and you can remove it with one line. Following up on my note from Thursday, in case it got buried.
+
+Vesna Ellingcombe, Umbermoor Systems, GT Slack, Oct 13: Hi Vesna, We don&#x27;t store request bodies by default, only the shape of each call and what came back. Thanks again for the time on Monday, the point about pagination stuck with me.
+
+Sol Quillstone, Nettlehurst Networks, SPC Slack, Oct 13: Hi Sol, The fix there was one line in a tool description, and completion rates moved the same day. Happy to run it against your public server first and send you what we find, no strings.
+
+Ugo Tallow, Juniwell Analytics, Email, Oct 13: Hi Ugo, We&#x27;re a small team and have been heads down on this since the spring. Tallowmere groups those retries into one session so you can read it like a transcript. Nobody had noticed because the old name still worked for people reading the docs. If it&#x27;s useful I can share a short report from a server similar to yours.</code></pre>
+</details>
+</article>
+
+<footer>
+  <div class="footer-row">
+    <div class="footer-brand"><strong>Baton</strong> by Good Timing, Inc. &nbsp;&middot;&nbsp; &copy; 2026</div>
+    <div class="footer-links">
+      <a href="/privacy.html">Privacy</a>
+      <a href="/terms.html">Terms</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* One listener for every Get started link, present and future: the press that
+   leaves this site for the console is the last thing we can count here, and
+   the console's own funnel picks the person up on the other side. */
+document.addEventListener('click', function (e) {
+  var a = e.target.closest('a[href*="baton.goodtiming.ai"]');
+  if (a && window.fathom) { fathom.trackEvent('get started'); }
+});
+
+/* Tell the console where this reader came from. The console only ever sees the
+   hop from this page, so every reader of the post would arrive as "came from
+   goodtiming.ai". This puts ONE of two things on the Get started links so the
+   console can tell them apart: ?utm_source=<word> when the link the reader
+   clicked carried a utm_source (a word we typed into a link we posted), else
+   ?ref=<host> with the site the browser says they came from. No renaming, no
+   lookup table. Nothing here identifies a person. */
+(function () {
+  var param = '', val = '';
+  try { val = new URL(location.href).searchParams.get('utm_source') || ''; } catch (e) {}
+  if (val) { param = 'utm_source'; }
+  else {
+    var h = '';
+    try { h = document.referrer ? new URL(document.referrer).hostname.toLowerCase() : ''; } catch (e) {}
+    h = h.replace(/^www\./, '');
+    if (h && h !== location.hostname && !/(^|\.)goodtiming\.ai$/.test(h)) { param = 'ref'; val = h; }
+  }
+  val = val.toLowerCase().replace(/[^a-z0-9._-]/g, '').slice(0, 64);
+  if (!param || !val) return;
+  var links = document.querySelectorAll('a[href*="baton.goodtiming.ai"]');
+  for (var i = 0; i < links.length; i++) {
+    try {
+      var u = new URL(links[i].href);
+      if (!u.searchParams.get('utm_source') && !u.searchParams.get('ref')) { u.searchParams.set(param, val); links[i].href = u.toString(); }
+    } catch (e) {}
+  }
+})();
+</script>
+</body>
+</html>
