@@ -148,8 +148,6 @@
        SVG; tests/test_docs_diagrams.py is what says so. The highlighter's
        `.diagram` guard below stays: it costs a line, and it means a stray
        <pre> here degrades instead of being mangled into spans. */
-    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0.5rem 0 1.25rem; }
-    .chip { font-family: var(--mono); font-size: 11.5px; padding: 3px 10px; border-radius: 6px; background: var(--line-soft); border: 1px solid var(--line); color: var(--ink-3); }
 
     /* ---------- footer ---------- */
     footer { padding: 36px 32px 48px; border-top: 1px solid var(--line); background: var(--card); }
@@ -605,37 +603,41 @@ install_baton(mcp, VendorConfig(
       </div>
       <ul>
         <li><strong>Your API is untouched.</strong> Baton lives in the Skill that calls it, not behind it, so nothing ships on the API side.</li>
-        <li><strong>One <code>client.trace(...)</code> per call</strong> is the whole integration; the events it emits are the same envelope the MCP path emits.</li>
+        <li><strong>One <code>client.trace(...)</code> per call, inside one <code>client.session(...)</code> per request,</strong> is the whole integration; the events it emits are the same envelope the MCP path emits.</li>
         <li><strong>Use this path when you ship a Skill rather than an MCP server.</strong></li>
       </ul>
       <h3>Sync (<code>Client</code>)</h3>
-      <pre>from baton import Client, SignalType
+      <pre>from baton import Client, Principal
 
 client = Client(dsn="https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...")
 
-with client.trace(
-    tool_name="chat.completions.create",
-    intent="summarize the user's question",
-    expected_outcome="2-3 sentence answer",
-) as trace:
-    response = vendor_client.chat.completions.create(...)
-    trace.observed(response)
+with client.session(
+    session_id=request.conversation_id,           # optional: your own id for the conversation
+    principal=Principal(principal_id=user.id),    # optional: who is calling
+    client_info={"name": "claude-code", "version": "2.1"},  # optional: which app is calling
+    headers=request.headers,                      # optional: only User-Agent and X-Anthropic-Client are kept
+):
+    with client.trace(
+        tool_name="chat.completions.create",
+        intent="summarize the user's question",
+        expected_outcome="2-3 sentence answer",
+    ) as trace:
+        response = vendor_client.chat.completions.create(...)
+        trace.observed(response)
 
-client.annotate(signal_type=SignalType.DEAD_END, suggested_improvement="...")
+    client.annotate(what_happened="asked for a CSV export; no endpoint returns one", tool_name="none")
+
 client.close()  # or: with Client(dsn=...) as client:</pre>
+      <p>Open one <code>client.session(...)</code> per request or conversation. Every <code>trace()</code> and <code>annotate()</code> inside it shares its session, principal and client. A call outside any block gets a session of its own, so it does not join the others. Pass <code>client_info</code> or the request's headers when your request says which app the agent runs in; with neither, your dashboard shows "app not reported".</p>
       <h3>Async (<code>AsyncClient</code>)</h3>
       <pre>from baton import AsyncClient
 
 async with AsyncClient(dsn="https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...") as client:
-    async with client.trace(tool_name="...", intent="...") as trace:
-        response = await vendor_client.chat.completions.create(...)
-        trace.observed(response)</pre>
-      <p>Both take the same keyword arguments: <code>dsn</code>, or <code>vendor_id</code>, <code>tenant_id</code> and <code>sink</code> without one. Both read <code>BATON_DSN</code> when no DSN is passed.</p>
-      <h3>Signal types</h3>
-      <p>Eight friction signal types per <a href="https://github.com/good-timing/baton/blob/main/docs/SPEC.md" style="color:var(--brand)">SPEC §3.1</a>. Stable and additive-only until v1.0.</p>
-      <div class="chips">
-        <span class="chip">failure</span><span class="chip">retry_loop</span><span class="chip">dead_end</span><span class="chip">parameter_confusion</span><span class="chip">slow_performance</span><span class="chip">abandonment</span><span class="chip">feature_gap</span><span class="chip">other</span>
-      </div>
+    with client.session(session_id=request.conversation_id):
+        async with client.trace(tool_name="...", intent="...") as trace:
+            response = await vendor_client.chat.completions.create(...)
+            trace.observed(response)</pre>
+      <p>Both take the same keyword arguments: <code>dsn</code>, or <code>vendor_id</code>, <code>tenant_id</code> and <code>sink</code> without one. Both read <code>BATON_DSN</code> when no DSN is passed. On both, <code>session()</code> is a plain <code>with</code> block.</p>
       <h3><code>trace.annotate()</code></h3>
       <pre>with client.trace(tool_name="search", intent="find docs for X") as trace:
     try:
@@ -643,7 +645,8 @@ async with AsyncClient(dsn="https://baton_pk_...@baton.goodtiming.ai/ten_.../srv
         trace.observed(result)
     except ApiError as e:
         trace.observed(error=e)
-        trace.annotate(signal_type=SignalType.FAILURE, suggested_improvement="add retry-after on 429s")</pre>
+        trace.annotate(what_happened="search returned 429 with no retry-after", tool_name="search", suggested_improvement="add retry-after on 429s")</pre>
+      <p>A report says what went wrong in its own words. The collector assigns its group; there is no category to pick. Name the tool the report is about, or pass <code>tool_name="none"</code> when no tool exists for what was asked.</p>
       <h3 id="choosing">Choosing paths</h3>
       <table class="docs-table">
         <thead><tr><th>Concern</th><th>MCP integration</th><th>Library API</th></tr></thead>
