@@ -677,6 +677,18 @@ withBaton(server, {
   dsn: "https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...",
   resolvePrincipal: principalFromOAuthEmail,
 });</pre>
+      <h3>Without MCP</h3>
+      <p>The <a href="#library-api" style="color:var(--brand)">Library API</a> is here too, as <code>Client</code>. The block and the call take callbacks instead of <code>with</code>: <code>client.session(options, fn)</code> and <code>client.trace(options, fn)</code>. The option names are the Python names in camelCase. Put one <code>trace()</code> where every tool call passes through, such as a middleware, and every tool is covered.</p>
+      <pre>import { Client } from "@goodtiming/baton-sdk";
+
+const baton = new Client({ dsn: process.env.BATON_DSN });
+
+app.use((req, res, next) =&gt;
+  baton.session({ sessionId: req.get("x-conversation-id"), headers: req.headers }, () =&gt;
+    baton.trace({ toolName: req.path, params: req.body }, () =&gt; next()),
+  ),
+);</pre>
+      <p>A callback can be sync or async. Its return value is recorded as the result, and a throw is recorded and passed on unchanged. <code>client.wrap(toolName, fn)</code> traces a function on every call, for code with no single place to put <code>trace()</code>.</p>
       <h3>What it captures</h3>
       <p>The same three intent parameters, the same annotation tool, the same <code>surface_snapshot</code>, and the same events. <code>intentParamMode</code> defaults to <code>"required"</code>, which advertises all three in each tool&#39;s <code>required</code> list and never enforces them. Measured identical to the Python SDK and the proxy on the currently published versions.</p>
       <p>PII scrubbing is <strong>on by default</strong> here too, a rule-for-rule port of Python&#39;s ruleset. Pass <code>identityScrub</code> to opt out, or your own <code>(value: unknown) =&gt; unknown</code>. Read <a href="#pii" style="color:var(--brand)">what it does and does not catch</a> before relying on it.</p>
