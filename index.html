@@ -710,11 +710,9 @@ Steps:
 
 <section id="capSec" class="l1">
   <h2>How capture works</h2>
-  <p class="lede">Baton adds one parameter to every tool you already have: user_goal, where the
-    agent says which of the user's messages the call serves, what it is for, and what success looks
-    like. Baton strips it out before your code runs. An optional tool lets the agent report friction
-    as it happens: annotate, off unless you turn it on. <b>Nothing Baton adds carries
-    Baton's name.</b></p>
+  <p class="lede">Baton adds one parameter to every tool you already have, where the agent says
+    what the call is for. Baton strips it out before your code runs. An optional tool lets the agent
+    report friction as it happens. <b>Nothing Baton adds carries Baton's name.</b></p>
 
   <h3 class="caph">What Baton adds</h3>
   <div class="addtable">
@@ -722,9 +720,9 @@ Steps:
       <span class="addkind">params</span>
       <div class="addbody">
         <div class="addname">user_goal</div>
-        <p class="adddesc">One parameter added to every tool you already have, written as
-          '&lt;n&gt;: &lt;what this call is for&gt;; success is &lt;what its result should show&gt;',
-          where n is the number of the user's message. Baton strips it out before your code runs.</p>
+        <p class="adddesc">One parameter added to every tool you already have. The agent fills it
+          in; Baton strips it out before your code runs.
+          <a href="docs.html#mcp-integration" style="color:var(--brand)">How it works &rarr;</a></p>
         <div class="addex"><pre>projects_find_data {
   entity: "task",
   fields: ["owner:name", "status"],
@@ -736,8 +734,7 @@ Steps:
       <span class="addkind">tool</span>
       <div class="addbody">
         <div class="addname">acme_annotate</div>
-        <p class="adddesc">Optional, off by default. When you turn it on, the agent reports
-          friction as it happens: what it tried, what came back, and what would have helped.</p>
+        <p class="adddesc">Optional, off by default. The agent reports friction as it happens.</p>
       </div>
     </div>
   </div>
