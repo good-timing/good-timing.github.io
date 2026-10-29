@@ -980,6 +980,7 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
   "env": { "BATON_UPSTREAM_AUTH_TOKEN": "..." }
 }</pre>
       <p><code>--url</code> and the <code>-- &lt;command&gt;</code> form are mutually exclusive.</p>
+      <p><strong style="color:var(--ink)">Sessions.</strong> The proxy gives each process one session id, so every call through one proxy run is one session, whether it spawns the server or fronts a remote one. Its events name no one, because the proxy can't tell who is calling.</p>
       <div class="note">Bridge scope today: the client-initiated request and response loop only. It does not open the standing GET SSE channel, so server-initiated messages (sampling, elicitation, notifications) are not captured, and requests are serialised. When the upstream is unreachable the handshake degrades to a synthetic healthy response rather than an error, so the client attaches instead of the session wedging, and <code>baton_annotate</code>, when on, stays usable.</div>
 
       <h3 id="injected-tools">Injected tools</h3>
