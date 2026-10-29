@@ -363,7 +363,7 @@ install_baton(mcp, dsn="https://baton_pk_...@baton.goodtiming.ai/ten_.../acme-kb
       <p>baton-sdk is native instrumentation for vendors who control their MCP server source. One call wires up capture, annotation, and sink routing, with the same wire format as the proxy and no subprocess hop. Because it lives inside what you ship, it captures friction from your real customers, who never have to install anything.</p>
       <div class="card"><h3>MCP middleware path</h3><p>Your MCP server calls <code>install_baton(mcp, dsn=…)</code>. Two lines. Captures every tool call at the transport boundary. Best for vendors with MCP servers as their primary surface.</p></div>
       <div class="card"><h3>Library API path</h3><p>Code that calls your API wraps each call in <code>client.trace(…)</code>. Same event envelope, same sinks, different emission boundary. Best for vendors who ship Skills rather than an MCP server.</p></div>
-      <p>baton-sdk is open source under Apache-2.0; the source lives in the <a href="https://github.com/good-timing/baton" target="_blank" rel="noopener" style="color:var(--brand)">baton</a> repo. The Python package needs 3.11+. There is a <a href="#typescript" style="color:var(--brand)">TypeScript SDK</a> too, <code>@goodtiming/baton-sdk</code> on npm, which takes the same DSN and emits the same events; everything on this page applies to both unless it says otherwise.</p>
+      <p>baton-sdk is open source under Apache-2.0, and the source lives in the <a href="https://github.com/good-timing/baton" target="_blank" rel="noopener" style="color:var(--brand)">baton</a> repo. The Python package needs 3.11+. There is a <a href="#typescript" style="color:var(--brand)">TypeScript SDK</a> too, <code>@goodtiming/baton-sdk</code> on npm, under Apache-2.0 with its source in the <a href="https://github.com/good-timing/baton-ts" target="_blank" rel="noopener" style="color:var(--brand)">baton-ts</a> repo. It takes the same DSN and emits the same events, and everything on this page applies to both unless it says otherwise.</p>
       <h2 id="sdk-install">Install</h2>
       <table class="docs-table">
         <thead><tr><th>Command</th><th>Includes</th></tr></thead>
@@ -455,7 +455,7 @@ withBaton(server, {
         <li><strong style="color:var(--ink)">One sentence in the server instructions</strong>, 268 characters, telling the agent to pass the user's message number on to sub-agents. Your own instructions stay first, with ours after a blank line. If any tool has its own <code>user_goal</code>, the sentence is left out.</li>
         <li><strong style="color:var(--ink)">No tools.</strong> With <code>report_mode="on"</code> it also adds a tool the agent uses to report problems, named after your server, so a server called <code>"Acme Knowledge Base"</code> gets <code>acme-knowledge-base_annotate</code>. Its instructions and description add about 1,400 characters, for about 1,700 in all with the sentence above.</li>
       </ul>
-      <p><strong style="color:var(--ink)">Sessions on stateless HTTP.</strong> When a request carries no session id, each request is its own session, so two clients never share one. To group one person's calls, pass <code>resolve_principal</code> (see <a href="#identity" style="color:var(--brand)">Identity</a>). On stdio there is one session per process.</p>
+      <p><strong style="color:var(--ink)">Sessions on stateless HTTP.</strong> When a request carries no session id, each request is its own session, so two clients never share one. Your dashboard groups a person's sessions by <code>principal_id</code>, so to see one person's calls together, pass <code>resolve_principal</code> (see <a href="#identity" style="color:var(--brand)">Identity</a>). On stdio there is one session per process.</p>
       <h3>Getting a DSN</h3>
       <p>Sign in at <a href="https://baton.goodtiming.ai/account" style="color:var(--brand)">baton.goodtiming.ai/account</a> and press <strong>Add a server</strong>, with a name if you want one. The page shows the new DSN with a <strong>Copy</strong> button, and every server's DSN stays listed under <strong>Publishable keys</strong>. The <a href="https://baton.goodtiming.ai/setup/agent" style="color:var(--brand)">setup agent</a> makes one for you when it wires up a server.</p>
       <p>We assign the server id and it never changes. The name is a label on <code>/account</code> and in your workspace picker, and you can rename it there. A publishable key can only write events, and only for the server its DSN names, so it is safe in your source.</p>
@@ -527,9 +527,10 @@ def resolve(ctx):
       <table class="docs-table">
         <thead><tr><th><code>Principal</code> field</th><th>Default</th><th>What it does</th></tr></thead>
         <tbody>
-    <tr><td>principal_id</td><td>required</td><td>The id, sent exactly as you return it. Your dashboard groups a person's sessions by it.</td></tr>
+    <tr><td>principal_id</td><td>required</td><td>The id, sent exactly as you return it. Your dashboard groups a person's sessions by it. It can name a person, a service account or an organisation. There is no separate company field.</td></tr>
     <tr><td>display_name</td><td><code>None</code></td><td>What your dashboard shows for this person. Without it, the dashboard shows the id.</td></tr>
     <tr><td>form</td><td><code>"raw"</code></td><td>What the id is. Leave it as <code>"raw"</code> for a real identity. Set <code>"hashed"</code> only when your function hashed the id itself.</td></tr>
+    <tr><td>user_data</td><td><code>None</code></td><td>Accepted, and not used today. Nothing in it is sent.</td></tr>
         </tbody>
       </table>
       <p><strong style="color:var(--ink)">The id you return is stored by the collector as it is.</strong> Your function decides what is safe to send. If real identities must not leave your side, hash the id in the function and say so:</p>
@@ -555,6 +556,7 @@ def resolve(ctx):
           <tr><td>MultiSink([…])</td><td>Fan out to several sinks at once.</td></tr>
         </tbody>
       </table>
+      <p>There is no S3 or OpenTelemetry sink in the SDKs. The proxy can write to S3.</p>
       <pre>from baton import install_baton, VendorConfig
 from baton.sinks import StdoutSink, FileSink, MultiSink
 
@@ -709,7 +711,7 @@ app.use((req, res, next) =&gt;
       <ul>
         <li><strong>Only <code>StdoutSink</code> and <code>HttpSink</code>.</strong> <code>FileSink</code> and <code>MultiSink</code> are deferred; the Python package has all four.</li>
         <li><strong>Only the high-level <code>McpServer</code>.</strong> The low-level <code>Server</code> is not wrapped.</li>
-        <li><strong>Intent parameters need a Zod schema.</strong> On the 2.x SDK a tool registered with a non-Zod standard schema is still wrapped and still emits <code>tool_call_*</code>; it just advertises no intent parameters.</li>
+        <li><strong>Only the intent parameter needs a Zod schema.</strong> Every tool is wrapped and captured either way. On the 2.x SDK a tool registered with a non-Zod standard schema is still wrapped and still emits <code>tool_call_*</code>; it just advertises no intent parameters.</li>
         <li><strong>The per-request <code>createMcpHandler</code> shape is unscoped.</strong> It builds a fresh server per request, which would make the session id and the snapshot dedup request-lifetime state.</li>
       </ul>
       <h3>Wire compatibility</h3>
