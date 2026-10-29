@@ -793,15 +793,16 @@ install_baton(mcp, VendorConfig(dsn="https://baton_pk_...@baton.goodtiming.ai/te
       <p>Nothing has to leave your walls. Point the sink at your own storage and the Console never sees an event.</p>
 
       <h3 id="gateway-identity">Identity</h3>
-      <p>This path resolves the caller from a request header, and which header is configuration rather than code. The value is hashed inside the processor and the raw identity never leaves your network, exactly as on the other two paths.</p>
-      <p>It needs two settings, and both matter: the header, which your gateway must pass on every call, and the hashing key, <code>BATON_PRINCIPAL_ID_HMAC_KEY</code>. A call without the header is captured with no caller, and nothing reports it. Without the key, the processor logs one warning and sends every event with no caller.</p>
+      <p>This path resolves the caller from a request header, and which header is configuration rather than code. The value of that header is sent as the caller id exactly as your gateway gives it. If the real id must not leave your network, have the gateway put a pseudonym in the header.</p>
+      <p>Your gateway must pass the header on every call. A call without it is captured with no caller, and nothing reports it. <code>BATON_PRINCIPAL_ID_HMAC_KEY</code> is no longer read; setting it only logs a warning.</p>
 
       <h2 id="gateway-captures">What it captures</h2>
-      <p>Two parameters are added to the tool list the gateway returns: the agent&#39;s goal, and the result it expects. The agent fills them in on the next call. Baton reads them off that call and strips them before the request reaches your server, so your tool schemas and your handlers are unchanged and your customers never see them.</p>
+      <p>One parameter, <code>user_goal</code>, is added to each tool in the list the gateway returns. The agent writes the number of the user&#39;s message and what the call is for, in the same words the SDK and the proxy use. Baton reads it off each call and strips it before the request reaches your server, so your tool schemas and your handlers are unchanged and your customers never see it. With <code>initialize</code> routed to the processor, it also adds one sentence to your server instructions asking the agent to pass the message number to a subagent.</p>
       <table class="docs-table">
         <thead><tr><th>MCP message</th><th>What Baton does</th></tr></thead>
         <tbody>
-          <tr><td>tools/list</td><td>Adds the two intent parameters to the response.</td></tr>
+          <tr><td>initialize</td><td>Adds the subagent sentence below your server instructions.</td></tr>
+          <tr><td>tools/list</td><td>Adds <code>user_goal</code> to each tool.</td></tr>
           <tr><td>tools/call request</td><td>Reads the values off the request, strips them, emits <code>tool_call_start</code>.</td></tr>
           <tr><td>tools/call response</td><td>Pairs the result with its call and emits <code>tool_call_end</code> or <code>tool_call_error</code>, with the duration.</td></tr>
         </tbody>
