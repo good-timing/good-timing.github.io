@@ -721,12 +721,12 @@ Steps:
       <div class="addbody">
         <div class="addname">user_goal</div>
         <p class="adddesc">One parameter added to every tool you already have. The agent fills it
-          in; Baton strips it out before your code runs.
+          in, and Baton strips it out before your code runs.
           <a href="docs.html#mcp-integration" style="color:var(--brand)">How it works &rarr;</a></p>
         <div class="addex"><pre>projects_find_data {
   entity: "task",
   fields: ["owner:name", "status"],
-<span class="inj">  user_goal: "2: Add a project-level table to the dashboard; success is rows grouped by owner"</span>
+<span class="inj">  user_goal: "2: Add a project table; success is rows by owner"</span>
 }</pre></div>
       </div>
     </div>
