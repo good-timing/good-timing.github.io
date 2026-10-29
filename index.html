@@ -710,10 +710,10 @@ Steps:
 
 <section id="capSec" class="l1">
   <h2>How capture works</h2>
-  <p class="lede">Baton adds three parameters to every tool you already have: the goal, the
-    expected result, and the task the agent is working through. The agent fills them in with each
-    call, and Baton strips them out before your code runs. One added tool lets the agent send
-    feedback directly: annotate, for friction as it happens. <b>Your customers never see
+  <p class="lede">Baton adds one parameter to every tool you already have: user_goal, where the
+    agent says which of the user's messages the call serves, what it is for, and what success looks
+    like. Baton strips it out before your code runs. An optional tool lets the agent report friction
+    as it happens: annotate, off unless you turn it on. <b>Your customers never see
     Baton.</b></p>
 
   <h3 class="caph">What Baton adds</h3>
@@ -721,15 +721,14 @@ Steps:
     <div class="addrow">
       <span class="addkind">params</span>
       <div class="addbody">
-        <div class="addname">user_goal &nbsp;·&nbsp; expected_result &nbsp;·&nbsp; overall_task</div>
-        <p class="adddesc">Three parameters added to every tool you already have. The agent fills
-          them in with each call; Baton strips them out before your code runs.</p>
+        <div class="addname">user_goal</div>
+        <p class="adddesc">One parameter added to every tool you already have, written as
+          '&lt;n&gt;: &lt;what this call is for&gt;; success is &lt;what its result should show&gt;',
+          where n is the number of the user's message. Baton strips it out before your code runs.</p>
         <div class="addex"><pre>projects_find_data {
   entity: "task",
   fields: ["owner:name", "status"],
-<span class="inj">  user_goal: "Add a project-level table to the dashboard",</span>
-<span class="inj">  expected_result: "Rows grouped by owner",</span>
-<span class="inj">  overall_task: "Build a leadership dashboard"</span>
+<span class="inj">  user_goal: "2: Add a project-level table to the dashboard; success is rows grouped by owner"</span>
 }</pre></div>
       </div>
     </div>
@@ -737,8 +736,8 @@ Steps:
       <span class="addkind">tool</span>
       <div class="addbody">
         <div class="addname">acme_annotate</div>
-        <p class="adddesc">The agent reports friction as it happens: what it tried, what it
-          expected, what happened instead.</p>
+        <p class="adddesc">Optional, off by default. When you turn it on, the agent reports
+          friction as it happens: what it tried, what came back, and what would have helped.</p>
       </div>
     </div>
   </div>
@@ -767,7 +766,7 @@ Steps:
       <rect x="300" y="90" width="330" height="98" rx="11" fill="#fff" stroke="#e5e7eb" stroke-width="1.2"/>
       <text x="465" y="133" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="600" fill="#111827">Your MCP server</text>
       <text x="465" y="154" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#6b7280">your code unchanged</text>
-      <text x="465" y="218" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#6b7280">user_goal · expected_result · overall_task · annotate</text>
+      <text x="465" y="218" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#6b7280">user_goal · annotate (optional)</text>
       <line x1="662" y1="138" x2="732" y2="138" stroke="#0ca678" stroke-width="2" marker-end="url(#arE1)"/>
       <text x="697" y="126" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#6b7280">emits</text>
       <rect x="740" y="98" width="160" height="80" rx="13" fill="#fff" stroke="#e5e7eb" stroke-width="1.2"/>
@@ -838,8 +837,8 @@ Steps:
       write straight to your own S3.</p></div>
     <div><h3>Auditable end to end</h3><p>Every event is logged and inspectable. You define the
       capture schema, so what you don't capture can never reach us.</p></div>
-    <div><h3>Your telemetry, if you want it</h3><p>Events can also route to your own OpenTelemetry
-      sink. Possible, supported, and rarely the place to start.</p></div>
+    <div><h3>Your endpoint, if you want it</h3><p>Events can go to any HTTPS endpoint you run
+      instead of Baton's. Possible, supported, and rarely the place to start.</p></div>
   </div>
 </section>
 
@@ -852,9 +851,10 @@ Steps:
   <div class="faq-item"><h3>Do I have to rebuild anything?</h3><p>No. The SDK builds in with about five
     lines and your tools stay exactly as they are. If your customers reach you through agent-generated
     code, a Skill calling your API, the SDK's Library API instruments those calls instead.</p></div>
-  <div class="faq-item"><h3>Where does my data go?</h3><p>Nowhere, by default. The open-source capture
-    writes to a local file or a sink you choose: your own OpenTelemetry endpoint or your S3. PII is
-    scrubbed before anything leaves. You only send to the Console if you choose to.</p></div>
+  <div class="faq-item"><h3>Where does my data go?</h3><p>Nowhere, by default. With no key, the open-source
+    capture writes events to your server's stderr. You can choose a local file (Python SDK and proxy),
+    an HTTPS endpoint you run, or your own S3 (proxy). PII is scrubbed before anything leaves. You only
+    send to the Console if you choose to.</p></div>
   <div class="faq-item"><h3>What's free, and what's paid?</h3><p>Everything is free to start,
     including the Console. Capture is open source, and light use of the Console costs nothing. You
     pay once you pass a monthly session threshold.</p></div>

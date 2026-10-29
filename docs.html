@@ -258,6 +258,7 @@
         <a href="#vendorconfig" class="sidebar-link">Configuration</a>
         <a href="#library-api" class="sidebar-link">Library API</a>
         <a href="#typescript" class="sidebar-link">TypeScript</a>
+        <a href="#costs" class="sidebar-link">What it costs your agent</a>
         <a href="#what-leaves" class="sidebar-link">What leaves your server</a>
         <a href="#pii" class="sidebar-link">PII scrubbing</a>
       </div>
@@ -369,7 +370,7 @@ install_baton(mcp, dsn="https://baton_pk_...@baton.goodtiming.ai/ten_.../acme-kb
         <tbody>
           <tr><td>pip install "baton-sdk&gt;=0.8.8"</td><td><strong style="color:var(--ink)">Needed to send events to a Baton Console.</strong> httpx is a core dependency, so the Console sink needs no extra. 0.8.6 is the oldest release the Console accepts, because earlier ones send <code>user_id</code>, which was renamed <code>principal_id</code>. On 0.8.7 and earlier the sink also needed the <code>[http]</code> extra, which a fresh <code>[mcp]</code> or <code>[fastmcp]</code> install did not pull in.</td></tr>
           <tr><td>pip install baton-sdk</td><td>Core. Library API and sinks, the Console sink included. Writes to stderr, a file, or https.</td></tr>
-          <tr><td>pip install "baton-sdk[mcp]"</td><td>+ the official <code>mcp</code> SDK, <code>mcp&gt;=1.20,&lt;3</code>.</td></tr>
+          <tr><td>pip install "baton-sdk[mcp]"</td><td>+ the official <code>mcp</code> SDK, <code>mcp&gt;=1.21.1,&lt;3</code>. CI tests mcp 1.21.1, 1.25.0, 1.27.2 and 2.0.0.</td></tr>
           <tr><td>pip install "baton-sdk[fastmcp]"</td><td>+ standalone <code>fastmcp</code>, <code>fastmcp&gt;=2.14,&lt;5</code>.</td></tr>
           <tr><td>pip install "baton-sdk[all]"</td><td>Everything above.</td></tr>
         </tbody>
@@ -447,7 +448,14 @@ withBaton(server, {
 });</pre>
       </div>
       <p>That string is the whole configuration. It is the <strong>DSN</strong> for one server, and it carries four things: a publishable key (<code>baton_pk_…</code>), the host events go to, your workspace id (<code>ten_…</code>) and the server's id (<code>srv-…</code>). The SDK reads all four and builds the sink itself.</p>
-      <p><code>install_baton</code> works out which library your server comes from, and raises <code>TypeError</code> before changing anything if the object is not an MCP server it supports. Tools registered before and after the call are both captured. It adds no tools by default. Each tool gets one extra parameter, <code>user_goal</code>, which is removed before your handler runs. With <code>report_mode="on"</code> it also adds a tool the agent uses to report problems, named after your server: a server called <code>"Acme Knowledge Base"</code> gets <code>acme-knowledge-base_annotate</code>.</p>
+      <p><code>install_baton</code> works out which library your server comes from, and raises <code>TypeError</code> before changing anything if the object is not an MCP server it supports. It supports <code>FastMCP</code> (mcp 1.x), <code>MCPServer</code> (mcp 2.x) and standalone <code>fastmcp</code>. The check is on shape, not class, so a subclass of these is accepted; our tests don't cover a subclass. The low-level <code>mcp.server.lowlevel.Server</code> is not supported. Tools registered before and after the call are both captured.</p>
+      <p>What a default install changes on your server:</p>
+      <ul>
+        <li><strong style="color:var(--ink)">One parameter on every tool</strong>, <code>user_goal</code>, removed before your handler runs. It is listed as required, but a call without it is served as usual. Its description is 344 characters. There is no per-tool setting: every wrapped tool gets it. A tool that already has its own <code>user_goal</code> argument keeps it.</li>
+        <li><strong style="color:var(--ink)">One sentence in the server instructions</strong>, 268 characters, telling the agent to pass the user's message number on to sub-agents. Your own instructions stay first, with ours after a blank line. If any tool has its own <code>user_goal</code>, the sentence is left out.</li>
+        <li><strong style="color:var(--ink)">No tools.</strong> With <code>report_mode="on"</code> it also adds a tool the agent uses to report problems, named after your server: a server called <code>"Acme Knowledge Base"</code> gets <code>acme-knowledge-base_annotate</code>. Its instructions and description add about 1,700 characters for a short server name.</li>
+      </ul>
+      <p><strong style="color:var(--ink)">Sessions on stateless HTTP.</strong> When a request carries no session id, each request is its own session, so two clients never share one. To group one person's calls, pass <code>resolve_principal</code> (see <a href="#identity" style="color:var(--brand)">Identity</a>). On stdio there is one session per process.</p>
       <h3>Getting a DSN</h3>
       <p>Sign in at <a href="https://baton.goodtiming.ai/account" style="color:var(--brand)">baton.goodtiming.ai/account</a> and press <strong>Add a server</strong>, with a name if you want one. The page shows the new DSN with a <strong>Copy</strong> button, and every server's DSN stays listed under <strong>Publishable keys</strong>. The <a href="https://baton.goodtiming.ai/setup/agent" style="color:var(--brand)">setup agent</a> makes one for you when it wires up a server.</p>
       <p>We assign the server id and it never changes. The name is a label on <code>/account</code> and in your workspace picker, and you can rename it there. A publishable key can only write events, and only for the server its DSN names, so it is safe in your source.</p>
@@ -663,7 +671,7 @@ async with AsyncClient(dsn="https://baton_pk_...@baton.goodtiming.ai/ten_.../srv
       <h2 id="typescript">TypeScript</h2>
       <p>The same SDK for Node. <code>@goodtiming/baton-sdk</code> emits the same envelope as the Python package to the same sinks, so a workspace can run both and the Console never learns which one produced an event. Node 20+.</p>
       <pre>npm install @goodtiming/baton-sdk</pre>
-      <p>Your MCP server is the argument, as in Python. Both major versions of the official TypeScript MCP SDK are supported and both are optional peer dependencies, so you install whichever one you already use, either <code>@modelcontextprotocol/sdk</code> 1.x or <code>@modelcontextprotocol/server</code> 2.x, and nothing else.</p>
+      <p>Your MCP server is the argument, as in Python. Both major versions of the official TypeScript MCP SDK are supported and both are optional peer dependencies, so you install whichever one you already use, either <code>@modelcontextprotocol/sdk</code> <code>^1.30.0</code> or <code>@modelcontextprotocol/server</code> <code>^2.0.0</code>, and nothing else.</p>
       <pre>import { McpServer } from "@modelcontextprotocol/server";
 import { withBaton } from "@goodtiming/baton-sdk";
 
@@ -706,6 +714,15 @@ app.use((req, res, next) =&gt;
       </ul>
       <h3>Wire compatibility</h3>
       <p>This is a tested property, not an intention. Both SDKs are checked against <a href="https://github.com/good-timing/baton-spec" target="_blank" rel="noopener" style="color:var(--brand)">baton-spec</a>, a neutral schema repo: every event type is validated against the shared JSON Schema, and the TypeScript emitter is diffed field-by-field against captured Python output for the same scenario. Envelope and payload keys must match exactly; values match except for ids, timestamps, timings and the genuinely language-specific fields.</p>
+
+      <h2 id="costs">What it costs your agent</h2>
+      <p>Measured with Claude Code on our own test servers, with Sonnet 5.5 unless stated. Your numbers depend on your tools and your model; these are the size of the effect, not a promise.</p>
+      <ul>
+        <li><strong style="color:var(--ink)">Input:</strong> each tool's schema grows by the 344-character <code>user_goal</code> description, sent with the tool list. Input tokens cost about 0.02 ms each to process, 0.01 ms when cached, 100 to 200 times less than output.</li>
+        <li><strong style="color:var(--ink)">Output:</strong> the agent writes the <code>user_goal</code> value on every call. Writing time follows output tokens: about 4.2–4.7 ms per token on Sonnet 5.5, 6.8 on Opus 5.5 and 3.6 on Haiku 5.5.</li>
+        <li><strong style="color:var(--ink)">Together:</strong> on a five-task support-desk test, the field added about 8 seconds of writing across all five tasks against no Baton, half what the three fields before 0.8.22 added.</li>
+        <li><strong style="color:var(--ink)">Reports</strong> (<code>report_mode="on"</code>) cost more: each report filed adds a turn before the answer.</li>
+      </ul>
 
       <h2 id="what-leaves">What leaves your server</h2>
       <p>Only what crosses the MCP call. The SDK never reads your logs, your database or anything else in your process. This table is the Python SDK; the TypeScript difference is noted under <a href="#typescript" style="color:var(--brand)">TypeScript</a>.</p>
@@ -778,7 +795,7 @@ install_baton(mcp, VendorConfig(dsn="https://baton_pk_...@baton.goodtiming.ai/te
       <p>This is the path that reaches surfaces with no code to instrument. A client behind the gateway is captured without anyone shipping a change to it.</p>
 
       <h2 id="gateway-start">Quickstart</h2>
-      <p>There is no package to install yet. The <a href="#proxy" style="color:var(--brand)">proxy</a> and the <a href="#sdk" style="color:var(--brand)">SDK</a> are published and you can start with either one today; the gateway processor ships with a runbook for your platform team instead, and we set it up with you. <a href="https://calendly.com/dave-goodtiming/30min" style="color:var(--brand)">Talk to us</a> and we will size it against your gateway.</p>
+      <p>There is no public package yet: each release builds private container images, and it is not on PyPI. The <a href="#proxy" style="color:var(--brand)">proxy</a> and the <a href="#sdk" style="color:var(--brand)">SDK</a> are published and you can start with either one today; the gateway processor ships with a runbook for your platform team instead, and we set it up with you. <a href="https://calendly.com/dave-goodtiming/30min" style="color:var(--brand)">Talk to us</a> and we will size it against your gateway.</p>
       <h2 id="gateway-config">Configuration</h2>
       <p>Two pieces: one hook in your gateway&#39;s own policy, pointed at the processor and set to see both the request and the response of each tool call along with its session id, and the same handful of environment variables the <a href="#proxy" style="color:var(--brand)">proxy</a> reads.</p>
       <table class="docs-table">
