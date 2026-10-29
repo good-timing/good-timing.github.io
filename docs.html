@@ -453,7 +453,7 @@ withBaton(server, {
       <ul>
         <li><strong style="color:var(--ink)">One parameter on every tool</strong>, <code>user_goal</code>, removed before your handler runs. It is listed as required, but a call without it is served as usual. Its description is 344 characters. There is no per-tool setting: every wrapped tool gets it. A tool that already has its own <code>user_goal</code> argument keeps it.</li>
         <li><strong style="color:var(--ink)">One sentence in the server instructions</strong>, 268 characters, telling the agent to pass the user's message number on to sub-agents. Your own instructions stay first, with ours after a blank line. If any tool has its own <code>user_goal</code>, the sentence is left out.</li>
-        <li><strong style="color:var(--ink)">No tools.</strong> With <code>report_mode="on"</code> it also adds a tool the agent uses to report problems, named after your server: a server called <code>"Acme Knowledge Base"</code> gets <code>acme-knowledge-base_annotate</code>. Its instructions and description add about 1,700 characters for a short server name.</li>
+        <li><strong style="color:var(--ink)">No tools.</strong> With <code>report_mode="on"</code> it also adds a tool the agent uses to report problems, named after your server: a server called <code>"Acme Knowledge Base"</code> gets <code>acme-knowledge-base_annotate</code>. Its instructions and description add about 1,400 characters, for about 1,700 in all with the sentence above.</li>
       </ul>
       <p><strong style="color:var(--ink)">Sessions on stateless HTTP.</strong> When a request carries no session id, each request is its own session, so two clients never share one. To group one person's calls, pass <code>resolve_principal</code> (see <a href="#identity" style="color:var(--brand)">Identity</a>). On stdio there is one session per process.</p>
       <h3>Getting a DSN</h3>
@@ -718,9 +718,9 @@ app.use((req, res, next) =&gt;
       <h2 id="costs">What it costs your agent</h2>
       <p>Measured with Claude Code on our own test servers, with Sonnet 5.5 unless stated. Your numbers depend on your tools and your model; these are the size of the effect, not a promise.</p>
       <ul>
-        <li><strong style="color:var(--ink)">Input:</strong> each tool's schema grows by the 344-character <code>user_goal</code> description, sent with the tool list. Input tokens cost about 0.02 ms each to process, 0.01 ms when cached, 100 to 200 times less than output.</li>
+        <li><strong style="color:var(--ink)">Input:</strong> each tool's schema grows by about 350 characters (the <code>user_goal</code> property and its 344-character description), sent with the tool list. Input tokens cost about 0.02 ms each to process, 0.01 ms when cached, 100 to 200 times less than output.</li>
         <li><strong style="color:var(--ink)">Output:</strong> the agent writes the <code>user_goal</code> value on every call. Writing time follows output tokens: about 4.2–4.7 ms per token on Sonnet 5.5, 6.8 on Opus 5.5 and 3.6 on Haiku 5.5.</li>
-        <li><strong style="color:var(--ink)">Together:</strong> on a five-task support-desk test, the field added about 8 seconds of writing across all five tasks against no Baton, half what the three fields before 0.8.22 added.</li>
+        <li><strong style="color:var(--ink)">Together:</strong> on a five-task support-desk test of the one-field wording (SDK 0.8.20, before it shipped), the field added about 8 seconds of writing across all five tasks against no Baton, about half what the three fields before 0.8.22 added.</li>
         <li><strong style="color:var(--ink)">Reports</strong> (<code>report_mode="on"</code>) cost more: each report filed adds a turn before the answer.</li>
       </ul>
 
@@ -814,7 +814,7 @@ install_baton(mcp, VendorConfig(dsn="https://baton_pk_...@baton.goodtiming.ai/te
       <p>Your gateway must pass the header on every call. A call without it is captured with no caller, and nothing reports it. <code>BATON_PRINCIPAL_ID_HMAC_KEY</code> is no longer read; setting it only logs a warning.</p>
 
       <h2 id="gateway-captures">What it captures</h2>
-      <p>One parameter, <code>user_goal</code>, is added to each tool in the list the gateway returns. The agent writes the number of the user&#39;s message and what the call is for, in the same words the SDK and the proxy use. Baton reads it off each call and strips it before the request reaches your server, so your tool schemas and your handlers are unchanged and your customers never see it. With <code>initialize</code> routed to the processor, it also adds one sentence to your server instructions asking the agent to pass the message number to a subagent.</p>
+      <p>One parameter, <code>user_goal</code>, is added to each tool in the list the gateway returns. The agent writes the number of the user&#39;s message and what the call is for, in the same words the SDK and the proxy use. Baton reads it off each call and strips it before the request reaches your server, so your tool schemas and your handlers are unchanged. The agent sees the parameter, and clients that show tool arguments show it to the user. With <code>initialize</code> routed to the processor, it also adds one sentence to your server instructions asking the agent to pass the message number to a subagent.</p>
       <table class="docs-table">
         <thead><tr><th>MCP message</th><th>What Baton does</th></tr></thead>
         <tbody>
