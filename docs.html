@@ -530,7 +530,7 @@ def resolve(ctx):
     <tr><td>principal_id</td><td>required</td><td>The id, sent exactly as you return it. Your dashboard groups a person's sessions by it. It can name a person, a service account or an organisation. There is no separate company field.</td></tr>
     <tr><td>display_name</td><td><code>None</code></td><td>What your dashboard shows for this person. Without it, the dashboard shows the id.</td></tr>
     <tr><td>form</td><td><code>"raw"</code></td><td>What the id is. Leave it as <code>"raw"</code> for a real identity. Set <code>"hashed"</code> only when your function hashed the id itself.</td></tr>
-    <tr><td>user_data</td><td><code>None</code></td><td>Accepted, and not used today. Nothing in it is sent.</td></tr>
+    <tr><td>user_data</td><td><code>None</code></td><td>Python only. Accepted, and not used today. Nothing in it is sent.</td></tr>
         </tbody>
       </table>
       <p><strong style="color:var(--ink)">The id you return is stored by the collector as it is.</strong> Your function decides what is safe to send. If real identities must not leave your side, hash the id in the function and say so:</p>
@@ -711,7 +711,7 @@ app.use((req, res, next) =&gt;
       <ul>
         <li><strong>Only <code>StdoutSink</code> and <code>HttpSink</code>.</strong> <code>FileSink</code> and <code>MultiSink</code> are deferred; the Python package has all four.</li>
         <li><strong>Only the high-level <code>McpServer</code>.</strong> The low-level <code>Server</code> is not wrapped.</li>
-        <li><strong>Only the intent parameter needs a Zod schema.</strong> Every tool is wrapped and captured either way. On the 2.x SDK a tool registered with a non-Zod standard schema is still wrapped and still emits <code>tool_call_*</code>; it just advertises no intent parameters.</li>
+        <li><strong>Only the intent parameter needs a Zod schema.</strong> Every tool is wrapped and captured either way, and a tool with no input schema gets no intent parameter. On the 2.x SDK a tool registered with a non-Zod standard schema is still wrapped and still emits <code>tool_call_*</code>; it just advertises no intent parameters.</li>
         <li><strong>The per-request <code>createMcpHandler</code> shape is unscoped.</strong> It builds a fresh server per request, which would make the session id and the snapshot dedup request-lifetime state.</li>
       </ul>
       <h3>Wire compatibility</h3>
