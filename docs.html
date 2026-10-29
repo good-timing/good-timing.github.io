@@ -258,6 +258,7 @@
         <a href="#vendorconfig" class="sidebar-link">Configuration</a>
         <a href="#library-api" class="sidebar-link">Library API</a>
         <a href="#typescript" class="sidebar-link">TypeScript</a>
+        <a href="#by-product" class="sidebar-link">Settings by product</a>
         <a href="#costs" class="sidebar-link">What it costs your agent</a>
         <a href="#what-leaves" class="sidebar-link">What leaves your server</a>
         <a href="#pii" class="sidebar-link">PII scrubbing</a>
@@ -501,7 +502,7 @@ install_baton(mcp, VendorConfig(
           <tr><td>scrubber</td><td><code>Scrubber()</code></td><td>Runs on every payload. Pass <code>identity_scrub</code> to turn scrubbing off, or your own callable. See <a href="#pii" style="color:var(--brand)">PII scrubbing</a>.</td></tr>
           <tr><td>intent_param_mode</td><td><code>"required"</code></td><td>Adds one parameter, <code>user_goal</code>, to every tool's input schema and removes it before your handler runs. The agent writes it as <code>'&lt;n&gt;: &lt;what this call is for&gt;; success is &lt;what its result should show&gt;'</code>, where <code>n</code> is the number of the user's current message. <code>"required"</code> lists it as required, as an advertisement only: no call fails for leaving it out. <code>"optional"</code> leaves it off the required list. <code>"off"</code> adds nothing, and is only accepted with <code>report_mode="on"</code> and <code>proactive_mode="on"</code>.</td></tr>
           <tr><td>report_mode</td><td><code>"off"</code></td><td><code>"on"</code> adds a tool the agent uses to report a tool call that went wrong, or a request no tool covers, plus instructions saying when to use it. Off, no tool is added and each call's goal still arrives in <code>user_goal</code>.</td></tr>
-          <tr><td>proactive_mode</td><td><code>"off"</code></td><td><code>"on"</code> asks the agent to file a report before every tool call. It needs <code>report_mode="on"</code>. Leave it off unless you set <code>intent_param_mode="off"</code>.</td></tr>
+          <tr><td>proactive_mode</td><td><code>"off"</code></td><td><code>"on"</code> asks the agent to file a report before every tool call. It needs <code>report_mode="on"</code>. Leave it off unless you set <code>intent_param_mode="off"</code>. With it on, the instructions are about 1,450 characters and the report tool's description about 1,300, so about 2,700 in all.</td></tr>
           <tr><td>result_capture_mode</td><td><code>"full"</code></td><td><code>"off"</code> stops sending what your tools return. Requests are still sent. See <a href="#what-leaves" style="color:var(--brand)">What leaves your server</a>.</td></tr>
           <tr><td>resolve_principal</td><td>—</td><td>A function, sync or async, that says who is behind a call. Unset, no event names anyone. See <a href="#identity" style="color:var(--brand)">Identity</a>.</td></tr>
         </tbody>
@@ -716,6 +717,22 @@ app.use((req, res, next) =&gt;
       </ul>
       <h3>Wire compatibility</h3>
       <p>This is a tested property, not an intention. Both SDKs are checked against <a href="https://github.com/good-timing/baton-spec" target="_blank" rel="noopener" style="color:var(--brand)">baton-spec</a>, a neutral schema repo: every event type is validated against the shared JSON Schema, and the TypeScript emitter is diffed field-by-field against captured Python output for the same scenario. Envelope and payload keys must match exactly; values match except for ids, timestamps, timings and the genuinely language-specific fields.</p>
+
+      <h2 id="by-product">Settings by product</h2>
+      <p>The four ways to install Baton don't have the same settings. Check the column for the one you use.</p>
+      <table class="docs-table">
+        <thead><tr><th></th><th>Python SDK</th><th>TypeScript SDK</th><th>Proxy</th><th>Gateway</th></tr></thead>
+        <tbody>
+          <tr><td>Where settings go</td><td><code>VendorConfig</code>, snake_case</td><td><code>withBaton</code> options, camelCase</td><td>Environment variables</td><td>Environment variables</td></tr>
+          <tr><td><code>user_goal</code></td><td><code>intent_param_mode</code>, required or optional. Off only with reports and proactive mode on</td><td><code>intentParamMode</code>, required or optional</td><td><code>BATON_INTENT_PARAM</code>, required or optional</td><td><code>BATON_INTENT_PARAM</code>, required or optional</td></tr>
+          <tr><td>Report tool, off by default</td><td><code>report_mode</code>, named after your server</td><td><code>reportMode</code>, named after your server</td><td><code>BATON_ANNOTATE</code>, named <code>baton_annotate</code></td><td>None</td></tr>
+          <tr><td>Proactive reports</td><td><code>proactive_mode</code></td><td>None</td><td><code>BATON_PROACTIVE</code></td><td>None</td></tr>
+          <tr><td>Turn off results</td><td><code>result_capture_mode</code></td><td><code>resultCaptureMode</code></td><td>None, results are always sent</td><td>None, results are always sent</td></tr>
+          <tr><td>Turn Baton off</td><td><code>BATON_DISABLED=1</code></td><td><code>BATON_DISABLED=1</code></td><td>None, stop wrapping the server</td><td>None</td></tr>
+          <tr><td>Where events go</td><td>stderr, a file, HTTPS, or several</td><td>stderr or HTTPS</td><td>stderr, a file, HTTPS or S3</td><td>The proxy's sinks</td></tr>
+          <tr><td>Who is calling</td><td><code>resolve_principal</code></td><td><code>resolvePrincipal</code></td><td>Not sent</td><td>From a gateway header</td></tr>
+        </tbody>
+      </table>
 
       <h2 id="costs">What it costs your agent</h2>
       <p>Measured with Claude Code on our own test servers, with Sonnet 5.5 unless stated. Your numbers depend on your tools and your model, so read these as the size of the effect, not a promise.</p>
