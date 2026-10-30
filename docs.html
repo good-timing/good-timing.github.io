@@ -552,7 +552,7 @@ def resolve(ctx):
     <tr><td>form</td><td><code>"raw"</code></td><td>As for <code>Principal</code>. Set <code>"hashed"</code> only when your function hashed the id itself.</td></tr>
         </tbody>
       </table>
-      <p>Your dashboard stores the organization with each event, but doesn&#39;t filter by it or show it yet. Two sessions that name different organizations are never joined. With the Library API, pass the same values to <code>client.session(principal=...)</code>. A block that names only an organization, with no <code>session_id</code>, is never joined to another, so pass your own <code>session_id</code> there.</p>
+      <p>Your dashboard stores the organization with each event, but doesn&#39;t filter by it or show it yet. Two sessions that name different organizations are never joined, and a session that names two organizations is never joined to another. With the Library API, pass the same values to <code>client.session(principal=...)</code>. A block that names only an organization, with no <code>session_id</code>, is never joined to another, so pass your own <code>session_id</code> there.</p>
       <p><strong style="color:var(--ink)">The id you return is stored by the collector as it is.</strong> Your function decides what is safe to send. If real identities must not leave your side, hash the id in the function and say so:</p>
       <pre>import hashlib, hmac, os
 from baton import Principal
