@@ -825,7 +825,7 @@ Steps:
 
 
 <section>
-  <h2>You control what's captured. You can audit the rest.</h2>
+  <h2>You can see and audit everything that's captured.</h2>
   <div class="pillars">
     <div><h3>Secrets are scrubbed first</h3><p>Every payload is scrubbed before it leaves your process.
       By default that removes emails, North American phone numbers, common API keys and
@@ -853,8 +853,8 @@ Steps:
   <div class="faq-item"><h3>Where does my data go?</h3><p>Nowhere, by default. With no key, the SDKs write
     events to your server's stderr, and the proxy writes to stderr and /tmp/baton-proxy.jsonl. You can
     choose a local file (Python SDK and proxy), an HTTPS endpoint you run, or your own S3 (proxy).
-    Common PII patterns (emails, keys, tokens, card numbers, phone numbers) are scrubbed before
-    anything leaves. You only send to the Console if you choose to.</p></div>
+    Emails, common keys and tokens, card numbers written without spaces and North American
+    phone numbers are scrubbed before anything leaves. Names and addresses are not. You only send to the Console if you choose to.</p></div>
   <div class="faq-item"><h3>What's free, and what's paid?</h3><p>Everything is free to start,
     including the Console. Capture is open source, and light use of the Console costs nothing. You
     pay once you pass a monthly session threshold.</p></div>
