@@ -827,13 +827,14 @@ Steps:
 <section>
   <h2>You control what's captured. You can audit the rest.</h2>
   <div class="pillars">
-    <div><h3>PII never leaves raw</h3><p>Every payload is scrubbed before it leaves your process:
-      emails, keys, tokens, card numbers, and sensitive fields, on by default.</p></div>
+    <div><h3>Secrets are scrubbed first</h3><p>Every payload is scrubbed before it leaves your process.
+      By default that removes emails, phone numbers, keys, tokens and card numbers. Names and
+      addresses are not removed.</p></div>
     <div><h3>Deploy where you're comfortable</h3><p>Keep everything inside your perimeter, send
       events to an endpoint you run, or use Baton's cloud, hosted single-tenant. The proxy can
       write straight to your own S3.</p></div>
-    <div><h3>Auditable end to end</h3><p>Every event is logged and inspectable. You define the
-      capture schema, so what you don't capture can never reach us.</p></div>
+    <div><h3>Auditable end to end</h3><p>Every event is logged and inspectable. With the SDKs you
+      can stop sending results. Arguments are always sent, after the scrubber.</p></div>
     <div><h3>Your endpoint, if you want it</h3><p>Events can go to any HTTPS endpoint you run
       instead of Baton's. Possible, supported, and rarely the place to start.</p></div>
   </div>
@@ -846,7 +847,8 @@ Steps:
     captures what the customer was trying to do, whether they got it, and the fix. It runs alongside
     Sentry and LangSmith and sees the layer they don't: intent.</p></div>
   <div class="faq-item"><h3>Do I have to rebuild anything?</h3><p>No. The SDK builds in with about five
-    lines and your tools stay exactly as they are. If your customers reach you through agent-generated
+    lines and you don't change your tools' code. Baton adds one field to each tool's schema and
+    strips it before your code runs. If your customers reach you through agent-generated
     code, a Skill calling your API, the SDK's Library API instruments those calls instead.</p></div>
   <div class="faq-item"><h3>Where does my data go?</h3><p>Nowhere, by default. With no key, the SDKs write
     events to your server's stderr, and the proxy writes to stderr and /tmp/baton-proxy.jsonl. You can

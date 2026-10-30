@@ -302,7 +302,7 @@
       <p>You instrument your server once. Whatever agent your customers use (Claude, Cursor, ChatGPT) keeps working exactly as before.</p>
 
       <h2 id="start-here">Which path is mine</h2>
-      <p>Three ways to capture. They emit the same events in the same wire format to the same sinks, so the choice is about where the code goes, not what you get. You only need one.</p>
+      <p>Three ways to capture. They emit events in the same wire format, but their settings and sinks differ, so check <a href="#by-product" style="color:var(--brand)">Settings by product</a>. You only need one.</p>
       <div class="card-grid three-up">
         <div class="card">
           <h3><code>baton-sdk</code></h3>
@@ -378,7 +378,7 @@ install_baton(mcp, dsn="https://baton_pk_...@baton.goodtiming.ai/ten_.../acme-kb
       </table>
       <p>Quote the extras. zsh, the default shell on macOS, treats square brackets as a pattern and stops with <code>no matches found</code> before pip runs.</p>
       <h2 id="mcp-integration">Quickstart</h2>
-      <p>The SDK runs in-process inside your server and captures every tool call at the transport boundary, with no subprocess and your tools unchanged.</p>
+      <p>The SDK runs in-process inside your server and captures every tool call at the transport boundary, with no subprocess and no change to your tools' code.</p>
       <p>The following diagram illustrates where the SDK runs inside your MCP server:</p>
       <div class="diagram">
         <svg viewBox="0 50 680 214" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="sdk1-t sdk1-d">
@@ -454,7 +454,7 @@ withBaton(server, {
       <ul>
         <li><strong style="color:var(--ink)">One parameter on every tool</strong>, <code>user_goal</code>, removed before your handler runs. It is listed as required, but a call without it is served as usual. Its description is 344 characters. There is no per-tool setting: every wrapped tool gets it. A tool that already has its own <code>user_goal</code> argument keeps it.</li>
         <li><strong style="color:var(--ink)">One sentence in the server instructions</strong>, 268 characters, telling the agent to pass the user's message number on to sub-agents. Your own instructions stay first, with ours after a blank line. If any tool has its own <code>user_goal</code>, the sentence is left out.</li>
-        <li><strong style="color:var(--ink)">No tools.</strong> With <code>report_mode="on"</code> it also adds a tool the agent uses to report problems, named after your server, so a server called <code>"Acme Knowledge Base"</code> gets <code>acme-knowledge-base_annotate</code>. Its instructions and description add about 1,400 characters, for about 1,700 in all with the sentence above.</li>
+        <li><strong style="color:var(--ink)">No tools.</strong> With <code>report_mode="on"</code> it also adds a tool the agent uses to report problems, named after your server, so a server called <code>"Acme Knowledge Base"</code> gets <code>acme-knowledge-base_annotate</code>. It adds about 1,300 characters of tool description to the tool list, and about 150 to the server instructions, so the instructions come to about 420 in all.</li>
       </ul>
       <p><strong style="color:var(--ink)">Sessions on stateless HTTP.</strong> When a request carries no session id, each request is its own session, so two clients never share one. Your dashboard groups a person's sessions by <code>principal_id</code>, so to see one person's calls together, pass <code>resolve_principal</code> (see <a href="#identity" style="color:var(--brand)">Identity</a>). On stdio there is one session per process.</p>
       <h3>Getting a DSN</h3>
@@ -1061,7 +1061,7 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
       <p>Every event as it arrives, newest first, refreshed every couple of seconds. One row shape, no highlighting. This is the raw stream, for watching your own setup work while you drive an agent at it. Events appear within seconds of the call. Anything that interprets them lives on the other three tabs.</p>
 
       <h2 id="console-access">Access &amp; security</h2>
-      <p>The Console is hosted by us and auditable by you. Your data is single-tenant, and every event is logged and inspectable, so you can see exactly what each agent sent, when, and why. Scrubbing runs before anything leaves your machine: emails, phone numbers, card numbers, keys and tokens are redacted at the SDK, on by default. What you don&#39;t capture can never reach us. It is pattern matching, not a guarantee: free text inside a tool argument or result is sent as written, so decide what your tools hand back.</p>
+      <p>The Console is hosted by us and auditable by you. Your data is single-tenant, and every event is logged and inspectable, so you can see exactly what each agent sent, when, and why. Scrubbing runs before anything leaves your machine: emails, phone numbers, card numbers, keys and tokens are redacted at the SDK, on by default. Nothing outside the tool call reaches us. It is pattern matching, not a guarantee: free text inside a tool argument or result is sent as written, so decide what your tools hand back.</p>
       <p>The Console is where you act on what the proxy and the SDK capture. <a href="https://baton.goodtiming.ai/" style="color:var(--brand)">Get started →</a></p>
     </div>
 
