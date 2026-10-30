@@ -366,7 +366,7 @@ install_baton(mcp, dsn="https://baton_pk_...@baton.goodtiming.ai/ten_.../acme-kb
       <div class="card"><h3>Library API path</h3><p>Code that calls your API wraps each call in <code>client.trace(…)</code>. Same event envelope, same sinks, different emission boundary. Best for vendors who ship Skills rather than an MCP server.</p></div>
       <p>baton-sdk is open source under Apache-2.0, and the source lives in the <a href="https://github.com/good-timing/baton" target="_blank" rel="noopener" style="color:var(--brand)">baton</a> repo. The Python package needs 3.11+. There is a <a href="#typescript" style="color:var(--brand)">TypeScript SDK</a> too, <code>@goodtiming/baton-sdk</code> on npm, under Apache-2.0 with its source in the <a href="https://github.com/good-timing/baton-ts" target="_blank" rel="noopener" style="color:var(--brand)">baton-ts</a> repo. It takes the same DSN and emits the same events, and everything on this page applies to both unless it says otherwise.</p>
       <h2 id="sdk-install">Install</h2>
-      <p>The latest releases are <code>baton-sdk</code> 0.9.0 on PyPI, <code>@goodtiming/baton-sdk</code> 0.5.8 on npm and <code>baton-proxy</code> 0.7.0 on PyPI. The <code>&gt;=0.8.8</code> below is the oldest version a plain install can send to the Console with, not the current one.</p>
+      <p>The latest releases are <code>baton-sdk</code> 0.9.1 on PyPI, <code>@goodtiming/baton-sdk</code> 0.6.1 on npm and <code>baton-proxy</code> 0.7.1 on PyPI. The <code>&gt;=0.8.8</code> below is the oldest version a plain install can send to the Console with, not the current one.</p>
       <table class="docs-table">
         <thead><tr><th>Command</th><th>Includes</th></tr></thead>
         <tbody>
@@ -450,7 +450,7 @@ withBaton(server, {
 });</pre>
       </div>
       <p>That string is the whole configuration. It is the <strong>DSN</strong> for one server, and it carries four things: a publishable key (<code>baton_pk_…</code>), the host events go to, your workspace id (<code>ten_…</code>) and the server's id (<code>srv-…</code>). The SDK reads all four and builds the sink itself.</p>
-      <p><code>install_baton</code> works out which library your server comes from, and raises <code>TypeError</code> before changing anything if the object is not an MCP server it supports. It supports <code>FastMCP</code> (mcp 1.x), <code>MCPServer</code> (mcp 2.x) and standalone <code>fastmcp</code>. The check is on shape, not class, so a subclass of these installs the same way, and our tests cover one on every supported mcp and fastmcp version. If your subclass overrides <code>call_tool</code> to check access or credits, that check runs before Baton. It sees the <code>user_goal</code> argument, and a call it rejects is not captured. The low-level <code>mcp.server.lowlevel.Server</code> is not supported. Tools registered before and after the call are both captured.</p>
+      <p><code>install_baton</code> works out which library your server comes from, and raises <code>TypeError</code> before changing anything if the object is not an MCP server it supports. It supports <code>FastMCP</code> (mcp 1.x), <code>MCPServer</code> (mcp 2.x) and standalone <code>fastmcp</code>. The check is on shape, not class, so a subclass of these installs the same way, and our tests cover one on every supported mcp and fastmcp version. If your subclass overrides <code>call_tool</code> to check access or credits, Baton removes <code>user_goal</code> before that check runs, and a call the check refuses is captured with <code>failure_kind</code> <code>"refused"</code>. With <code>result_capture_mode="off"</code> its message is not sent. The low-level <code>mcp.server.lowlevel.Server</code> is not supported. Tools registered before and after the call are both captured.</p>
       <p>A default install changes three things on your server.</p>
       <ul>
         <li><strong style="color:var(--ink)">One parameter on every tool</strong>, <code>user_goal</code>, removed before your handler runs. It is listed as required, but a call without it is served as usual. Its description is 344 characters. There is no per-tool setting: every wrapped tool gets it. A tool that already has its own <code>user_goal</code> argument keeps it.</li>
@@ -528,12 +528,31 @@ def resolve(ctx):
       <table class="docs-table">
         <thead><tr><th><code>Principal</code> field</th><th>Default</th><th>What it does</th></tr></thead>
         <tbody>
-    <tr><td>principal_id</td><td>required</td><td>The id, sent exactly as you return it. Your dashboard groups a person's sessions by it. It can name a person, a service account or an organisation. There is no separate company field.</td></tr>
+    <tr><td>principal_id</td><td>required</td><td>The id, sent exactly as you return it. Your dashboard groups a person's sessions by it. It can name a person or a service account. For the company they belong to, use <code>organization</code> below.</td></tr>
     <tr><td>display_name</td><td><code>None</code></td><td>What your dashboard shows for this person. Without it, the dashboard shows the id.</td></tr>
     <tr><td>form</td><td><code>"raw"</code></td><td>What the id is. Leave it as <code>"raw"</code> for a real identity. Set <code>"hashed"</code> only when your function hashed the id itself.</td></tr>
     <tr><td>user_data</td><td><code>None</code></td><td>Python only. Accepted, and not used today. Nothing in it is sent.</td></tr>
         </tbody>
       </table>
+      <p><strong style="color:var(--ink)">Their company.</strong> To say which of your customers a call belongs to, give the <code>Principal</code> an <code>organization</code>. If you only know the company, for example from an org-wide API key, return an <code>Organization</code> on its own. A company returned as a <code>Principal</code> is counted as a person, so use <code>Organization</code> for it.</p>
+      <pre>from baton import Organization, Principal
+
+def resolve(ctx):
+    user = (ctx.headers or {}).get("x-forwarded-user")
+    org = (ctx.headers or {}).get("x-org-id")
+    company = Organization(organization_id=org) if org else None
+    if user:
+        return Principal(principal_id=user, organization=company)
+    return company</pre>
+      <table class="docs-table">
+        <thead><tr><th><code>Organization</code> field</th><th>Default</th><th>What it does</th></tr></thead>
+        <tbody>
+    <tr><td>organization_id</td><td>required</td><td>The company's id, sent exactly as you return it.</td></tr>
+    <tr><td>display_name</td><td><code>None</code></td><td>A name for the company. It is a label, never a key.</td></tr>
+    <tr><td>form</td><td><code>"raw"</code></td><td>As for <code>Principal</code>. Set <code>"hashed"</code> only when your function hashed the id itself.</td></tr>
+        </tbody>
+      </table>
+      <p>Your dashboard stores the organization with each event, but doesn&#39;t filter by it or show it yet. Two sessions that name different organizations are never joined. With the Library API, pass the same values to <code>client.session(principal=...)</code>. A block that names only an organization is never joined to another, so pass your own <code>session_id</code> there.</p>
       <p><strong style="color:var(--ink)">The id you return is stored by the collector as it is.</strong> Your function decides what is safe to send. If real identities must not leave your side, hash the id in the function and say so:</p>
       <pre>import hashlib, hmac, os
 from baton import Principal
@@ -684,7 +703,7 @@ withBaton(server, {
   dsn: "https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...",
 });</pre>
       <p>Config fields are the Python names in camelCase (<code>vendorId</code>, <code>tenantId</code>, <code>vendorDisplayName</code>, <code>intentParamMode</code>, <code>reportMode</code>, <code>resultCaptureMode</code>, <code>scrubber</code>), and a <code>dsn</code> replaces the first three exactly as it does in Python. Tools registered before or after <code>withBaton</code> are both captured, and so are tools added or removed later.</p>
-      <p>Identity works as in Python: pass <code>resolvePrincipal</code>, which returns <code>{ principalId, displayName?, form? }</code> or <code>null</code>. <code>principalFromOAuthEmail</code> and <code>principalFromOAuthSub</code> ship ready-made and read the token's claims from <code>authInfo.extra</code>. See <a href="#identity" style="color:var(--brand)">Identity</a>.</p>
+      <p>Identity works as in Python: pass <code>resolvePrincipal</code>, which returns <code>{ principalId, displayName?, form?, organization? }</code>, an organization on its own as <code>{ organizationId, displayName?, form? }</code>, or <code>null</code>. <code>principalFromOAuthEmail</code> and <code>principalFromOAuthSub</code> ship ready-made and read the token's claims from <code>authInfo.extra</code>. See <a href="#identity" style="color:var(--brand)">Identity</a>.</p>
       <pre>import { withBaton, principalFromOAuthEmail } from "@goodtiming/baton-sdk";
 
 withBaton(server, {
@@ -714,6 +733,7 @@ app.use((req, res, next) =&gt;
         <li><strong>Only the high-level <code>McpServer</code>.</strong> The low-level <code>Server</code> is not wrapped.</li>
         <li><strong>Only the intent parameter needs a Zod schema.</strong> Every tool registered with a handler function is wrapped and captured either way, and a tool with no input schema gets no intent parameter. On the 2.x SDK a tool registered with a non-Zod standard schema is still wrapped and still emits <code>tool_call_*</code>; it just advertises no intent parameters.</li>
         <li><strong>A 1.x task-based tool is not wrapped.</strong> It emits no events, and <code>user_goal</code> can reach your handler.</li>
+        <li><strong>A refusal inside your own <code>validateToolInput</code> override reads as <code>invalid_argument</code>.</strong> A refusal anywhere else above the tool, such as a wrapper on the <code>tools/call</code> handler, is captured as <code>"refused"</code>.</li>
         <li><strong>Stateless HTTP shares one session.</strong> Requests that carry no <code>mcp-session-id</code> header share one session for the life of the server process, so different clients&#39; calls land in it together. The Python SDK gives each such request its own session. Pass <code>resolvePrincipal</code> to tell people apart.</li>
         <li><strong>The per-request <code>createMcpHandler</code> shape is unscoped.</strong> It builds a fresh server per request, which would make the session id and the snapshot dedup request-lifetime state.</li>
       </ul>
@@ -732,6 +752,7 @@ app.use((req, res, next) =&gt;
           <tr><td>Turn Baton off</td><td><code>BATON_DISABLED=1</code></td><td><code>BATON_DISABLED=1</code></td><td>None, stop wrapping the server</td><td>None, remove it from the gateway config</td></tr>
           <tr><td>Where events go</td><td>stderr, a file, HTTPS, or several</td><td>stderr or HTTPS</td><td>stderr, a file, HTTPS or S3</td><td>The proxy's sinks</td></tr>
           <tr><td>Who is calling</td><td><code>resolve_principal</code></td><td><code>resolvePrincipal</code></td><td>Not sent</td><td>From a gateway header</td></tr>
+          <tr><td>Their company</td><td><code>Organization</code>, from <code>resolve_principal</code></td><td><code>organization</code>, from <code>resolvePrincipal</code></td><td>Not sent</td><td><code>BATON_EXTMCP_ORGANIZATION_ID_HEADER</code></td></tr>
         </tbody>
       </table>
 
@@ -830,6 +851,7 @@ install_baton(mcp, VendorConfig(dsn="https://baton_pk_...@baton.goodtiming.ai/te
 
       <h3 id="gateway-identity">Identity</h3>
       <p>This path resolves the caller from a request header, and which header is configuration rather than code. The value of that header is sent as the caller id exactly as your gateway gives it. If the real id must not leave your network, have the gateway put a pseudonym in the header.</p>
+      <p>To name the caller&#39;s company, set <code>BATON_EXTMCP_ORGANIZATION_ID_HEADER</code> to the header that carries it. It is unset by default, so nothing is sent. Its value is sent as your gateway gives it.</p>
       <p>Your gateway must pass the header on every call. A call without it is captured with no caller, and nothing reports it. <code>BATON_PRINCIPAL_ID_HMAC_KEY</code> is no longer read; setting it only logs a warning.</p>
 
       <h2 id="gateway-captures">What it captures</h2>
