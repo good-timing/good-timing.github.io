@@ -712,7 +712,7 @@ app.use((req, res, next) =&gt;
         <li><strong>Only <code>StdoutSink</code> and <code>HttpSink</code>.</strong> <code>FileSink</code> and <code>MultiSink</code> are deferred; the Python package has all four.</li>
         <li><strong>Only the high-level <code>McpServer</code>.</strong> The low-level <code>Server</code> is not wrapped.</li>
         <li><strong>Only the intent parameter needs a Zod schema.</strong> Every tool registered with a handler function is wrapped and captured either way, and a tool with no input schema gets no intent parameter. On the 2.x SDK a tool registered with a non-Zod standard schema is still wrapped and still emits <code>tool_call_*</code>; it just advertises no intent parameters.</li>
-        <li><strong>A 1.x task-based tool is not wrapped.</strong> It emits no events, and <code>user_goal</code> still reaches your handler.</li>
+        <li><strong>A 1.x task-based tool is not wrapped.</strong> It emits no events, and <code>user_goal</code> can reach your handler.</li>
         <li><strong>Stateless HTTP shares one session.</strong> Requests that carry no <code>mcp-session-id</code> header share one session for the life of the server process, so different clients&#39; calls land in it together. The Python SDK gives each such request its own session. Pass <code>resolvePrincipal</code> to tell people apart.</li>
         <li><strong>The per-request <code>createMcpHandler</code> shape is unscoped.</strong> It builds a fresh server per request, which would make the session id and the snapshot dedup request-lifetime state.</li>
       </ul>
@@ -1063,7 +1063,7 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
       <p>Every event as it arrives, newest first, refreshed every couple of seconds. One row shape, no highlighting. This is the raw stream, for watching your own setup work while you drive an agent at it. Events appear within seconds of the call. Anything that interprets them lives on the other three tabs.</p>
 
       <h2 id="console-access">Access &amp; security</h2>
-      <p>The Console is hosted by us and auditable by you. Your data is single-tenant, and every event is logged and inspectable, so you can see exactly what each agent sent, when, and why. Scrubbing runs before anything leaves your machine: emails, phone numbers, card numbers, keys and tokens are redacted at the SDK, on by default. Nothing that doesn&#39;t cross the MCP connection reaches us. It is pattern matching, not a guarantee: free text inside a tool argument or result is sent as written, so decide what your tools hand back.</p>
+      <p>The Console is hosted by us and auditable by you. Your data is single-tenant, and every event is logged and inspectable, so you can see exactly what each agent sent, when, and why. Scrubbing runs before anything leaves your machine, and is on by default. It redacts emails, North American phone numbers, common API keys and tokens, and card numbers written without spaces. It is pattern matching, not a guarantee. Free text inside a tool argument or result is sent as written, so decide what your tools hand back. Nothing that doesn&#39;t cross the MCP connection reaches us.</p>
       <p>The Console is where you act on what the proxy and the SDK capture. <a href="https://baton.goodtiming.ai/" style="color:var(--brand)">Get started →</a></p>
     </div>
 
