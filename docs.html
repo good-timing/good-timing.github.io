@@ -737,7 +737,7 @@ app.use((req, res, next) =&gt;
       <ul>
         <li><strong style="color:var(--ink)">Input.</strong> Each tool's schema grows by about 350 characters (the <code>user_goal</code> property and its 344-character description), sent with the tool list. Input tokens cost about 0.02 ms each to process, 0.01 ms when cached, 100 to 200 times less than output.</li>
         <li><strong style="color:var(--ink)">Output.</strong> The agent writes the <code>user_goal</code> value on every call. Writing time follows output tokens, at about 4.2–4.7 ms per token on Sonnet 5.5, 6.8 on Opus 5.5 and 3.6 on Haiku 5.5.</li>
-        <li><strong style="color:var(--ink)">Reports</strong> (<code>report_mode="on"</code>). The agent is told to call the report tool only when it has something to report, such as a tool call that went wrong or a request no tool covers. Each report it files adds a turn before its answer. The tool and its instructions add about 1,400 characters to what the agent reads.</li>
+        <li><strong style="color:var(--ink)">Reports</strong> (<code>report_mode="on"</code>). The agent is told to call the report tool only when it has something to report, such as a tool call that went wrong or a request no tool covers. Each report it files adds a turn before its answer. The tool and its instructions add about 1,400 characters to what the agent reads. About 1,300 of them are the tool's description, in the tool list. The rest, about 150, go into your server instructions.</li>
       </ul>
 
       <h2 id="what-leaves">What leaves your server</h2>
