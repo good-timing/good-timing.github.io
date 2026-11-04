@@ -258,10 +258,12 @@
         <a href="#vendorconfig" class="sidebar-link">Configuration</a>
         <a href="#library-api" class="sidebar-link">Library API</a>
         <a href="#typescript" class="sidebar-link">TypeScript</a>
+        <a href="#go" class="sidebar-link">Go</a>
         <a href="#by-product" class="sidebar-link">Settings by product</a>
         <a href="#costs" class="sidebar-link">What it costs your agent</a>
         <a href="#what-leaves" class="sidebar-link">What leaves your server</a>
         <a href="#pii" class="sidebar-link">PII scrubbing</a>
+        <a href="#stability" class="sidebar-link">Stability and versions</a>
       </div>
     
       <div class="sidebar-group">
@@ -306,7 +308,7 @@
       <div class="card-grid three-up">
         <div class="card">
           <h3><code>baton-sdk</code></h3>
-          <p>A server you own. Goes inside it and captures your real customers. Python or TypeScript. <a href="#mcp-integration" style="color:var(--brand)">Quickstart &rarr;</a></p>
+          <p>A server you own. Goes inside it and captures your real customers. Python, TypeScript or Go. <a href="#mcp-integration" style="color:var(--brand)">Quickstart &rarr;</a></p>
         </div>
         <div class="card">
           <h3>Gateway</h3>
@@ -364,15 +366,15 @@ install_baton(mcp, dsn="https://baton_pk_...@baton.goodtiming.ai/ten_.../acme-kb
       <p>baton-sdk is native instrumentation for vendors who control their MCP server source. One call wires up capture, annotation, and sink routing, with the same wire format as the proxy and no subprocess hop. Because it lives inside what you ship, it captures friction from your real customers, who never have to install anything.</p>
       <div class="card"><h3>MCP middleware path</h3><p>Your MCP server calls <code>install_baton(mcp, dsn=…)</code>. Two lines. Captures every tool call at the transport boundary. Best for vendors with MCP servers as their primary surface.</p></div>
       <div class="card"><h3>Library API path</h3><p>Code that calls your API wraps each call in <code>client.trace(…)</code>. Same event envelope, same sinks, different emission boundary. Best for vendors who ship Skills rather than an MCP server.</p></div>
-      <p>baton-sdk is open source under Apache-2.0, and the source lives in the <a href="https://github.com/good-timing/baton" target="_blank" rel="noopener" style="color:var(--brand)">baton</a> repo. The Python package needs 3.11+. There is a <a href="#typescript" style="color:var(--brand)">TypeScript SDK</a> too, <code>@goodtiming/baton-sdk</code> on npm, under Apache-2.0 with its source in the <a href="https://github.com/good-timing/baton-ts" target="_blank" rel="noopener" style="color:var(--brand)">baton-ts</a> repo. It takes the same DSN and emits the same events, and everything on this page applies to both unless it says otherwise.</p>
+      <p>baton-sdk is open source under Apache-2.0, and the source lives in the <a href="https://github.com/good-timing/baton" target="_blank" rel="noopener" style="color:var(--brand)">baton</a> repo. The Python package needs 3.11+. There is also a <a href="#typescript" style="color:var(--brand)">TypeScript SDK</a>, <code>@goodtiming/baton-sdk</code> on npm, and a <a href="#go" style="color:var(--brand)">Go SDK</a>, <code>github.com/good-timing/baton-go</code>. Both are under Apache-2.0, with source in the <a href="https://github.com/good-timing/baton-ts" target="_blank" rel="noopener" style="color:var(--brand)">baton-ts</a> and <a href="https://github.com/good-timing/baton-go" target="_blank" rel="noopener" style="color:var(--brand)">baton-go</a> repos. All three take the same DSN and emit the same events. Everything on this page applies to Python and TypeScript unless it says otherwise. Go has its own section.</p>
       <h2 id="sdk-install">Install</h2>
-      <p>The latest releases are <code>baton-sdk</code> 0.9.1 on PyPI, <code>@goodtiming/baton-sdk</code> 0.6.1 on npm and <code>baton-proxy</code> 0.7.1 on PyPI. The <code>&gt;=0.8.8</code> below is the oldest version a plain install can send to the Console with, not the current one.</p>
+      <p>The latest releases are <code>baton-sdk</code> 1.0.0 on PyPI, <code>@goodtiming/baton-sdk</code> 1.0.0 on npm, <code>baton-go</code> v1.0.0 and <code>baton-proxy</code> 0.7.2 on PyPI. See <a href="#stability" style="color:var(--brand)">Stability and versions</a>. The <code>&gt;=0.8.8</code> below is the oldest version a plain install can send to the Console with, not the current one.</p>
       <table class="docs-table">
         <thead><tr><th>Command</th><th>Includes</th></tr></thead>
         <tbody>
-          <tr><td>pip install "baton-sdk&gt;=0.8.8"</td><td><strong style="color:var(--ink)">Needed to send events to a Baton Console.</strong> httpx is a core dependency, so the Console sink needs no extra. 0.8.6 is the oldest release the Console accepts, because earlier ones send <code>user_id</code>, which was renamed <code>principal_id</code>. On 0.8.7 and earlier the sink also needed the <code>[http]</code> extra, which a fresh <code>[mcp]</code> or <code>[fastmcp]</code> install did not pull in.</td></tr>
+          <tr><td>pip install "baton-sdk&gt;=0.8.8"</td><td><strong style="color:var(--ink)">Needed to send events to a Baton Console.</strong> The Console sink is in the core install, so it needs no extra. 0.8.6 is the oldest release the Console accepts, because earlier ones send <code>user_id</code>, which was renamed <code>principal_id</code>. On 0.8.7 and earlier the sink also needed the <code>[http]</code> extra, which a fresh <code>[mcp]</code> or <code>[fastmcp]</code> install did not pull in.</td></tr>
           <tr><td>pip install baton-sdk</td><td>Core. Library API and sinks, the Console sink included. Writes to stderr, a file, or https.</td></tr>
-          <tr><td>pip install "baton-sdk[mcp]"</td><td>+ the official <code>mcp</code> SDK, <code>mcp&gt;=1.21.1,&lt;3</code>. CI tests mcp 1.21.1, 1.25.0, 1.27.2 and 2.0.0.</td></tr>
+          <tr><td>pip install "baton-sdk[mcp]"</td><td>+ the official <code>mcp</code> SDK, <code>mcp&gt;=1.21.1,&lt;3</code>. CI tests mcp 1.21.1, 1.25.0, 1.27.2, 2.0.0 and 2.3.0.</td></tr>
           <tr><td>pip install "baton-sdk[fastmcp]"</td><td>+ standalone <code>fastmcp</code>, <code>fastmcp&gt;=2.14,&lt;5</code>.</td></tr>
           <tr><td>pip install "baton-sdk[all]"</td><td>Everything above.</td></tr>
         </tbody>
@@ -416,6 +418,7 @@ install_baton(mcp, dsn="https://baton_pk_...@baton.goodtiming.ai/ten_.../acme-kb
           <button class="code-tab-btn"><code>mcp</code> 1.x</button>
           <button class="code-tab-btn">fastmcp</button>
           <button class="code-tab-btn">TypeScript</button>
+          <button class="code-tab-btn">Go</button>
         </div>
         <pre>from mcp.server.mcpserver import MCPServer
 from baton import install_baton
@@ -448,6 +451,23 @@ const server = new McpServer({ name: "acme-knowledge-base", version: "1.0.0" });
 withBaton(server, {
   dsn: "https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...",
 });</pre>
+        <pre hidden>import (
+	"context"
+	"log"
+
+	baton "github.com/good-timing/baton-go"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
+)
+
+impl := &amp;mcp.Implementation{Name: "acme-knowledge-base", Version: "1.0.0"}
+server := mcp.NewServer(impl, nil)
+handle, err := baton.Install(server, impl, nil, baton.Config{
+	DSN: "https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...",
+})
+if err != nil {
+	log.Fatal(err)
+}
+defer handle.Close(context.Background())</pre>
       </div>
       <p>That string is the whole configuration. It is the <strong>DSN</strong> for one server, and it carries four things: a publishable key (<code>baton_pk_…</code>), the host events go to, your workspace id (<code>ten_…</code>) and the server's id (<code>srv-…</code>). The SDK reads all four and builds the sink itself.</p>
       <p><code>install_baton</code> works out which library your server comes from, and raises <code>TypeError</code> before changing anything if the object is not an MCP server it supports. It supports <code>FastMCP</code> (mcp 1.x), <code>MCPServer</code> (mcp 2.x) and standalone <code>fastmcp</code>. The check is on shape, not class, so a subclass of these installs the same way, and our tests cover one on every supported mcp and fastmcp version. If your subclass overrides <code>call_tool</code> to check access or credits, Baton removes <code>user_goal</code> before that check for any tool your server has registered, and a call the check refuses is captured with <code>failure_kind</code> <code>"refused"</code>. With <code>result_capture_mode="off"</code> its message is not sent. On fastmcp 2 the library never calls a <code>call_tool</code> override. The low-level <code>mcp.server.lowlevel.Server</code> is not supported. Tools registered before and after the call are both captured.</p>
@@ -457,7 +477,7 @@ withBaton(server, {
         <li><strong style="color:var(--ink)">One sentence in the server instructions</strong>, 268 characters, telling the agent to pass the user's message number on to sub-agents. Your own instructions stay first, with ours after a blank line. If any tool has its own <code>user_goal</code>, the sentence is left out.</li>
         <li><strong style="color:var(--ink)">No tools.</strong> With <code>report_mode="on"</code> it also adds a tool the agent uses to report problems, named after your server, so a server called <code>"Acme Knowledge Base"</code> gets <code>acme-knowledge-base_annotate</code>. It adds about 1,300 characters of tool description to the tool list, and about 150 to the server instructions, so our instructions come to about 420 in all, after your own.</li>
       </ul>
-      <p><strong style="color:var(--ink)">Sessions on stateless HTTP.</strong> When a request carries no session id, each request is its own session, so two clients never share one. Your dashboard groups a person's sessions by <code>principal_id</code>, so to see one person's calls together, pass <code>resolve_principal</code> (see <a href="#identity" style="color:var(--brand)">Identity</a>). On stdio there is one session per process.</p>
+      <p id="stateless-sessions"><strong style="color:var(--ink)">Sessions on stateless HTTP.</strong> When a request carries no session id, each request is its own session, so two clients never share one. Your dashboard groups a person's sessions by <code>principal_id</code>, so to see one person's calls together, pass <code>resolve_principal</code> (see <a href="#identity" style="color:var(--brand)">Identity</a>). On stdio there is one session per process.</p>
       <h3>Getting a DSN</h3>
       <p>Sign in at <a href="https://baton.goodtiming.ai/account" style="color:var(--brand)">baton.goodtiming.ai/account</a> and press <strong>Add a server</strong>, with a name if you want one. The page shows the new DSN with a <strong>Copy</strong> button, and every server's DSN stays listed under <strong>Publishable keys</strong>. The <a href="https://baton.goodtiming.ai/setup/agent" style="color:var(--brand)">setup agent</a> makes one for you when it wires up a server.</p>
       <p>We assign the server id and it never changes. The name is a label on <code>/account</code> and in your workspace picker, and you can rename it there. A publishable key can only write events, and only for the server its DSN names, so it is safe in your source.</p>
@@ -465,7 +485,8 @@ withBaton(server, {
       <p><strong>A server you distribute</strong>, meaning a stdio server started on your user's machine, takes the DSN in source, as above. An MCP client starts a stdio server with a fixed allowlist of environment variables (six names on macOS and Linux) plus whatever the user wrote in their own client config, so a value in your <code>.env</code> never reaches it.</p>
       <p><strong>A server you host</strong> can read it from the environment. Set <code>BATON_DSN</code> and pass nothing:</p>
       <pre>install_baton(mcp)  # reads BATON_DSN</pre>
-      <p>An explicit <code>dsn=</code> wins over <code>BATON_DSN</code>, and either one wins over <code>BATON_VENDOR_ID</code> and <code>BATON_TENANT_ID</code>, so a new DSN is never overridden by values an earlier install left in the environment.</p>
+      <p>If <code>BATON_DSN</code> is not set either, and there is no <code>vendor_id</code>, <code>tenant_id</code> or <code>sink</code>, <code>install_baton</code> logs one warning and installs nothing. Your server starts as usual.</p>
+      <p>An explicit <code>dsn=</code> wins over <code>BATON_DSN</code>, and either one wins over <code>BATON_TENANT_ID</code> (and, for <code>Client</code>, <code>BATON_VENDOR_ID</code>), so a new DSN is never overridden by values an earlier install left in the environment.</p>
       <div class="note">A bare <code>baton_pk_…</code> key in place of the DSN stops at startup with a message saying to copy the full value from <code>/account</code>. A secret <code>baton_sk_…</code> key in a DSN works, and logs a warning: it reads and writes everything in your workspace, so it must never ship.</div>
       <h3 id="without-dsn">Without a DSN</h3>
       <p>To send to your own collector, or to try the SDK before you have a key, name the parts. Leave out <code>sink</code> and events go to stderr as JSON Lines.</p>
@@ -479,7 +500,7 @@ install_baton(mcp, VendorConfig(
     vendor_display_name="Acme Knowledge Base",
     sink=HttpSink("https://collector.example.com", api_key=os.environ["COLLECTOR_KEY"]),
 ))</pre>
-      <p><code>vendor_id</code> names the server and <code>tenant_id</code> names the account the collector authenticates. One account holds many servers, so giving both the same value merges every server in it into one. <code>HttpSink</code> posts to <code>{url}/v0/events</code> with the key as a bearer token.</p>
+      <p><code>vendor_id</code> names the server and <code>tenant_id</code> names the account the collector authenticates. One account holds many servers, so giving both the same value merges every server in it into one. <code>HttpSink</code> posts batches to <code>{url}/v0/events/batch</code> with the key as a bearer token.</p>
       <p>A <code>VendorConfig</code> can carry a DSN too, as <code>VendorConfig(dsn=…, scrubber=…)</code>, when you want a DSN and other settings. Passing a DSN alongside <code>vendor_id</code>, <code>tenant_id</code> or <code>sink</code> raises, because the DSN already sets them.</p>
       <table class="docs-table">
         <thead><tr><th>Your server</th><th>Adapter, if you import one directly</th></tr></thead>
@@ -497,16 +518,32 @@ install_baton(mcp, VendorConfig(
           <tr><td>dsn</td><td><code>BATON_DSN</code></td><td>The value from <code>/account</code>. Sets <code>vendor_id</code>, <code>tenant_id</code> and <code>sink</code>, and <code>vendor_display_name</code> when that is unset.</td></tr>
           <tr><td>vendor_id</td><td>—</td><td>The server's id. Required without a DSN. Letters, digits, <code>_</code> and <code>-</code>, up to 48 characters.</td></tr>
           <tr><td>tenant_id</td><td><code>BATON_TENANT_ID</code>, then <code>vendor_id</code></td><td>The account the collector authenticates.</td></tr>
-          <tr><td>vendor_display_name</td><td>the DSN's server id</td><td>The name the calling agent reads in the report tool's description and its instructions, with <code>report_mode="on"</code>. Required without a DSN.</td></tr>
-          <tr><td>sink</td><td>from the DSN, else <code>StdoutSink()</code></td><td>Where events go. See <a href="#sinks" style="color:var(--brand)">Sinks</a>.</td></tr>
+          <tr><td>vendor_display_name</td><td>your server's name, else the DSN's server id</td><td>The name the calling agent reads in the report tool's description and its instructions, with <code>report_mode="on"</code>. Required with <code>report_mode="on"</code> when there is no DSN.</td></tr>
+          <tr><td>sink</td><td>from the DSN, else <code>StdoutSink()</code> when <code>vendor_id</code> is set</td><td>Where events go. See <a href="#sinks" style="color:var(--brand)">Sinks</a>.</td></tr>
           <tr><td>annotation_tool_name</td><td>from the server's name</td><td>Pins the report tool's name, with <code>report_mode="on"</code>. Without a usable server name it is <code>{vendor_id}_annotate</code>.</td></tr>
           <tr><td>scrubber</td><td><code>Scrubber()</code></td><td>Runs on every payload. Pass <code>identity_scrub</code> to turn scrubbing off, or your own callable. See <a href="#pii" style="color:var(--brand)">PII scrubbing</a>.</td></tr>
           <tr><td>intent_param_mode</td><td><code>"required"</code></td><td>Adds one parameter, <code>user_goal</code>, to every tool's input schema and removes it before your handler runs. The agent writes it as <code>'&lt;n&gt;: &lt;what this call is for&gt;; success is &lt;what its result should show&gt;'</code>, where <code>n</code> is the number of the user's current message. <code>"required"</code> lists it as required, as an advertisement only: no call fails for leaving it out. <code>"optional"</code> leaves it off the required list.</td></tr>
-          <tr><td>report_mode</td><td><code>"off"</code></td><td><code>"on"</code> adds a tool the agent uses to report a tool call that went wrong, or a request no tool covers, plus instructions saying when to use it. Off, no tool is added and each call's goal still arrives in <code>user_goal</code>.</td></tr>
+          <tr><td>report_mode</td><td><code>"off"</code>, <code>"on"</code> with Console settings</td><td><code>"on"</code> adds a tool the agent uses to report a tool call that went wrong, or a request no tool covers, plus instructions saying when to use it. Off, no tool is added and each call's goal still arrives in <code>user_goal</code>.</td></tr>
           <tr><td>result_capture_mode</td><td><code>"full"</code></td><td><code>"off"</code> stops sending what your tools return. Requests are still sent. See <a href="#what-leaves" style="color:var(--brand)">What leaves your server</a>.</td></tr>
+          <tr><td>settings</td><td><code>"local"</code></td><td>Experimental. <code>"console"</code> reads capture settings from the Console, and refreshes them every <code>settings_refresh_s</code> seconds (60). Needs a DSN. See <a href="#stability" style="color:var(--brand)">Stability and versions</a>.</td></tr>
           <tr><td>resolve_principal</td><td>—</td><td>A function, sync or async, that says who is behind a call. Unset, no event names anyone. See <a href="#identity" style="color:var(--brand)">Identity</a>.</td></tr>
         </tbody>
       </table>
+      <h3 id="per-request">Servers built per request</h3>
+      <p>If your app builds a new MCP server for each request, do not call <code>install_baton</code> on each one: every call starts its own sender. Create one Baton at startup and wrap each server:</p>
+      <pre>import baton
+
+shared = baton.create_baton(dsn="https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...")
+
+def build_server():
+    server = FastMCP("Acme Knowledge Base")
+    ...                    # register your tools
+    shared.wrap(server)
+    return server
+
+# once, at shutdown, in your async shutdown hook:
+# await shared.aclose()</pre>
+      <p><code>create_baton</code> takes what <code>install_baton</code> takes and checks it at once, so no request fails on a bad setting. Its servers share one sender, and your tool list is sent once. Each server's calls keep their own session.</p>
       <h3 id="identity">Identity</h3>
       <p>Baton names the person behind a call only when you tell it who that is. You pass one function, <code>resolve_principal</code>. It gets the call's headers, <code>_meta</code>, tool name, arguments and the verified token's claims, and returns a <code>Principal</code> or <code>None</code>. The SDK sends what the function returns and does nothing else to it: no hashing, no key, no guessing.</p>
       <p>If your server runs OAuth, two ready-made hooks cover it. Pass one as it is:</p>
@@ -570,9 +607,9 @@ def resolve(ctx):
       <table class="docs-table">
         <thead><tr><th>Sink</th><th>Use case</th></tr></thead>
         <tbody>
-          <tr><td>StdoutSink()</td><td>Events to stderr as JSON Lines. The default with no DSN and no <code>sink=</code>.</td></tr>
+          <tr><td>StdoutSink()</td><td>Events to stderr as JSON Lines. The default with a <code>vendor_id</code> and no DSN or <code>sink=</code>.</td></tr>
           <tr><td>FileSink("./events.jsonl")</td><td>Capture to a local file.</td></tr>
-          <tr><td>HttpSink(url, api_key=…)</td><td>POST to <code>{url}/v0/events</code>. Bounded buffer, retry, circuit breaker. A DSN builds this one for you.</td></tr>
+          <tr><td>HttpSink(url, api_key=…)</td><td>POSTs batches to <code>{url}/v0/events/batch</code>, or one event at a time to <code>{url}/v0/events</code> if the collector has no batch endpoint. Bounded buffer, retry, circuit breaker. A DSN builds this one for you.</td></tr>
           <tr><td>MultiSink([…])</td><td>Fan out to several sinks at once.</td></tr>
         </tbody>
       </table>
@@ -670,7 +707,7 @@ async with AsyncClient(dsn="https://baton_pk_...@baton.goodtiming.ai/ten_.../srv
         async with client.trace(tool_name="...", intent="...") as trace:
             response = await vendor_client.chat.completions.create(...)
             trace.observed(response)</pre>
-      <p>Both take the same keyword arguments: <code>dsn</code>, or <code>vendor_id</code>, <code>tenant_id</code> and <code>sink</code> without one. Both read <code>BATON_DSN</code> when no DSN is passed. On both, <code>session()</code> is a plain <code>with</code> block.</p>
+      <p>Both take the same keyword arguments: <code>dsn</code>, or <code>vendor_id</code>, <code>tenant_id</code> and <code>sink</code> without one, plus <code>scrubber</code> and <code>result_capture_mode</code>. Both read <code>BATON_DSN</code> when no DSN is passed. On both, <code>session()</code> is a plain <code>with</code> block.</p>
       <h3><code>trace.annotate()</code></h3>
       <pre>with client.trace(tool_name="search", intent="find docs for X") as trace:
     try:
@@ -702,13 +739,23 @@ const server = new McpServer({ name: "acme-knowledge-base", version: "1.0.0" });
 withBaton(server, {
   dsn: "https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...",
 });</pre>
-      <p>Config fields are the Python names in camelCase (<code>vendorId</code>, <code>tenantId</code>, <code>vendorDisplayName</code>, <code>intentParamMode</code>, <code>reportMode</code>, <code>resultCaptureMode</code>, <code>scrubber</code>), and a <code>dsn</code> replaces the first three exactly as it does in Python. Tools registered before or after <code>withBaton</code> are both captured, and so are tools added or removed later.</p>
+      <p>Config fields are the Python names in camelCase (<code>vendorId</code>, <code>tenantId</code>, <code>vendorDisplayName</code>, <code>sink</code>, <code>annotationToolName</code>, <code>intentParamMode</code>, <code>reportMode</code>, <code>resultCaptureMode</code>, <code>scrubber</code>). A <code>dsn</code> sets <code>vendorId</code>, <code>tenantId</code> and <code>sink</code>, and <code>vendorDisplayName</code> when you leave it unset, as in Python. The sinks are the same four as in Python, as classes: <code>new HttpSink(url, { apiKey })</code>. Tools registered before or after <code>withBaton</code> are both captured, and so are tools added or removed later.</p>
       <p>Identity works as in Python: pass <code>resolvePrincipal</code>, which returns <code>{ principalId, displayName?, form?, organization? }</code>, an organization on its own as <code>{ organizationId, displayName?, form? }</code>, or <code>null</code>, sync or async. <code>principalFromOAuthEmail</code> and <code>principalFromOAuthSub</code> ship ready-made and read the token's claims from <code>authInfo.extra</code>. See <a href="#identity" style="color:var(--brand)">Identity</a>.</p>
       <pre>import { withBaton, principalFromOAuthEmail } from "@goodtiming/baton-sdk";
 
 withBaton(server, {
   dsn: "https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...",
   resolvePrincipal: principalFromOAuthEmail,
+});</pre>
+      <p><strong style="color:var(--ink)">A server built per request.</strong> Do not call <code>withBaton</code> per request, because each call builds a new sink. As in <a href="#per-request" style="color:var(--brand)">Python</a>, call <code>createBaton(config)</code> once at startup and <code>baton.wrap(server)</code> for each new server. It takes the same config as <code>withBaton</code>. Call <code>await baton.aclose()</code> when your server stops.</p>
+      <pre>import { createBaton } from "@goodtiming/baton-sdk";
+
+const baton = createBaton(); // reads BATON_DSN, like withBaton
+
+app.post("/mcp", async (req, res) =&gt; {
+  const server = buildServer();
+  baton.wrap(server);
+  // connect a transport and handle the request as before
 });</pre>
       <h3>Without MCP</h3>
       <p>The <a href="#library-api" style="color:var(--brand)">Library API</a> is here too, as <code>Client</code>. The block and the call take callbacks instead of <code>with</code>: <code>client.session(options, fn)</code> and <code>client.trace(options, fn)</code>. The option names are the Python names in camelCase. Put one <code>trace()</code> where every tool call passes through, such as a middleware, and every tool is covered.</p>
@@ -724,35 +771,134 @@ app.use((req, res, next) =&gt;
       <p>A callback can be sync or async. Its return value is recorded as the result, and a throw is recorded and passed on unchanged. <code>client.wrap(toolName, fn)</code> traces a function on every call, for code with no single place to put <code>trace()</code>.</p>
       <h3>What it captures</h3>
       <p>The same <code>user_goal</code> parameter, the same <code>surface_snapshot</code>, and the same events. <code>intentParamMode</code> defaults to <code>"required"</code>, which lists <code>user_goal</code> in each tool&#39;s <code>required</code> list and never enforces it. There is no <code>"off"</code>. The report tool is off by default here too; <code>reportMode: "on"</code> adds it.</p>
-      <p>One difference under <code>resultCaptureMode: "off"</code>: the message of an error your handler throws is still sent. The Python SDK withholds it unless it is a <code>ToolError</code>.</p>
+      <p>One difference under <code>resultCaptureMode: "off"</code>: the message of an error your handler throws is never sent. The TypeScript MCP SDK has no <code>ToolError</code> class to mark a message as safe to send. The Python SDK sends the message of a <code>ToolError</code>.</p>
       <p>PII scrubbing is <strong>on by default</strong> here too, a rule-for-rule port of Python&#39;s ruleset. Pass <code>identityScrub</code> to opt out, or your own <code>(value: unknown) =&gt; unknown</code>. Read <a href="#pii" style="color:var(--brand)">what it does and does not catch</a> before relying on it.</p>
       <h3>What is not here yet</h3>
       <p>Stated so you find out now rather than later. None of it blocks the paths above.</p>
       <ul>
-        <li><strong>Only <code>StdoutSink</code> and <code>HttpSink</code>.</strong> <code>FileSink</code> and <code>MultiSink</code> are deferred; the Python package has all four.</li>
         <li><strong>Only the high-level <code>McpServer</code>.</strong> The low-level <code>Server</code> is not wrapped.</li>
         <li><strong>Only the intent parameter needs a Zod schema.</strong> Every tool registered with a handler function is wrapped and captured either way, and a tool with no input schema gets no intent parameter. On the 2.x SDK a tool registered with a non-Zod standard schema is still wrapped and still emits <code>tool_call_*</code>; it just advertises no intent parameters.</li>
-        <li><strong>A 1.x task-based tool is not wrapped.</strong> It emits no events, and <code>user_goal</code> can reach your handler.</li>
+        <li><strong>A 1.x task-based tool is not wrapped.</strong> It emits no events. It still lists <code>user_goal</code>, and Baton removes it before your handler runs.</li>
         <li><strong>A refusal inside your own <code>validateToolInput</code> override reads as <code>invalid_argument</code>.</strong> A refusal from an override of <code>executeToolHandler</code>, or from a wrapper on the <code>tools/call</code> handler installed before <code>withBaton</code>, is captured as <code>"refused"</code>. One installed after <code>withBaton</code> is not seen.</li>
-        <li><strong>Stateless HTTP shares one session.</strong> Requests that carry no <code>mcp-session-id</code> header share one session for the life of the server process, so different clients&#39; calls land in it together. The Python SDK gives each such request its own session. Pass <code>resolvePrincipal</code> to tell people apart.</li>
-        <li><strong>The per-request <code>createMcpHandler</code> shape is unscoped.</strong> It builds a fresh server per request, which would make the session id and the snapshot dedup request-lifetime state.</li>
+        <li><strong>v2&#39;s <code>createMcpHandler</code> is tested only for calls that pause for input.</strong> A server your own code builds per request is supported, with <code>createBaton</code> above.</li>
+        <li><strong><code>resources/templates/list</code> sends no events.</strong></li>
       </ul>
       <h3>Wire compatibility</h3>
-      <p>This is a tested property, not an intention. Both SDKs are checked against <a href="https://github.com/good-timing/baton-spec" target="_blank" rel="noopener" style="color:var(--brand)">baton-spec</a>, a neutral schema repo: every event type is validated against the shared JSON Schema, and the TypeScript emitter is diffed field-by-field against captured Python output for the same scenario. Envelope and payload keys must match exactly; values match except for ids, timestamps, timings and the genuinely language-specific fields.</p>
+      <p>This is a tested property, not an intention. All three SDKs are checked against <a href="https://github.com/good-timing/baton-spec" target="_blank" rel="noopener" style="color:var(--brand)">baton-spec</a>, a neutral schema repo: Python and TypeScript events are validated against the shared JSON Schema, Go events are compared with its example events and scrub cases, and the TypeScript emitter is diffed field-by-field against captured Python output for the same scenario. Envelope and payload keys must match exactly; values match except for ids, timestamps, timings and the genuinely language-specific fields.</p>
+
+      <h2 id="go">Go</h2>
+      <p>The same SDK for servers built on the official <a href="https://github.com/modelcontextprotocol/go-sdk" target="_blank" rel="noopener" style="color:var(--brand)">Go MCP SDK</a>. <code>baton-go</code> takes the same DSN and sends the same events as the Python and TypeScript packages. It is open source under Apache-2.0, with its source in the <a href="https://github.com/good-timing/baton-go" target="_blank" rel="noopener" style="color:var(--brand)">baton-go</a> repo. Go 1.25+, and <code>github.com/modelcontextprotocol/go-sdk</code> v1.6.1 or later in v1.</p>
+      <pre>go get github.com/good-timing/baton-go@v1.0.0</pre>
+      <p>If your server is on an older go-sdk, <code>go get</code> moves it up to v1.6.1. A newer one stays where it is.</p>
+      <pre>impl := &amp;mcp.Implementation{Name: "acme-knowledge-base", Version: "1.0.0"}
+server := mcp.NewServer(impl, nil)
+
+handle, err := baton.Install(server, impl, nil, baton.Config{
+	DSN: "https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...",
+})
+if err != nil {
+	log.Fatal(err) // a bad DSN or config; nothing was installed
+}
+defer handle.Close(context.Background())</pre>
+      <p><strong style="color:var(--ink)">Pass <code>Install</code> the same <code>impl</code> and options you gave <code>mcp.NewServer</code>.</strong> The options may be nil in both places. Baton reads your server's name, version and instructions from them, and never calls your server to find them out. A nil <code>impl</code> or an empty <code>impl.Name</code> is an error. Tools added before and after <code>Install</code> are both captured.</p>
+      <p><strong style="color:var(--ink)">Call <code>Close</code> when your server stops.</strong> Events are sent in the background, in batches, so one can reach the Console up to 5 seconds after it was recorded. <code>Close(ctx)</code> sends what is still buffered and stops shortly before <code>ctx</code>'s deadline, or after about 3 seconds if it has none. It never returns an error. Events recorded after <code>Close</code> are dropped.</p>
+      <p>With no DSN, no <code>BATON_DSN</code>, and no <code>Sink</code>, <code>VendorID</code> or <code>TenantID</code>, <code>Install</code> logs one warning and installs nothing, and your server starts as usual. A config value that is not valid is still an error.</p>
+      <h3 id="go-config">Configuration</h3>
+      <p>Fields of <code>baton.Config</code>. With a DSN, every other field is optional. The modes are plain strings, the same values as in Python, and each value has a named constant.</p>
+      <table class="docs-table">
+        <thead><tr><th>Field</th><th>Default</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td>DSN</td><td><code>BATON_DSN</code></td><td>The value from <code>/account</code>. An explicit <code>DSN</code> wins over <code>BATON_DSN</code>.</td></tr>
+          <tr><td>Sink</td><td>from the DSN</td><td>Where events go without a DSN. See Sinks below.</td></tr>
+          <tr><td>VendorID</td><td>—</td><td>The server's id. Required without a DSN. Letters, digits, <code>_</code> and <code>-</code>, up to 48 characters.</td></tr>
+          <tr><td>TenantID</td><td><code>VendorID</code></td><td>The account, for events written without a DSN.</td></tr>
+          <tr><td>VendorDisplayName</td><td>the server's name</td><td>The name the agent reads in the report tool's description and its instructions.</td></tr>
+          <tr><td>ResultCaptureMode</td><td><code>baton.ResultCaptureFull</code></td><td><code>baton.ResultCaptureOff</code> stops sending what your tools return, and the error text. Requests are still sent.</td></tr>
+          <tr><td>IntentParamMode</td><td><code>baton.IntentParamRequired</code></td><td>Whether <code>user_goal</code> is listed as required. <code>baton.IntentParamOptional</code> leaves it off the list. Nothing enforces it.</td></tr>
+          <tr><td>ReportMode</td><td><code>baton.ReportOff</code></td><td><code>baton.ReportOn</code> adds the tool the agent uses to report problems, named after your server.</td></tr>
+          <tr><td>AnnotationToolName</td><td>from the server's name</td><td>Pins the report tool's name, with <code>baton.ReportOn</code>.</td></tr>
+          <tr><td>Scrubber</td><td><code>baton.DefaultScrubber</code></td><td>Runs on every captured value, with the same rules as Python. <code>baton.NoScrub</code> turns scrubbing off, or pass your own <code>func(any) any</code>.</td></tr>
+          <tr><td>ResolvePrincipal</td><td>—</td><td>A function that says who is behind a call. Unset, no event names anyone.</td></tr>
+          <tr><td>Middleware</td><td>—</td><td>Your own receiving middleware, such as an auth check. See Refused calls below.</td></tr>
+        </tbody>
+      </table>
+      <p>The constants are <code>ResultCaptureFull</code> and <code>ResultCaptureOff</code> (<code>"full"</code>, <code>"off"</code>), <code>IntentParamRequired</code> and <code>IntentParamOptional</code> (<code>"required"</code>, <code>"optional"</code>), and <code>ReportOn</code> and <code>ReportOff</code> (<code>"on"</code>, <code>"off"</code>).</p>
+      <p>Under <code>baton.ResultCaptureOff</code>, the <code>error_type</code> of an <code>error</code> your handler returned is still sent. It is the Go type name, such as <code>*acme.NotFoundError</code>. Its message is withheld, unless you return it as a <code>*baton.PublicError</code>, which marks it safe to send. The message of a failed listing, prompt or resource request is still sent, and <code>Install</code> warns once about this.</p>
+      <h3 id="go-per-request">Servers built per request</h3>
+      <p><strong style="color:var(--ink)">A server built per request.</strong> Each <code>Install</code> starts its own sender, so do not call it per request. Make one <code>Baton</code> at startup with <code>New</code>, and <code>Wrap</code> each server:</p>
+      <pre>b, err := baton.New(impl, opts, baton.Config{DSN: os.Getenv("BATON_DSN")})
+if err != nil {
+	log.Fatal(err)
+}
+defer b.Close(context.Background())
+
+handler := mcp.NewStreamableHTTPHandler(func(*http.Request) *mcp.Server {
+	s := mcp.NewServer(impl, opts)
+	// your AddTool lines
+	b.Wrap(s)
+	return s
+}, &amp;mcp.StreamableHTTPOptions{Stateless: true})</pre>
+      <p>Build every server with the <code>impl</code> and <code>opts</code> you gave <code>New</code>. <code>b.Close</code> closes the shared sink. <code>Wrap</code> never fails a request: it returns an error only for a nil server, and skips a server it already wrapped. If you build the server once, call <code>Install</code> once and hand that server to the handler.</p>
+      <p>Sessions on stateless HTTP work as in <a href="#stateless-sessions" style="color:var(--brand)">Python</a>.</p>
+      <h3 id="go-sinks">Sinks</h3>
+      <p>Without a collector, set <code>Sink</code> and <code>VendorID</code> instead of a DSN. Each event is one line of JSON.</p>
+      <pre>handle, err := baton.Install(server, impl, opts, baton.Config{
+	Sink:     baton.MultiSink(baton.StdoutSink(), baton.FileSink("events.jsonl")),
+	VendorID: "acme-kb",
+})</pre>
+      <table class="docs-table">
+        <thead><tr><th>Sink</th><th>Use case</th></tr></thead>
+        <tbody>
+          <tr><td>baton.StdoutSink()</td><td>Events to stderr, because stdout carries the stdio transport. The sink when you set <code>VendorID</code> and no <code>Sink</code>.</td></tr>
+          <tr><td>baton.FileSink(path)</td><td>Appends to a local file. The file is created on the first event.</td></tr>
+          <tr><td>baton.MultiSink(a, b)</td><td>Writes every event to each sink.</td></tr>
+          <tr><td>your own type</td><td>Anything with <code>Write(ctx, []baton.Event) error</code> and <code>Close(ctx) error</code>.</td></tr>
+        </tbody>
+      </table>
+      <p>There is no <code>HttpSink</code> to build: to send to a collector, give a DSN, which names its host. A <code>DSN</code> together with <code>Sink</code>, <code>VendorID</code> or <code>TenantID</code> is an error. A <code>BATON_DSN</code> in the environment is ignored then, with one warning. Baton calls a sink only from its own goroutine, never from a tool call, and holds up to 1,000 events in front of it, dropping the oldest when full.</p>
+      <h3 id="go-identity">Identity</h3>
+      <p>Pass <code>ResolvePrincipal</code>. It works as in <a href="#identity" style="color:var(--brand)">Identity</a>. It gets a <code>baton.Caller</code>, which holds the verified token, the HTTP headers, <code>_meta</code>, the tool's name and its arguments, and returns a <code>*baton.Principal</code> or <code>nil</code>.</p>
+      <pre>baton.Install(server, impl, opts, baton.Config{
+	DSN:              "https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...",
+	ResolvePrincipal: baton.PrincipalFromOAuthEmail, // or baton.PrincipalFromOAuthSub
+})</pre>
+      <p><code>PrincipalFromOAuthEmail</code> and <code>PrincipalFromOAuthSub</code> read the <code>email</code> or <code>sub</code> claim from <code>c.Token.Extra</code>. A token exists only on streamable HTTP behind go-sdk's <code>auth.RequireBearerToken</code>. On stdio and SSE, <code>c.Token</code> and <code>c.Header</code> are nil. For anything else, write your own:</p>
+      <pre>func resolve(ctx context.Context, c baton.Caller) (*baton.Principal, error) {
+	p := &amp;baton.Principal{ID: c.Header.Get("X-Forwarded-User")}
+	if org := c.Header.Get("X-Org-Id"); org != "" {
+		p.Organization = &amp;baton.Organization{ID: org}
+	}
+	return p, nil
+}</pre>
+      <p>A <code>Principal</code> has <code>ID</code>, <code>DisplayName</code>, <code>Hashed</code> and <code>Organization</code>. An <code>Organization</code> has <code>ID</code>, <code>DisplayName</code> and <code>Hashed</code>. If you only know the company, leave <code>ID</code> empty and set <code>Organization</code>. Set <code>Hashed: true</code> only when your function hashed the id itself. An id longer than 128 characters is cut to 128, and a blank one is not sent. If the hook returns an error, panics or takes longer than 5 seconds, that call is sent without a principal, and the call goes on.</p>
+      <h3 id="go-refused">Refused calls</h3>
+      <p>A call your own middleware stops before the tool runs, such as an auth or credits check, is captured with <code>failure_kind</code> <code>"refused"</code> when you give that middleware to Baton instead of adding it yourself:</p>
+      <pre>handle, err := baton.Install(server, impl, opts, baton.Config{
+	DSN:        "https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...",
+	Middleware: []mcp.Middleware{auth},
+})</pre>
+      <p>Baton adds it inside its own middleware, so it sees every call, and <code>ResolvePrincipal</code> sees what your auth put in the <code>ctx</code>. When <code>Install</code> or <code>New</code> adds nothing, it still adds your middleware, so your auth always runs. Do not add it again. Middleware you add yourself is not named: added before <code>Install</code>, a call it stops looks like your tool's own error; added after, a call it stops is not captured at all.</p>
+      <h3 id="go-off-switch">Turning capture off</h3>
+      <p><code>BATON_DISABLED=1</code> works as in <a href="#off-switch" style="color:var(--brand)">Turning capture off</a>, for both <code>Install</code> and <code>New</code>.</p>
+      <h3>What is not here yet</h3>
+      <ul>
+        <li><strong>No Library API.</strong> Only a go-sdk <code>*mcp.Server</code> is wrapped. The <a href="#library-api" style="color:var(--brand)">Library API</a> will come later, as an addition.</li>
+        <li><strong>No Console settings.</strong> Capture settings come from <code>Config</code> only.</li>
+      </ul>
 
       <h2 id="by-product">Settings by product</h2>
-      <p>The four ways to install Baton don't have the same settings. Check the column for the one you use.</p>
+      <p>The five ways to install Baton don't have the same settings. Check the column for the one you use.</p>
       <table class="docs-table">
-        <thead><tr><th></th><th>Python SDK</th><th>TypeScript SDK</th><th>Proxy</th><th>Gateway</th></tr></thead>
+        <thead><tr><th></th><th>Python SDK</th><th>TypeScript SDK</th><th>Go SDK</th><th>Proxy</th><th>Gateway</th></tr></thead>
         <tbody>
-          <tr><td>Where settings go</td><td><code>VendorConfig</code>, snake_case</td><td><code>withBaton</code> options, camelCase</td><td>Environment variables</td><td>Environment variables</td></tr>
-          <tr><td><code>user_goal</code></td><td><code>intent_param_mode</code>, required or optional</td><td><code>intentParamMode</code>, required or optional</td><td><code>BATON_INTENT_PARAM</code>, required or optional</td><td><code>BATON_INTENT_PARAM</code>, required or optional</td></tr>
-          <tr><td>Report tool, off by default</td><td><code>report_mode</code>, named after your server</td><td><code>reportMode</code>, named after your server</td><td><code>BATON_ANNOTATE</code>, named <code>baton_annotate</code></td><td>None</td></tr>
-          <tr><td>Turn off results</td><td><code>result_capture_mode</code></td><td><code>resultCaptureMode</code></td><td>None, results are always sent</td><td>None, results are always sent</td></tr>
-          <tr><td>Turn Baton off</td><td><code>BATON_DISABLED=1</code></td><td><code>BATON_DISABLED=1</code></td><td>None, stop wrapping the server</td><td>None, remove it from the gateway config</td></tr>
-          <tr><td>Where events go</td><td>stderr, a file, HTTPS, or several</td><td>stderr or HTTPS</td><td>stderr, a file, HTTPS or S3</td><td>The proxy's sinks</td></tr>
-          <tr><td>Who is calling</td><td><code>resolve_principal</code></td><td><code>resolvePrincipal</code></td><td>Not sent</td><td>From a gateway header</td></tr>
-          <tr><td>Their company</td><td><code>Organization</code>, from <code>resolve_principal</code></td><td><code>organization</code>, from <code>resolvePrincipal</code></td><td>Not sent</td><td><code>BATON_EXTMCP_ORGANIZATION_ID_HEADER</code></td></tr>
+          <tr><td>Where settings go</td><td><code>VendorConfig</code>, snake_case</td><td><code>withBaton</code> options, camelCase</td><td><code>baton.Config</code> fields</td><td>Environment variables</td><td>Environment variables</td></tr>
+          <tr><td><code>user_goal</code></td><td><code>intent_param_mode</code>, required or optional</td><td><code>intentParamMode</code>, required or optional</td><td><code>IntentParamMode</code>, required or optional</td><td><code>BATON_INTENT_PARAM</code>, required or optional</td><td><code>BATON_INTENT_PARAM</code>, required or optional</td></tr>
+          <tr><td>Report tool, off by default</td><td><code>report_mode</code>, named after your server. On by default with Console settings</td><td><code>reportMode</code>, named after your server</td><td><code>ReportMode</code>, named after your server</td><td><code>BATON_ANNOTATE</code>, named <code>baton_annotate</code></td><td>None</td></tr>
+          <tr><td>Turn off results</td><td><code>result_capture_mode</code></td><td><code>resultCaptureMode</code></td><td><code>ResultCaptureMode</code></td><td>None, results are always sent</td><td>None, results are always sent</td></tr>
+          <tr><td>Turn Baton off</td><td><code>BATON_DISABLED=1</code></td><td><code>BATON_DISABLED=1</code></td><td><code>BATON_DISABLED=1</code></td><td>None, stop wrapping the server</td><td>None, remove it from the gateway config</td></tr>
+          <tr><td>Where events go</td><td>stderr, a file, HTTPS, or several</td><td>stderr, a file, HTTPS, or several</td><td>stderr, a file, HTTPS, or several</td><td>stderr, a file, HTTPS or S3</td><td>The proxy's sinks</td></tr>
+          <tr><td>Who is calling</td><td><code>resolve_principal</code></td><td><code>resolvePrincipal</code></td><td><code>ResolvePrincipal</code></td><td>Not sent</td><td>From a gateway header</td></tr>
+          <tr><td>Their company</td><td><code>Organization</code>, from <code>resolve_principal</code></td><td><code>organization</code>, from <code>resolvePrincipal</code></td><td><code>Organization</code>, from <code>ResolvePrincipal</code></td><td>Not sent</td><td><code>BATON_EXTMCP_ORGANIZATION_ID_HEADER</code></td></tr>
         </tbody>
       </table>
 
@@ -761,11 +907,11 @@ app.use((req, res, next) =&gt;
       <ul>
         <li><strong style="color:var(--ink)">Input.</strong> Each tool's schema grows by about 350 characters (the <code>user_goal</code> property and its 344-character description), sent with the tool list. Input tokens cost about 0.02 ms each to process, 0.01 ms when cached, 100 to 200 times less than output.</li>
         <li><strong style="color:var(--ink)">Output.</strong> The agent writes the <code>user_goal</code> value on every call. Writing time follows output tokens, at about 4.2–4.7 ms per token on Sonnet 5.5, 6.8 on Opus 5.5 and 3.6 on Haiku 5.5.</li>
-        <li><strong style="color:var(--ink)">Reports</strong> (<code>report_mode="on"</code>). The agent is told to call the report tool only when it has something to report, such as a tool call that went wrong or a request no tool covers. Each report it files adds a turn before its answer. The tool and its instructions add about 1,400 characters to what the agent reads. About 1,300 of them are the tool's description, in the tool list. The rest, about 150, go into your server instructions.</li>
+        <li><strong style="color:var(--ink)">Reports</strong> (<code>report_mode="on"</code>). The agent is told to call the report tool only when it has something to report, such as a tool call that went wrong or a request no tool covers. Each report it files adds a turn before its answer. The tool and its instructions add about 1,450 characters to what the agent reads. About 1,300 of them are the tool's description, in the tool list. The rest, about 150, go into your server instructions.</li>
       </ul>
 
       <h2 id="what-leaves">What leaves your server</h2>
-      <p>Only what crosses the MCP call. The SDK never reads your logs, your database or anything else in your process. This table is the Python SDK; the TypeScript difference is noted under <a href="#typescript" style="color:var(--brand)">TypeScript</a>.</p>
+      <p>Only what crosses the MCP call. The SDK never reads your logs, your database or anything else in your process. This table is the Python SDK. The differences are noted under <a href="#typescript" style="color:var(--brand)">TypeScript</a> and <a href="#go-config" style="color:var(--brand)">Go</a>.</p>
       <table class="docs-table">
         <thead><tr><th>Sent</th><th>What</th></tr></thead>
         <tbody>
@@ -775,7 +921,7 @@ app.use((req, res, next) =&gt;
           <tr><td>Never</td><td>Anything that did not cross the MCP call.</td></tr>
         </tbody>
       </table>
-      <p><strong style="color:var(--ink)"><code>result_capture_mode="off"</code> turns off responses, not requests.</strong> Arguments are always sent, so the scrubber below is what protects them. Two things are still sent under <code>"off"</code>: a <code>ToolError</code>'s message, unless it was raised <code>from</code> another exception, and the message of a failed resource or prompt request.</p>
+      <p><strong style="color:var(--ink)"><code>result_capture_mode="off"</code> turns off responses, not requests.</strong> Arguments are always sent, so the scrubber below is what protects them. Two things are still sent under <code>"off"</code>: a <code>ToolError</code>'s message, unless it was raised <code>from</code> another exception, and the message of a failed tool list, resource or prompt request.</p>
       <p>The proxy has no <code>result_capture_mode</code>; it always sends results.</p>
 
       <h2 id="pii">PII scrubbing</h2>
@@ -786,6 +932,26 @@ app.use((req, res, next) =&gt;
 from baton.scrub import identity_scrub
 
 install_baton(mcp, VendorConfig(dsn="https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...", scrubber=identity_scrub))</pre>
+
+      <h2 id="stability">Stability and versions</h2>
+      <p>The Python, TypeScript and Go SDKs are at 1.0. What 1.0 promises:</p>
+      <ul>
+        <li><strong style="color:var(--ink)">The events only grow.</strong> No event type, field or value is removed or changes meaning without a 2.0. New optional fields and new event types can appear, so a collector must ignore what it does not know.</li>
+        <li><strong style="color:var(--ink)">Each SDK follows semver.</strong> A change that breaks your code comes only in a new major version. Each SDK&#39;s README says what is public. In Go, a new major is a new module path, such as <code>github.com/good-timing/baton-go/v2</code>.</li>
+        <li><strong style="color:var(--ink)"><code>baton-proxy</code> stays at 0.x</strong> and sends 1.0 events.</li>
+      </ul>
+      <p>A few parts are <strong>experimental</strong>. They may change in a minor release, so do not build on them yet:</p>
+      <table class="docs-table">
+        <thead><tr><th>Experimental</th><th>What it is</th></tr></thead>
+        <tbody>
+          <tr><td>labels, capture</td><td>Two fields on events, including <code>capture.overlay</code>. In Python, also the <code>labels</code> of <code>Principal</code> and <code>Organization</code>, and <code>CaptureObserved</code>.</td></tr>
+          <tr><td>GET /v0/settings</td><td>Reading capture settings from the Console. In Python, <code>VendorConfig(settings=..., settings_refresh_s=...)</code>.</td></tr>
+          <tr><td>client_report</td><td>The event that counts what an SDK could not deliver. In Python and TypeScript, <code>ClientReportEvent</code> and <code>ClientReportPayload</code>.</td></tr>
+          <tr><td>trace_context</td><td>Reserved. Not sent.</td></tr>
+          <tr><td>EventSchema</td><td>TypeScript only. The zod schema may change with a zod major; the event types may not.</td></tr>
+        </tbody>
+      </table>
+      <p>The full rules are in <a href="https://github.com/good-timing/baton/blob/main/docs/SPEC.md#stability-from-10" target="_blank" rel="noopener" style="color:var(--brand)">SPEC §13, "Stability from 1.0"</a>.</p>
     </div>
 
         <div class="code-pane" id="gateway" hidden>
