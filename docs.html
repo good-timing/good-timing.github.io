@@ -607,7 +607,7 @@ def resolve(ctx):
     return Principal(principal_id=digest, form="hashed")</pre>
       <p>A hook that raises, or returns nothing usable, costs that event its person and nothing else: the tool call and the event are unaffected. The two ready-made hooks are short and are the best examples to copy from: <a href="https://github.com/good-timing/baton/blob/main/src/baton/integrations/oauth_hooks.py" style="color:var(--brand)">Python</a>, <a href="https://github.com/good-timing/baton-ts/blob/main/src/integrations/mcp/oauthHooks.ts" style="color:var(--brand)">TypeScript</a>.</p>
       <h3 id="console-settings">Settings from the Console</h3>
-      <p><em>Experimental: may change in a minor release.</em> With <code>settings="console"</code>, the SDK reads the capture settings saved on the Console&#39;s Capture page, so you can change them without a deploy. Each caller gets the settings of the first audience that matches it. An audience can match on the caller&#39;s labels, the app it runs in (such as <code>claude-code</code>), a share of your callers, or several of these, and then all of them must match.</p>
+      <p><em>Experimental: may change in a minor release.</em> With <code>settings="console"</code>, the SDK reads the capture settings saved on the Console&#39;s Capture page, so you can change them without a deploy. Each caller gets the settings of the first audience that matches it. An audience can match on the caller&#39;s labels, the app it runs in (such as <code>claude-code</code>), or a share of your callers. With several of these, all must match.</p>
       <pre>install_baton(mcp, VendorConfig(
     dsn="https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...",
     settings="console",
@@ -628,7 +628,7 @@ def resolve(ctx):
         <li>One <code>create_baton()</code> reads the settings once for every server it wraps.</li>
         <li>Once settings are read, each event says which ones it ran under, in <code>capture</code>: the settings&#39; version and the matched audience.</li>
       </ul>
-      <p><strong style="color:var(--ink)">Labels</strong> come from your <code>resolve_principal</code>, as <code>labels</code> on the <code>Principal</code> or the <code>Organization</code> it returns: up to 20 per caller, each up to 64 characters. They are sent on every event in <code>labels</code>, as you return them and not scrubbed, so send only names you are happy for Baton to see, never a raw id. A share of callers is picked by the principal&#39;s id, or the company&#39;s when there is no principal, so the same person always lands in the same group. A caller with neither is never in a share.</p>
+      <p><strong style="color:var(--ink)">Labels</strong> come from your <code>resolve_principal</code>, as <code>labels</code> on the <code>Principal</code> or the <code>Organization</code> it returns: up to 20 per caller, each up to 64 characters. A label that is longer, blank or a repeat, or past the 20th, is dropped, not cut. They ride every event of that caller&#39;s requests in <code>labels</code>, not scrubbed, so send only names you are happy for Baton to see, never a raw id. A share of callers is picked by the principal&#39;s id, or the company&#39;s when there is no principal, so the same person always lands in the same group. A caller with neither is never in a share.</p>
       <h3 id="sinks">Sinks</h3>
       <table class="docs-table">
         <thead><tr><th>Sink</th><th>Use case</th></tr></thead>
@@ -639,7 +639,7 @@ def resolve(ctx):
           <tr><td>MultiSink([…])</td><td>Fan out to several sinks at once.</td></tr>
         </tbody>
       </table>
-      <p>Every sink but <code>HttpSink</code> is written off the tool call, from a queue of 1,000 events, so a slow or stuck sink never slows a call. When the queue is full, the oldest event is dropped and counted. A write that fails loses that event, and the next one is still written. Flush and close through the handle, <code>handle.flush()</code> and <code>handle.aclose()</code>: the sink&#39;s own skip what is still queued. If your own sink holds a connection made on your event loop, open it inside <code>write</code>, which runs on Baton&#39;s loop. <code>HttpSink</code> already had its own buffer and is unchanged.</p>
+      <p>Every sink but <code>HttpSink</code> is written off the tool call, from a queue of 1,000 events, so a slow or stuck sink never slows a call. When the queue is full, the oldest event is dropped and counted. A write that fails loses that event, and the next one is still written. Flush and close through the handle <code>install_baton</code> returns, with <code>handle = install_baton(...)</code> then <code>handle.flush()</code> and <code>handle.aclose()</code>. The sink&#39;s own <code>flush()</code> and <code>aclose()</code> skip what is still queued. If your own sink holds a connection made on your event loop, open it inside <code>write</code>, which runs on Baton&#39;s loop.</p>
       <p>There is no S3 or OpenTelemetry sink in the SDKs. The proxy can write to S3.</p>
       <pre>from baton import install_baton, VendorConfig
 from baton.sinks import StdoutSink, FileSink, MultiSink
@@ -745,7 +745,7 @@ async with AsyncClient(dsn="https://baton_pk_...@baton.goodtiming.ai/ten_.../srv
         trace.annotate(what_happened="search returned 429 with no retry-after", tool_name="search", suggested_improvement="add retry-after on 429s")</pre>
       <p>A report says what went wrong in its own words. The collector assigns its group; there is no category to pick. Name the tool the report is about, or pass <code>tool_name="none"</code> when no tool exists for what was asked.</p>
       <h3 id="report-tool">Agent reports on your own API</h3>
-      <p>The MCP path gives agents a report tool. On your own API, offer the same tool with <code>report_tool</code>: it has the name, description and input schema the MCP path registers on a server with that name, so an agent reads the same words.</p>
+      <p>The MCP path gives agents a report tool. On your own API, offer the same tool with <code>report_tool</code>. It has the MCP report tool&#39;s description and default input schema, and a name made from <code>vendor_display_name</code> the same way, so an agent reads the same words. A display name that gives no usable tool name raises; pass <code>name=</code> then.</p>
       <pre>from baton import report_tool
 
 tool = report_tool(vendor_display_name="Acme")
@@ -757,7 +757,7 @@ if kwargs is None:
     return {"ok": False, "error": tool.refusal}
 client.annotate(**kwargs)
 return {"ok": True}</pre>
-      <p><code>annotate_kwargs</code> returns <code>None</code> when the agent sent no <code>what_happened</code>. Send <code>tool.refusal</code> back and nothing to Baton, because a call with no account is not a report. Call <code>annotate</code> inside the same <code>session(...)</code> block as the calls it is about, or use <code>trace.annotate(**kwargs)</code> for one traced call. Pass <code>name=</code> to choose the tool&#39;s name. <code>tool.instructions</code> holds the text the MCP path adds to your server instructions.</p>
+      <p><code>annotate_kwargs</code> returns <code>None</code> when the agent sent no <code>what_happened</code>, or a blank one. Send <code>tool.refusal</code> back and send nothing to Baton. Call <code>annotate</code> inside the same <code>session(...)</code> block as the calls it is about, or use <code>trace.annotate(**kwargs)</code> for one traced call. <code>tool.instructions</code> holds the text the MCP path adds to your server instructions.</p>
       <h3 id="choosing">Choosing paths</h3>
       <table class="docs-table">
         <thead><tr><th>Concern</th><th>MCP integration</th><th>Library API</th></tr></thead>
@@ -765,7 +765,7 @@ return {"ok": True}</pre>
           <tr><td>Instrumentation lives</td><td>Vendor side (MCP server)</td><td>Agent side (agent-generated code)</td></tr>
           <tr><td>Setup</td><td>2 lines in your MCP server</td><td>Vendor publishes a Baton-aware Skill</td></tr>
           <tr><td>Reliability</td><td>Deterministic. Every tool call</td><td>Soft. Depends on agent following Skill</td></tr>
-          <tr><td>Reports from the agent</td><td>An MCP tool, off by default (<code>report_mode="on"</code>)</td><td>Python calls (<code>trace.annotate(…)</code>)</td></tr>
+          <tr><td>Reports from the agent</td><td>An MCP tool, off by default (<code>report_mode="on"</code>), on by default with Console settings</td><td>The same tool on your own API (<code>report_tool</code>), then <code>annotate(…)</code></td></tr>
         </tbody>
       </table>
       <h2 id="typescript">TypeScript</h2>
@@ -780,7 +780,7 @@ const server = new McpServer({ name: "acme-knowledge-base", version: "1.0.0" });
 withBaton(server, {
   dsn: "https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...",
 });</pre>
-      <p>Config fields are the Python names in camelCase (<code>vendorId</code>, <code>tenantId</code>, <code>vendorDisplayName</code>, <code>sink</code>, <code>annotationToolName</code>, <code>intentParamMode</code>, <code>reportMode</code>, <code>resultCaptureMode</code>, <code>scrubber</code>). A <code>dsn</code> sets <code>vendorId</code>, <code>tenantId</code> and <code>sink</code>, and <code>vendorDisplayName</code> when you leave it unset, as in Python. The sinks are the same four as in Python, as classes, such as <code>new HttpSink(url, { apiKey })</code>, and are written off the call the same way, from a queue of 1,000 events (see <a href="#sinks" style="color:var(--brand)">Sinks</a>). Call <code>handle.aclose()</code> before <code>process.exit()</code>: at exit only a <code>StdoutSink</code> or <code>FileSink</code> gets what is still queued. Tools registered before or after <code>withBaton</code> are both captured, and so are tools added or removed later.</p>
+      <p>Config fields are the Python names in camelCase (<code>vendorId</code>, <code>tenantId</code>, <code>vendorDisplayName</code>, <code>sink</code>, <code>annotationToolName</code>, <code>intentParamMode</code>, <code>reportMode</code>, <code>resultCaptureMode</code>, <code>scrubber</code>), plus <code>settings</code> and <code>settingsRefreshMs</code>, which is in milliseconds. A <code>dsn</code> sets <code>vendorId</code>, <code>tenantId</code> and <code>sink</code>, and <code>vendorDisplayName</code> when you leave it unset, as in Python. The sinks are the same four as in Python, as classes, such as <code>new HttpSink(url, { apiKey })</code>, and queue events the same way (see <a href="#sinks" style="color:var(--brand)">Sinks</a>). Call <code>handle.aclose()</code> before <code>process.exit()</code>: at exit only a <code>StdoutSink</code> or <code>FileSink</code> gets what is still queued. Tools registered before or after <code>withBaton</code> are both captured, and so are tools added or removed later.</p>
       <p>Identity works as in Python: pass <code>resolvePrincipal</code>, which returns <code>{ principalId, displayName?, form?, organization?, labels? }</code>, an organization on its own as <code>{ organizationId, displayName?, form?, labels? }</code>, or <code>null</code>, sync or async. <code>principalFromOAuthEmail</code> and <code>principalFromOAuthSub</code> ship ready-made and read the token's claims from <code>authInfo.extra</code>. See <a href="#identity" style="color:var(--brand)">Identity</a>.</p>
       <pre>import { withBaton, principalFromOAuthEmail } from "@goodtiming/baton-sdk";
 
@@ -788,7 +788,7 @@ withBaton(server, {
   dsn: "https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...",
   resolvePrincipal: principalFromOAuthEmail,
 });</pre>
-      <p><strong style="color:var(--ink)">Settings from the Console</strong> (experimental) work as in Python, with <code>settings: "console"</code> and <code>settingsRefreshMs</code> (60000 by default, at least 15000). <code>BATON_DSN</code> works here too. Labels go in <code>labels</code> on the <code>Principal</code> or <code>Organization</code> your <code>resolvePrincipal</code> returns, and in <code>client.session({ principal })</code>. See <a href="#console-settings" style="color:var(--brand)">Settings from the Console</a>.</p>
+      <p><strong style="color:var(--ink)">Settings from the Console</strong> (experimental) work as in Python, with <code>settings: "console"</code> and <code>settingsRefreshMs</code> (60000 by default, at least 15000). It needs a DSN, and <code>BATON_DSN</code> counts. Labels go in <code>labels</code> on the <code>Principal</code> or <code>Organization</code> your <code>resolvePrincipal</code> returns, and in <code>client.session({ principal })</code>. See <a href="#console-settings" style="color:var(--brand)">Settings from the Console</a>.</p>
       <p><strong style="color:var(--ink)">A server built per request.</strong> Do not call <code>withBaton</code> per request, because each call builds a new sink. As in <a href="#per-request" style="color:var(--brand)">Python</a>, call <code>createBaton(config)</code> once at startup and <code>baton.wrap(server)</code> for each new server. It takes the same config as <code>withBaton</code>. Call <code>await baton.aclose()</code> when your server stops.</p>
       <pre>import { createBaton } from "@goodtiming/baton-sdk";
 
@@ -813,7 +813,7 @@ app.use((req, res, next) =&gt;
       <p>A callback can be sync or async. Its return value is recorded as the result, and a throw is recorded and passed on unchanged. <code>client.wrap(toolName, fn)</code> traces a function on every call, for code with no single place to put <code>trace()</code>.</p>
       <p>The <a href="#report-tool" style="color:var(--brand)">report tool for your own API</a> is <code>reportTool({ vendorDisplayName, name? })</code>. Its <code>annotateArgs(args)</code> returns the options for <code>annotate()</code>, or <code>null</code> when the agent sent no <code>what_happened</code>; answer <code>tool.refusal</code> then.</p>
       <h3>What it captures</h3>
-      <p>The same <code>user_goal</code> parameter, the same <code>surface_snapshot</code>, and the same events. <code>intentParamMode</code> defaults to <code>"required"</code>, which lists <code>user_goal</code> in each tool&#39;s <code>required</code> list and never enforces it. There is no <code>"off"</code>. The report tool is off by default here too; <code>reportMode: "on"</code> adds it.</p>
+      <p>The same <code>user_goal</code> parameter, the same <code>surface_snapshot</code>, and the same events. <code>intentParamMode</code> defaults to <code>"required"</code>, which lists <code>user_goal</code> in each tool&#39;s <code>required</code> list and never enforces it. There is no <code>"off"</code>. The report tool is off by default here too, and on by default with Console settings. <code>reportMode: "on"</code> adds it.</p>
       <p>One difference under <code>resultCaptureMode: "off"</code>: the message of an error your handler throws is never sent. The TypeScript MCP SDK has no <code>ToolError</code> class to mark a message as safe to send. The Python SDK sends the message of a <code>ToolError</code>.</p>
       <p>PII scrubbing is <strong>on by default</strong> here too, a rule-for-rule port of Python&#39;s ruleset. Pass <code>identityScrub</code> to opt out, or your own <code>(value: unknown) =&gt; unknown</code>. Read <a href="#pii" style="color:var(--brand)">what it does and does not catch</a> before relying on it.</p>
       <h3>What is not here yet</h3>
@@ -928,7 +928,7 @@ handler := mcp.NewStreamableHTTPHandler(func(*http.Request) *mcp.Server {
       <h3>What is not here yet</h3>
       <ul>
         <li><strong>No Library API.</strong> Only a go-sdk <code>*mcp.Server</code> is wrapped. The <a href="#library-api" style="color:var(--brand)">Library API</a> will come later, as an addition.</li>
-        <li><strong>No Console setup recipe for a server built per request.</strong> Follow <a href="#go-per-request" style="color:var(--brand)">Servers built per request</a>.</li>
+        <li><strong>The Console&#39;s <a href="https://baton.goodtiming.ai/setup/agent" style="color:var(--brand)">setup agent</a> has no Go recipe for a server built per request.</strong> Follow <a href="#go-per-request" style="color:var(--brand)">Servers built per request</a> by hand.</li>
       </ul>
 
       <h2 id="by-product">Settings by product</h2>
