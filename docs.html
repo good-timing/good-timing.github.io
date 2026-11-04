@@ -525,7 +525,8 @@ install_baton(mcp, VendorConfig(
           <tr><td>intent_param_mode</td><td><code>"required"</code></td><td>Adds one parameter, <code>user_goal</code>, to every tool's input schema and removes it before your handler runs. The agent writes it as <code>'&lt;n&gt;: &lt;what this call is for&gt;; success is &lt;what its result should show&gt;'</code>, where <code>n</code> is the number of the user's current message. <code>"required"</code> lists it as required, as an advertisement only: no call fails for leaving it out. <code>"optional"</code> leaves it off the required list.</td></tr>
           <tr><td>report_mode</td><td><code>"off"</code>, <code>"on"</code> with Console settings</td><td><code>"on"</code> adds a tool the agent uses to report a tool call that went wrong, or a request no tool covers, plus instructions saying when to use it. Off, no tool is added and each call's goal still arrives in <code>user_goal</code>.</td></tr>
           <tr><td>result_capture_mode</td><td><code>"full"</code></td><td><code>"off"</code> stops sending what your tools return. Requests are still sent. See <a href="#what-leaves" style="color:var(--brand)">What leaves your server</a>.</td></tr>
-          <tr><td>settings</td><td><code>"local"</code></td><td>Experimental. <code>"console"</code> reads capture settings from the Console, and refreshes them every <code>settings_refresh_s</code> seconds (60). Needs a DSN. See <a href="#stability" style="color:var(--brand)">Stability and versions</a>.</td></tr>
+          <tr><td>settings</td><td><code>"local"</code></td><td>Experimental. <code>"console"</code> reads capture settings from the Console. Needs a DSN. See <a href="#console-settings" style="color:var(--brand)">Settings from the Console</a>.</td></tr>
+          <tr><td>settings_refresh_s</td><td><code>60</code></td><td>Experimental. How often <code>"console"</code> reads the settings, in seconds. At least 15.</td></tr>
           <tr><td>resolve_principal</td><td>—</td><td>A function, sync or async, that says who is behind a call. Unset, no event names anyone. See <a href="#identity" style="color:var(--brand)">Identity</a>.</td></tr>
         </tbody>
       </table>
@@ -569,6 +570,7 @@ def resolve(ctx):
     <tr><td>display_name</td><td><code>None</code></td><td>What your dashboard shows for this person. Without it, the dashboard shows the id.</td></tr>
     <tr><td>form</td><td><code>"raw"</code></td><td>What the id is. Leave it as <code>"raw"</code> for a real identity. Set <code>"hashed"</code> only when your function hashed the id itself.</td></tr>
     <tr><td>user_data</td><td><code>None</code></td><td>Python only. Accepted, and not used today. Nothing in it is sent.</td></tr>
+    <tr><td>labels</td><td><code>()</code></td><td>Experimental. Your names for the groups this caller is in, for the Console's settings to match. See <a href="#console-settings" style="color:var(--brand)">Settings from the Console</a>.</td></tr>
         </tbody>
       </table>
       <p><strong style="color:var(--ink)">Their company.</strong> To say which of your customers a call belongs to, give the <code>Principal</code> an <code>organization</code>. If you only know the company, for example from an org-wide API key, return an <code>Organization</code> on its own. A company returned as a <code>Principal</code> is counted as a person, so use <code>Organization</code> for it.</p>
@@ -587,6 +589,7 @@ def resolve(ctx):
     <tr><td>organization_id</td><td>required</td><td>The company's id, sent exactly as you return it.</td></tr>
     <tr><td>display_name</td><td><code>None</code></td><td>A name for the company. It is a label, never a key.</td></tr>
     <tr><td>form</td><td><code>"raw"</code></td><td>As for <code>Principal</code>. Set <code>"hashed"</code> only when your function hashed the id itself.</td></tr>
+    <tr><td>labels</td><td><code>()</code></td><td>Experimental. As for <code>Principal</code>. Both lists are sent together.</td></tr>
         </tbody>
       </table>
       <p>Your dashboard stores the organization with each event, but doesn&#39;t filter by it or show it yet. Two sessions that name different organizations are never joined, and a session that names two organizations is never joined to another. With the Library API, pass the same values to <code>client.session(principal=...)</code>. A block that names only an organization, with no <code>session_id</code>, is never joined to another, so pass your own <code>session_id</code> there.</p>
@@ -603,6 +606,29 @@ def resolve(ctx):
     digest = hmac.new(KEY, sub.encode(), hashlib.sha256).hexdigest()
     return Principal(principal_id=digest, form="hashed")</pre>
       <p>A hook that raises, or returns nothing usable, costs that event its person and nothing else: the tool call and the event are unaffected. The two ready-made hooks are short and are the best examples to copy from: <a href="https://github.com/good-timing/baton/blob/main/src/baton/integrations/oauth_hooks.py" style="color:var(--brand)">Python</a>, <a href="https://github.com/good-timing/baton-ts/blob/main/src/integrations/mcp/oauthHooks.ts" style="color:var(--brand)">TypeScript</a>.</p>
+      <h3 id="console-settings">Settings from the Console</h3>
+      <p><em>Experimental: may change in a minor release.</em> With <code>settings="console"</code>, the SDK reads the capture settings saved on the Console&#39;s Capture page, so you can change them without a deploy. Each caller gets the settings of the first audience that matches it. An audience can match on the caller&#39;s labels, the app it runs in (such as <code>claude-code</code>), a share of your callers, or several of these, and then all of them must match.</p>
+      <pre>install_baton(mcp, VendorConfig(
+    dsn="https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...",
+    settings="console",
+))</pre>
+      <table class="docs-table">
+        <thead><tr><th>Setting</th><th>What it changes</th><th>When it applies</th></tr></thead>
+        <tbody>
+          <tr><td>results</td><td>Whether results and error messages are sent, as <code>result_capture_mode</code> does.</td><td>The next call</td></tr>
+          <tr><td>goal</td><td>Whether the <code>user_goal</code> Baton adds is required or optional.</td><td>The next <code>tools/list</code></td></tr>
+          <tr><td>reports</td><td>Whether the caller sees the report tool. A caller with reports off can still file a report from an older tool list.</td><td>The next <code>tools/list</code></td></tr>
+        </tbody>
+      </table>
+      <ul>
+        <li>It needs a DSN: it reads with the DSN&#39;s key. Without one, install raises.</li>
+        <li>The settings are read in the background, every 60 seconds by default. A read never delays startup or a call. Until the first read succeeds, and while nothing is saved, the values in your config apply.</li>
+        <li>The report tool is on by default here, so the Console decides who sees it. Set the report mode to off to keep it off for everyone.</li>
+        <li>Your server instructions point to the report tool while any audience has reports on. A client reads them when it connects, so a change reaches new connections only.</li>
+        <li>One <code>create_baton()</code> reads the settings once for every server it wraps.</li>
+        <li>Once settings are read, each event says which ones it ran under, in <code>capture</code>: the settings&#39; version and the matched audience.</li>
+      </ul>
+      <p><strong style="color:var(--ink)">Labels</strong> come from your <code>resolve_principal</code>, as <code>labels</code> on the <code>Principal</code> or the <code>Organization</code> it returns: up to 20 per caller, each up to 64 characters. They are sent on every event in <code>labels</code>, as you return them and not scrubbed, so send only names you are happy for Baton to see, never a raw id. A share of callers is picked by the principal&#39;s id, or the company&#39;s when there is no principal, so the same person always lands in the same group. A caller with neither is never in a share.</p>
       <h3 id="sinks">Sinks</h3>
       <table class="docs-table">
         <thead><tr><th>Sink</th><th>Use case</th></tr></thead>
@@ -613,6 +639,7 @@ def resolve(ctx):
           <tr><td>MultiSink([…])</td><td>Fan out to several sinks at once.</td></tr>
         </tbody>
       </table>
+      <p>Every sink but <code>HttpSink</code> is written off the tool call, from a queue of 1,000 events, so a slow or stuck sink never slows a call. When the queue is full, the oldest event is dropped and counted. A write that fails loses that event, and the next one is still written. Flush and close through the handle, <code>handle.flush()</code> and <code>handle.aclose()</code>: the sink&#39;s own skip what is still queued. If your own sink holds a connection made on your event loop, open it inside <code>write</code>, which runs on Baton&#39;s loop. <code>HttpSink</code> already had its own buffer and is unchanged.</p>
       <p>There is no S3 or OpenTelemetry sink in the SDKs. The proxy can write to S3.</p>
       <pre>from baton import install_baton, VendorConfig
 from baton.sinks import StdoutSink, FileSink, MultiSink
@@ -717,6 +744,20 @@ async with AsyncClient(dsn="https://baton_pk_...@baton.goodtiming.ai/ten_.../srv
         trace.observed(error=e)
         trace.annotate(what_happened="search returned 429 with no retry-after", tool_name="search", suggested_improvement="add retry-after on 429s")</pre>
       <p>A report says what went wrong in its own words. The collector assigns its group; there is no category to pick. Name the tool the report is about, or pass <code>tool_name="none"</code> when no tool exists for what was asked.</p>
+      <h3 id="report-tool">Agent reports on your own API</h3>
+      <p>The MCP path gives agents a report tool. On your own API, offer the same tool with <code>report_tool</code>: it has the name, description and input schema the MCP path registers on a server with that name, so an agent reads the same words.</p>
+      <pre>from baton import report_tool
+
+tool = report_tool(vendor_display_name="Acme")
+# Offer tool.name, tool.description and tool.input_schema to the agent.
+
+# When the agent calls it:
+kwargs = tool.annotate_kwargs(arguments)
+if kwargs is None:
+    return {"ok": False, "error": tool.refusal}
+client.annotate(**kwargs)
+return {"ok": True}</pre>
+      <p><code>annotate_kwargs</code> returns <code>None</code> when the agent sent no <code>what_happened</code>. Send <code>tool.refusal</code> back and nothing to Baton, because a call with no account is not a report. Call <code>annotate</code> inside the same <code>session(...)</code> block as the calls it is about, or use <code>trace.annotate(**kwargs)</code> for one traced call. Pass <code>name=</code> to choose the tool&#39;s name. <code>tool.instructions</code> holds the text the MCP path adds to your server instructions.</p>
       <h3 id="choosing">Choosing paths</h3>
       <table class="docs-table">
         <thead><tr><th>Concern</th><th>MCP integration</th><th>Library API</th></tr></thead>
@@ -739,14 +780,15 @@ const server = new McpServer({ name: "acme-knowledge-base", version: "1.0.0" });
 withBaton(server, {
   dsn: "https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...",
 });</pre>
-      <p>Config fields are the Python names in camelCase (<code>vendorId</code>, <code>tenantId</code>, <code>vendorDisplayName</code>, <code>sink</code>, <code>annotationToolName</code>, <code>intentParamMode</code>, <code>reportMode</code>, <code>resultCaptureMode</code>, <code>scrubber</code>). A <code>dsn</code> sets <code>vendorId</code>, <code>tenantId</code> and <code>sink</code>, and <code>vendorDisplayName</code> when you leave it unset, as in Python. The sinks are the same four as in Python, as classes: <code>new HttpSink(url, { apiKey })</code>. Tools registered before or after <code>withBaton</code> are both captured, and so are tools added or removed later.</p>
-      <p>Identity works as in Python: pass <code>resolvePrincipal</code>, which returns <code>{ principalId, displayName?, form?, organization? }</code>, an organization on its own as <code>{ organizationId, displayName?, form? }</code>, or <code>null</code>, sync or async. <code>principalFromOAuthEmail</code> and <code>principalFromOAuthSub</code> ship ready-made and read the token's claims from <code>authInfo.extra</code>. See <a href="#identity" style="color:var(--brand)">Identity</a>.</p>
+      <p>Config fields are the Python names in camelCase (<code>vendorId</code>, <code>tenantId</code>, <code>vendorDisplayName</code>, <code>sink</code>, <code>annotationToolName</code>, <code>intentParamMode</code>, <code>reportMode</code>, <code>resultCaptureMode</code>, <code>scrubber</code>). A <code>dsn</code> sets <code>vendorId</code>, <code>tenantId</code> and <code>sink</code>, and <code>vendorDisplayName</code> when you leave it unset, as in Python. The sinks are the same four as in Python, as classes, such as <code>new HttpSink(url, { apiKey })</code>, and are written off the call the same way, from a queue of 1,000 events (see <a href="#sinks" style="color:var(--brand)">Sinks</a>). Call <code>handle.aclose()</code> before <code>process.exit()</code>: at exit only a <code>StdoutSink</code> or <code>FileSink</code> gets what is still queued. Tools registered before or after <code>withBaton</code> are both captured, and so are tools added or removed later.</p>
+      <p>Identity works as in Python: pass <code>resolvePrincipal</code>, which returns <code>{ principalId, displayName?, form?, organization?, labels? }</code>, an organization on its own as <code>{ organizationId, displayName?, form?, labels? }</code>, or <code>null</code>, sync or async. <code>principalFromOAuthEmail</code> and <code>principalFromOAuthSub</code> ship ready-made and read the token's claims from <code>authInfo.extra</code>. See <a href="#identity" style="color:var(--brand)">Identity</a>.</p>
       <pre>import { withBaton, principalFromOAuthEmail } from "@goodtiming/baton-sdk";
 
 withBaton(server, {
   dsn: "https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...",
   resolvePrincipal: principalFromOAuthEmail,
 });</pre>
+      <p><strong style="color:var(--ink)">Settings from the Console</strong> (experimental) work as in Python, with <code>settings: "console"</code> and <code>settingsRefreshMs</code> (60000 by default, at least 15000). <code>BATON_DSN</code> works here too. Labels go in <code>labels</code> on the <code>Principal</code> or <code>Organization</code> your <code>resolvePrincipal</code> returns, and in <code>client.session({ principal })</code>. See <a href="#console-settings" style="color:var(--brand)">Settings from the Console</a>.</p>
       <p><strong style="color:var(--ink)">A server built per request.</strong> Do not call <code>withBaton</code> per request, because each call builds a new sink. As in <a href="#per-request" style="color:var(--brand)">Python</a>, call <code>createBaton(config)</code> once at startup and <code>baton.wrap(server)</code> for each new server. It takes the same config as <code>withBaton</code>. Call <code>await baton.aclose()</code> when your server stops.</p>
       <pre>import { createBaton } from "@goodtiming/baton-sdk";
 
@@ -769,6 +811,7 @@ app.use((req, res, next) =&gt;
   ),
 );</pre>
       <p>A callback can be sync or async. Its return value is recorded as the result, and a throw is recorded and passed on unchanged. <code>client.wrap(toolName, fn)</code> traces a function on every call, for code with no single place to put <code>trace()</code>.</p>
+      <p>The <a href="#report-tool" style="color:var(--brand)">report tool for your own API</a> is <code>reportTool({ vendorDisplayName, name? })</code>. Its <code>annotateArgs(args)</code> returns the options for <code>annotate()</code>, or <code>null</code> when the agent sent no <code>what_happened</code>; answer <code>tool.refusal</code> then.</p>
       <h3>What it captures</h3>
       <p>The same <code>user_goal</code> parameter, the same <code>surface_snapshot</code>, and the same events. <code>intentParamMode</code> defaults to <code>"required"</code>, which lists <code>user_goal</code> in each tool&#39;s <code>required</code> list and never enforces it. There is no <code>"off"</code>. The report tool is off by default here too; <code>reportMode: "on"</code> adds it.</p>
       <p>One difference under <code>resultCaptureMode: "off"</code>: the message of an error your handler throws is never sent. The TypeScript MCP SDK has no <code>ToolError</code> class to mark a message as safe to send. The Python SDK sends the message of a <code>ToolError</code>.</p>
@@ -820,9 +863,11 @@ defer handle.Close(context.Background())</pre>
           <tr><td>Scrubber</td><td><code>baton.DefaultScrubber</code></td><td>Runs on every captured value, with the same rules as Python. <code>baton.NoScrub</code> turns scrubbing off, or pass your own <code>func(any) any</code>.</td></tr>
           <tr><td>ResolvePrincipal</td><td>—</td><td>A function that says who is behind a call. Unset, no event names anyone.</td></tr>
           <tr><td>Middleware</td><td>—</td><td>Your own receiving middleware, such as an auth check. See Refused calls below.</td></tr>
+          <tr><td>Settings</td><td><code>baton.SettingsLocal</code></td><td>Experimental. <code>baton.SettingsConsole</code> reads capture settings from the Console, and needs a DSN. See <a href="#console-settings" style="color:var(--brand)">Settings from the Console</a>.</td></tr>
+          <tr><td>SettingsRefresh</td><td>60 seconds</td><td>Experimental. How often <code>SettingsConsole</code> reads, as a <code>time.Duration</code>. At least 15 seconds.</td></tr>
         </tbody>
       </table>
-      <p>The constants are <code>ResultCaptureFull</code> and <code>ResultCaptureOff</code> (<code>"full"</code>, <code>"off"</code>), <code>IntentParamRequired</code> and <code>IntentParamOptional</code> (<code>"required"</code>, <code>"optional"</code>), and <code>ReportOn</code> and <code>ReportOff</code> (<code>"on"</code>, <code>"off"</code>).</p>
+      <p>The constants are <code>ResultCaptureFull</code> and <code>ResultCaptureOff</code> (<code>"full"</code>, <code>"off"</code>), <code>IntentParamRequired</code> and <code>IntentParamOptional</code> (<code>"required"</code>, <code>"optional"</code>), <code>ReportOn</code> and <code>ReportOff</code> (<code>"on"</code>, <code>"off"</code>), and <code>SettingsLocal</code> and <code>SettingsConsole</code> (<code>"local"</code>, <code>"console"</code>).</p>
       <p>Under <code>baton.ResultCaptureOff</code>, the <code>error_type</code> of an <code>error</code> your handler returned is still sent. It is the Go type name, such as <code>*acme.NotFoundError</code>. Its message is withheld, unless you return it as a <code>*baton.PublicError</code>, which marks it safe to send. The message of a failed listing, prompt or resource request is still sent, and <code>Install</code> warns once about this.</p>
       <h3 id="go-per-request">Servers built per request</h3>
       <p><strong style="color:var(--ink)">A server built per request.</strong> Each <code>Install</code> starts its own sender, so do not call it per request. Make one <code>Baton</code> at startup with <code>New</code>, and <code>Wrap</code> each server:</p>
@@ -870,20 +915,20 @@ handler := mcp.NewStreamableHTTPHandler(func(*http.Request) *mcp.Server {
 	}
 	return p, nil
 }</pre>
-      <p>A <code>Principal</code> has <code>ID</code>, <code>DisplayName</code>, <code>Hashed</code> and <code>Organization</code>. An <code>Organization</code> has <code>ID</code>, <code>DisplayName</code> and <code>Hashed</code>. If you only know the company, leave <code>ID</code> empty and set <code>Organization</code>. Set <code>Hashed: true</code> only when your function hashed the id itself. An id longer than 128 characters is cut to 128, and a blank one is not sent. If the hook returns an error, panics or takes longer than 5 seconds, that call is sent without a principal, and the call goes on.</p>
+      <p>A <code>Principal</code> has <code>ID</code>, <code>DisplayName</code>, <code>Hashed</code> and <code>Organization</code>. An <code>Organization</code> has <code>ID</code>, <code>DisplayName</code> and <code>Hashed</code>. Both have <code>Labels</code> (experimental) for <a href="#console-settings" style="color:var(--brand)">Settings from the Console</a>; a <code>Principal</code> with <code>Labels</code> and no <code>ID</code> sends the labels alone. If you only know the company, leave <code>ID</code> empty and set <code>Organization</code>. Set <code>Hashed: true</code> only when your function hashed the id itself. An id longer than 128 characters is cut to 128, and a blank one is not sent. If the hook returns an error, panics or takes longer than 5 seconds, that call is sent without a principal, and the call goes on.</p>
       <h3 id="go-refused">Refused calls</h3>
       <p>A call your own middleware stops before the tool runs, such as an auth or credits check, is captured with <code>failure_kind</code> <code>"refused"</code> when you give that middleware to Baton instead of adding it yourself:</p>
       <pre>handle, err := baton.Install(server, impl, opts, baton.Config{
 	DSN:        "https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...",
 	Middleware: []mcp.Middleware{auth},
 })</pre>
-      <p>Baton adds it inside its own middleware, so it sees every call, and <code>ResolvePrincipal</code> sees what your auth put in the <code>ctx</code>. When <code>Install</code> or <code>New</code> adds nothing, it still adds your middleware, so your auth always runs. Do not add it again. Middleware you add yourself is not named: added before <code>Install</code>, a call it stops looks like your tool's own error; added after, a call it stops is not captured at all.</p>
+      <p>Baton adds it inside its own middleware, so it sees every call, and <code>ResolvePrincipal</code> sees what your auth put in the <code>ctx</code>. That holds for a <code>tools/list</code> too, so labels from your auth shape the caller&#39;s tool list; Baton adds its tools to the list your middleware returns. A listing your middleware answers without calling <code>next</code>, such as from a cache, is matched without what your auth set. When <code>Install</code> or <code>New</code> adds nothing, it still adds your middleware, so your auth always runs. Do not add it again. Middleware you add yourself is not named: added before <code>Install</code>, a call it stops looks like your tool's own error; added after, a call it stops is not captured at all.</p>
       <h3 id="go-off-switch">Turning capture off</h3>
       <p><code>BATON_DISABLED=1</code> works as in <a href="#off-switch" style="color:var(--brand)">Turning capture off</a>, for both <code>Install</code> and <code>New</code>.</p>
       <h3>What is not here yet</h3>
       <ul>
         <li><strong>No Library API.</strong> Only a go-sdk <code>*mcp.Server</code> is wrapped. The <a href="#library-api" style="color:var(--brand)">Library API</a> will come later, as an addition.</li>
-        <li><strong>No Console settings.</strong> Capture settings come from <code>Config</code> only.</li>
+        <li><strong>No Console setup recipe for a server built per request.</strong> Follow <a href="#go-per-request" style="color:var(--brand)">Servers built per request</a>.</li>
       </ul>
 
       <h2 id="by-product">Settings by product</h2>
@@ -893,12 +938,14 @@ handler := mcp.NewStreamableHTTPHandler(func(*http.Request) *mcp.Server {
         <tbody>
           <tr><td>Where settings go</td><td><code>VendorConfig</code>, snake_case</td><td><code>withBaton</code> options, camelCase</td><td><code>baton.Config</code> fields</td><td>Environment variables</td><td>Environment variables</td></tr>
           <tr><td><code>user_goal</code></td><td><code>intent_param_mode</code>, required or optional</td><td><code>intentParamMode</code>, required or optional</td><td><code>IntentParamMode</code>, required or optional</td><td><code>BATON_INTENT_PARAM</code>, required or optional</td><td><code>BATON_INTENT_PARAM</code>, required or optional</td></tr>
-          <tr><td>Report tool, off by default</td><td><code>report_mode</code>, named after your server. On by default with Console settings</td><td><code>reportMode</code>, named after your server</td><td><code>ReportMode</code>, named after your server</td><td><code>BATON_ANNOTATE</code>, named <code>baton_annotate</code></td><td>None</td></tr>
+          <tr><td>Report tool, off by default</td><td><code>report_mode</code>, named after your server. On by default with Console settings</td><td><code>reportMode</code>, named after your server. On by default with Console settings</td><td><code>ReportMode</code>, named after your server. On by default with Console settings</td><td><code>BATON_ANNOTATE</code>, named <code>baton_annotate</code></td><td>None</td></tr>
+          <tr><td>Settings from the Console</td><td><code>settings="console"</code></td><td><code>settings: "console"</code></td><td><code>Settings: baton.SettingsConsole</code></td><td>None</td><td>None</td></tr>
           <tr><td>Turn off results</td><td><code>result_capture_mode</code></td><td><code>resultCaptureMode</code></td><td><code>ResultCaptureMode</code></td><td>None, results are always sent</td><td>None, results are always sent</td></tr>
           <tr><td>Turn Baton off</td><td><code>BATON_DISABLED=1</code></td><td><code>BATON_DISABLED=1</code></td><td><code>BATON_DISABLED=1</code></td><td>None, stop wrapping the server</td><td>None, remove it from the gateway config</td></tr>
           <tr><td>Where events go</td><td>stderr, a file, HTTPS, or several</td><td>stderr, a file, HTTPS, or several</td><td>stderr, a file, HTTPS, or several</td><td>stderr, a file, HTTPS or S3</td><td>The proxy's sinks</td></tr>
           <tr><td>Who is calling</td><td><code>resolve_principal</code></td><td><code>resolvePrincipal</code></td><td><code>ResolvePrincipal</code></td><td>Not sent</td><td>From a gateway header</td></tr>
           <tr><td>Their company</td><td><code>Organization</code>, from <code>resolve_principal</code></td><td><code>organization</code>, from <code>resolvePrincipal</code></td><td><code>Organization</code>, from <code>ResolvePrincipal</code></td><td>Not sent</td><td><code>BATON_EXTMCP_ORGANIZATION_ID_HEADER</code></td></tr>
+          <tr><td>Their groups</td><td><code>labels</code>, from <code>resolve_principal</code></td><td><code>labels</code>, from <code>resolvePrincipal</code></td><td><code>Labels</code>, from <code>ResolvePrincipal</code></td><td>Not sent</td><td>Not sent</td></tr>
         </tbody>
       </table>
 
@@ -944,8 +991,8 @@ install_baton(mcp, VendorConfig(dsn="https://baton_pk_...@baton.goodtiming.ai/te
       <table class="docs-table">
         <thead><tr><th>Experimental</th><th>What it is</th></tr></thead>
         <tbody>
-          <tr><td>labels, capture</td><td>Two fields on events, including <code>capture.overlay</code>. In Python, also the <code>labels</code> of <code>Principal</code> and <code>Organization</code>, and <code>CaptureObserved</code>.</td></tr>
-          <tr><td>GET /v0/settings</td><td>Reading capture settings from the Console. In Python, <code>VendorConfig(settings=..., settings_refresh_s=...)</code>.</td></tr>
+          <tr><td>labels, capture</td><td>Two fields on events, including <code>capture.overlay</code>. In Python and TypeScript, also the <code>labels</code> of <code>Principal</code> and <code>Organization</code>, and <code>CaptureObserved</code>. In Go, <code>Principal.Labels</code>, <code>Organization.Labels</code>, <code>Event.Labels</code>, <code>Event.Capture</code> and <code>CaptureObserved</code>.</td></tr>
+          <tr><td>GET /v0/settings</td><td>Reading capture settings from the Console. In Python, <code>VendorConfig(settings=..., settings_refresh_s=...)</code>. In TypeScript, <code>settings</code> and <code>settingsRefreshMs</code>. In Go, <code>Config.Settings</code>, <code>Config.SettingsRefresh</code> and <code>SettingsMode</code> with its values.</td></tr>
           <tr><td>client_report</td><td>The event that counts what an SDK could not deliver. In Python and TypeScript, <code>ClientReportEvent</code> and <code>ClientReportPayload</code>.</td></tr>
           <tr><td>trace_context</td><td>Reserved. Not sent.</td></tr>
           <tr><td>EventSchema</td><td>TypeScript only. The zod schema may change with a zod major; the event types may not.</td></tr>
