@@ -804,7 +804,7 @@ defer handle.Close(context.Background())</pre>
       <p><strong style="color:var(--ink)">Call <code>Close</code> when your server stops.</strong> Events are sent in the background, in batches, so one can reach the Console up to 5 seconds after it was recorded. <code>Close(ctx)</code> sends what is still buffered and stops shortly before <code>ctx</code>'s deadline, or after about 3 seconds if it has none. It never returns an error. Events recorded after <code>Close</code> are dropped.</p>
       <p>With no DSN, no <code>BATON_DSN</code>, and no <code>Sink</code>, <code>VendorID</code> or <code>TenantID</code>, <code>Install</code> logs one warning and installs nothing, and your server starts as usual. A config value that is not valid is still an error.</p>
       <h3 id="go-config">Configuration</h3>
-      <p>Fields of <code>baton.Config</code>. With a DSN, every other field is optional. The modes are plain strings, the same values as in Python, and each value has a named constant.</p>
+      <p>Fields of <code>baton.Config</code>. With a DSN, every other field is optional. Each mode has its own type, with a named constant for each value, so a value of another mode is a compile error. A quoted value such as <code>"off"</code> also works; a <code>string</code> variable needs a conversion, such as <code>baton.ReportMode(s)</code>.</p>
       <table class="docs-table">
         <thead><tr><th>Field</th><th>Default</th><th>What it does</th></tr></thead>
         <tbody>
