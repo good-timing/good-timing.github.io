@@ -998,7 +998,7 @@ install_baton(mcp, VendorConfig(dsn="https://baton_pk_...@baton.goodtiming.ai/te
           <tr><td>EventSchema</td><td>TypeScript only. The zod schema may change with a zod major; the event types may not.</td></tr>
         </tbody>
       </table>
-      <p>The full rules are in <a href="https://github.com/good-timing/baton/blob/main/docs/SPEC.md#stability-from-10" target="_blank" rel="noopener" style="color:var(--brand)">SPEC §13, "Stability from 1.0"</a>.</p>
+      <p>The full rules are in <a href="https://github.com/good-timing/baton-spec/blob/main/SPEC.md#stability-from-10" target="_blank" rel="noopener" style="color:var(--brand)">SPEC §13, "Stability from 1.0"</a>.</p>
     </div>
 
         <div class="code-pane" id="gateway" hidden>
@@ -1225,7 +1225,7 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
       <p>Off by default. With <code>BATON_ANNOTATE=on</code>, the proxy adds <code>baton_annotate</code> to the upstream server&#39;s tool list during the MCP handshake. The upstream server never sees it. When the proxy writes events to a local file, the instructions it appends name that file&#39;s path, so Claude can read it and explain what went wrong. The try kit turns it on for you.</p>
       <div class="card"><h3><code>baton_annotate</code></h3><p>Called by Claude (unprompted) when a call goes wrong or no tool fits the request. Claude says what happened in its own words; there is no category to pick. Emits an annotation event with <code>what_happened</code>, <code>tool_name</code> (or <code>none</code> when no tool exists), <code>intent</code> (from <code>user_goal</code>), and optionally <code>suggested_improvement</code> and <code>context</code>. Available in all sink modes.</p></div>
       <h2 id="proxy-captures">What it captures</h2>
-      <p>Per real tool call, three event types are emitted matching the <a href="https://github.com/good-timing/baton/blob/main/docs/SPEC.md" style="color:var(--brand)">Baton wire format</a>:</p>
+      <p>Per real tool call, three event types are emitted matching the <a href="https://github.com/good-timing/baton-spec/blob/main/SPEC.md" style="color:var(--brand)">Baton wire format</a>:</p>
       <table class="docs-table">
         <thead><tr><th>Event</th><th>Payload fields</th></tr></thead>
         <tbody>
