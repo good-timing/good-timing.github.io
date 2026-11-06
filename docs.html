@@ -998,7 +998,7 @@ install_baton(mcp, VendorConfig(dsn="https://baton_pk_...@baton.goodtiming.ai/te
           <tr><td>EventSchema</td><td>TypeScript only. The zod schema may change with a zod major; the event types may not.</td></tr>
         </tbody>
       </table>
-      <p>The full rules are in <a href="https://github.com/good-timing/baton-spec/blob/main/SPEC.md#stability-from-10" target="_blank" rel="noopener" style="color:var(--brand)">SPEC §13, "Stability from 1.0"</a>.</p>
+      <p>The full rules are in <a href="https://github.com/good-timing/baton-spec/blob/main/SPEC.md#stability-from-10" target="_blank" rel="noopener" style="color:var(--brand)">SPEC §13, "Stability from 1.0"</a>. The <a href="/blog/baton-1-0/" style="color:var(--brand)">1.0 announcement</a> covers what is supported and what comes next.</p>
     </div>
 
         <div class="code-pane" id="gateway" hidden>
@@ -1143,7 +1143,7 @@ uvx baton-proxy --url "https://mcp.example.com/mcp"  # remote, as a bridge</pre>
       <pre>uvx baton-proxy scan --config &lt;server-name&gt;</pre>
       <p>To wrap a server permanently in Claude&#39;s config, put <code>baton-proxy</code> on your PATH so the config can invoke it directly:</p>
       <pre>pipx install baton-proxy</pre>
-      <p style="color:var(--mute-2);font-size:12.5px">Plain <code>pip install baton-proxy</code> works if you manage your own Python env. Requires Python 3.11+. Currently 0.x. The wire format is stable and additive-only until v1.0; see the <a href="https://github.com/good-timing/baton-proxy/releases" target="_blank" rel="noopener" style="color:var(--brand)">releases</a>.</p>
+      <p style="color:var(--mute-2);font-size:12.5px">Plain <code>pip install baton-proxy</code> works if you manage your own Python env. Requires Python 3.11+. Currently 0.x, and it sends 1.0 events; see <a href="#stability" style="color:var(--brand)">Stability and versions</a> and the <a href="https://github.com/good-timing/baton-proxy/releases" target="_blank" rel="noopener" style="color:var(--brand)">releases</a>.</p>
       <h2 id="quick-start">Quickstart</h2>
       <p>Replace your MCP server entry in Claude&#39;s config. The only change is wrapping your existing command:</p>
       <pre>// Before
