@@ -126,11 +126,11 @@
 
   <main>
     <h1>Privacy Policy</h1>
-    <p class="effective-date">Effective date: October 8, 2026</p>
+    <p class="effective-date">Effective date: November 6, 2026</p>
 
     <p>Thank you for visiting <a href="https://goodtiming.ai/">https://goodtiming.ai/</a> (the "Site") owned and operated by Good Timing, Inc. Good Timing, Inc. ("Good Timing," "we," "us," or "our") provides Baton, product analytics for products that AI agents use. Baton captures how AI agents use our customers' products, whether through MCP servers, skills, APIs or other interfaces, including the agent's description of what its user is trying to do, the tool calls it makes and what happened, and shows our customers where their users' agents run into trouble and how to fix it.</p>
 
-    <p>When you use our Services, including when you interact with Baton, we collect and use Personal Data as described in this Privacy Policy to operate, secure, and improve our Services and to provide you with the features you request. <strong>By using or accessing our Site in any manner, you acknowledge that you accept the practices and policies outlined below, and you hereby consent that we will collect, use and disclose your information as described in this Privacy Policy.</strong> Remember that your use of Good Timing's Services is at all times subject to our <a href="/terms.html">Terms of Use</a>, which incorporates this Privacy Policy. Any terms we use in this Policy without defining them have the definitions given to them in the Terms of Use.</p>
+    <p>When you use our Services, including when you interact with Baton, we collect and use Personal Data as described in this Privacy Policy to operate, secure, and improve our Services and to provide you with the features you request. <strong>By using or accessing our Site in any manner, you acknowledge that you accept the practices and policies outlined below, and you hereby consent that we will collect, use and disclose your information as described in this Privacy Policy.</strong> Remember that your use of Good Timing's Services is at all times subject to our <a href="/terms.html">Terms of Service</a>, which incorporates this Privacy Policy. Any terms we use in this Policy without defining them have the definitions given to them in the Terms of Service.</p>
 
     <p>You may print a copy of this Privacy Policy by clicking <a href="javascript:window.print()">here</a>.</p>
 
@@ -176,7 +176,7 @@
       </thead>
       <tbody>
         <tr>
-          <td><strong>Profile or Contact Data</strong> such as first and last name, email, phone number, and unique identifiers.</td>
+          <td><strong>Profile or Contact Data</strong> such as email, name (if you sign in with Google), workspace name, the name of the MCP server you connect, and unique identifiers.</td>
           <td>
             <ul>
               <li>Opening and managing your account</li>
@@ -221,7 +221,7 @@
           </td>
         </tr>
         <tr>
-          <td><strong>Device/IP Data</strong> such as IP address, device ID, and type of device, operating system, or browser used to access the Services.</td>
+          <td><strong>Device/IP Data</strong> such as shortened IP address and the network it comes from (which often identifies your company), device ID, and type of device, operating system, or browser used to access the Services.</td>
           <td>
             <ul>
               <li>Monitoring, testing, and improving the security, integrity, and availability of our Services.</li>
@@ -237,7 +237,7 @@
           </td>
         </tr>
         <tr>
-          <td><strong>Web Analytics</strong> such as web page interactions, referring webpage or source through which you accessed the Services, browsing or search history, and statistics associated with the interaction between device or browser and the Services.</td>
+          <td><strong>Web Analytics</strong> such as web page interactions, signup steps reached, referring webpage or source through which you accessed the Services, browsing or search history, and statistics associated with the interaction between device or browser and the Services.</td>
           <td>
             <ul>
               <li>Monitoring, testing, and improving the security, integrity, and availability of our Services.</li>
@@ -253,7 +253,7 @@
           </td>
         </tr>
         <tr>
-          <td><strong>Account Credentials</strong> such as your username and password with third-party services or platforms.</td>
+          <td><strong>Account Credentials</strong> such as your username and password with third-party services or platforms, as well as the API keys we issue you.</td>
           <td>
             <ul>
               <li>Monitoring, testing, and improving the security, integrity, and availability of our Services.</li>
@@ -268,7 +268,7 @@
           </td>
         </tr>
         <tr>
-          <td><strong>Location Data</strong> such as zip code and IP-address and GPS-based location information.</td>
+          <td><strong>Location Data</strong> such as approximate city derived from your shortened IP address.</td>
           <td>
             <ul>
               <li>Monitoring, testing, and improving the security, integrity, and availability of our Services.</li>
@@ -369,7 +369,7 @@
           </li>
           <li>Third-Party Credentials
             <ul>
-              <li>If you provide your third-party account credentials, such as your email or social network account credentials, to us or otherwise sign in to the Services through a third-party site or service, content and/or information in those accounts will be transmitted into your account with us.</li>
+              <li>If you sign in to the Services with Google, we receive basic profile information, such as your name and email address.</li>
             </ul>
           </li>
         </ul>
@@ -395,7 +395,7 @@
     <p>Baton sees what an agent sends to and receives from the customer's product, plus what the agent chooses to write in Baton's fields. It is not a recording of the conversation between a user and their agent.</p>
     <p>Our SDKs and Baton Proxy remove common sensitive values, such as email addresses, phone numbers, payment card numbers, API keys and access tokens, before data leaves the customer's systems. This is on by default, and customers using our SDKs can replace it with their own rules. Automated removal can miss things, so customers remain responsible for what they send.</p>
     <p>We use Customer Data only to provide the Services to the customer who sent it: to store it, show it in that customer's console, analyze it (for example, grouping calls into sessions, detecting failures, explaining sessions and suggesting fixes), support the customer, keep the Services secure and fix problems. We also create aggregated or de-identified statistics that do not identify the customer or any individual. We do not sell Customer Data, use it for advertising, or use it to train generative AI models.</p>
-    <p>Customer Data is stored with Google Cloud in the United States. Some of our analysis uses AI models from Anthropic, which receives Customer Data for that purpose and is not permitted to train on it.</p>
+    <p>Customer Data is stored with Google Cloud in the United States. Our analysis currently uses Google’s Gemini models through Google Cloud’s Vertex AI, which receives Customer Data for that purpose. We may also use AI models from Anthropic for this analysis; Anthropic receives Customer Data for that purpose and is not permitted to train on it.</p>
     <p>We keep Customer Data while the customer's account is active, unless the customer asks us to delete it sooner. We delete it within 30 days of a deletion request and within 90 days after an account ends. Backup copies expire within 30 days.</p>
     <p>Our SDKs and Baton Proxy are open source. If a customer runs them and sends data only to its own systems, we do not receive that data.</p>
 
@@ -464,7 +464,7 @@
     </ul>
 
     <h2 id="children">Personal Data of Children</h2>
-    <p>As noted in the <a href="/terms.html">Terms of Use</a>, we do not knowingly collect or solicit Personal Data from children under 13 years of age; if you are a child under the age of 13, please do not attempt to register for or otherwise use the Services or send us any Personal Data. If we learn we have collected Personal Data from a child under 13 years of age, we will delete that information as quickly as possible. If you believe that a child 13 years of age may have provided Personal Data to us, please contact us at <a href="mailto:team@goodtiming.ai">team@goodtiming.ai</a>.</p>
+    <p>We do not knowingly collect or solicit Personal Data from children under 13 years of age; if you are a child under the age of 13, please do not attempt to register for or otherwise use the Services or send us any Personal Data. If we learn we have collected Personal Data from a child under 13 years of age, we will delete that information as quickly as possible. If you believe that a child 13 years of age may have provided Personal Data to us, please contact us at <a href="mailto:team@goodtiming.ai">team@goodtiming.ai</a>.</p>
 
     <h2 id="state-law">State Law Privacy Rights</h2>
 
@@ -487,7 +487,7 @@
   <footer>
     &copy; 2026 Good Timing, Inc. All rights reserved. &nbsp;&middot;&nbsp;
     <a href="/privacy.html">Privacy Policy</a> &nbsp;&middot;&nbsp;
-    <a href="/terms.html">Terms of Use</a> &nbsp;&middot;&nbsp;
+    <a href="/terms.html">Terms of Service</a> &nbsp;&middot;&nbsp;
     <a href="/cookies.html">Cookie Settings</a>
   </footer>
 </body>
