@@ -1278,13 +1278,13 @@ cat /tmp/baton-proxy.jsonl | jq -c '{type: .event_type, payload}'</pre>
 
       <h3 id="console-tab-overview">The Overview tab</h3>
       <p>How agents experience your server, on one screen. Four stat tiles, picked from what your traffic has: sessions, tasks, identified users, the share of tool calls that returned an error, sessions containing a failure, and reports filed by agents.</p>
-      <p>Below them, four categories with a count each: recurring errors, token costs, high-friction sessions, and tools whose calls fail more than 20% of the time. Then the three most recent sessions worth a person&#39;s attention. A server card lists your tools, the surface hash and when it was last seen, and warns you if your server sends no <code>initialize</code> instructions, because then every agent connects with zero guidance from you.</p>
+      <p>Below them, four categories with a count each: recurring errors, token costs, high-friction sessions, and tools whose calls fail often. Then the three most recent sessions worth a person&#39;s attention. A server card lists your tools, the surface hash and when it was last seen, and warns you if your server sends no <code>initialize</code> instructions, because then every agent connects with zero guidance from you.</p>
 
       <h3 id="console-tab-insights">The Insights tab</h3>
       <p>Five panels. Each is a list of things you could go and fix.</p>
       <div class="card-grid">
         <div class="card"><h3>High-friction sessions</h3><p>Four counts: the last tool call failed, a tool failed and never succeeded again in that task, any call failed at all, and sessions you rated low. A session can sit in more than one.</p></div>
-        <div class="card"><h3>Recurring errors</h3><p>Errors that repeat across sessions, grouped into one pattern per tool with ids and quoted values ignored. Each row names where the fix belongs: the tool description, the error message, the implementation, or account config.</p></div>
+        <div class="card"><h3>Recurring errors</h3><p>Errors that repeat across sessions, grouped by tool. Each row names where the fix belongs: the tool description, the error message, the implementation, or account config.</p></div>
         <div class="card"><h3>Token costs</h3><p>What your surface costs every session before anyone calls anything. Tool definitions that are never called, mandated fetches, and responses large enough to push earlier results out of the agent&#39;s context.</p></div>
         <div class="card"><h3>Tool error rates</h3><p>Every tool ranked by how often its calls come back as errors, with p50 and p95 latency and the error codes, plus the tools nothing has called.</p></div>
       </div>
