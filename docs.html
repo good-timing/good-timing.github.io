@@ -525,8 +525,8 @@ install_baton(mcp, VendorConfig(
           <tr><td>intent_param_mode</td><td><code>"required"</code></td><td>Adds one parameter, <code>user_goal</code>, to every tool's input schema and removes it before your handler runs. The agent writes it as <code>'&lt;n&gt;: &lt;what this call is for&gt;; success is &lt;what its result should show&gt;'</code>, where <code>n</code> is the number of the user's current message. <code>"required"</code> lists it as required, as an advertisement only: no call fails for leaving it out. <code>"optional"</code> leaves it off the required list.</td></tr>
           <tr><td>report_mode</td><td><code>"off"</code>, <code>"on"</code> with Console settings</td><td><code>"on"</code> adds a tool the agent uses to report a tool call that went wrong, or a request no tool covers, plus instructions saying when to use it. Off, no tool is added and each call's goal still arrives in <code>user_goal</code>.</td></tr>
           <tr><td>result_capture_mode</td><td><code>"full"</code></td><td><code>"off"</code> stops sending what your tools return. Requests are still sent. See <a href="#what-leaves" style="color:var(--brand)">What leaves your server</a>.</td></tr>
-          <tr><td>settings</td><td><code>"local"</code></td><td>Experimental. <code>"console"</code> reads capture settings from the Console. Needs a DSN. See <a href="#console-settings" style="color:var(--brand)">Settings from the Console</a>.</td></tr>
-          <tr><td>settings_refresh_s</td><td><code>60</code></td><td>Experimental. How often <code>"console"</code> reads the settings, in seconds. At least 15.</td></tr>
+          <tr><td>settings</td><td><code>"local"</code></td><td><code>"console"</code> reads capture settings from the Console. Needs a DSN. See <a href="#console-settings" style="color:var(--brand)">Settings from the Console</a>.</td></tr>
+          <tr><td>settings_refresh_s</td><td><code>60</code></td><td>How often <code>"console"</code> reads the settings, in seconds. At least 15.</td></tr>
           <tr><td>resolve_principal</td><td>—</td><td>A function, sync or async, that says who is behind a call. Unset, no event names anyone. See <a href="#identity" style="color:var(--brand)">Identity</a>.</td></tr>
         </tbody>
       </table>
@@ -570,7 +570,7 @@ def resolve(ctx):
     <tr><td>display_name</td><td><code>None</code></td><td>What your dashboard shows for this person. Without it, the dashboard shows the id.</td></tr>
     <tr><td>form</td><td><code>"raw"</code></td><td>What the id is. Leave it as <code>"raw"</code> for a real identity. Set <code>"hashed"</code> only when your function hashed the id itself.</td></tr>
     <tr><td>user_data</td><td><code>None</code></td><td>Python only. Accepted, and not used today. Nothing in it is sent.</td></tr>
-    <tr><td>labels</td><td><code>()</code></td><td>Experimental. Your names for the groups this caller is in, for the Console's settings to match. See <a href="#console-settings" style="color:var(--brand)">Settings from the Console</a>.</td></tr>
+    <tr><td>labels</td><td><code>()</code></td><td>Your names for the groups this caller is in, for the Console's settings to match. See <a href="#console-settings" style="color:var(--brand)">Settings from the Console</a>.</td></tr>
         </tbody>
       </table>
       <p><strong style="color:var(--ink)">Their company.</strong> To say which of your customers a call belongs to, give the <code>Principal</code> an <code>organization</code>. If you only know the company, for example from an org-wide API key, return an <code>Organization</code> on its own. A company returned as a <code>Principal</code> is counted as a person, so use <code>Organization</code> for it.</p>
@@ -589,7 +589,7 @@ def resolve(ctx):
     <tr><td>organization_id</td><td>required</td><td>The company's id, sent exactly as you return it.</td></tr>
     <tr><td>display_name</td><td><code>None</code></td><td>A name for the company. It is a label, never a key.</td></tr>
     <tr><td>form</td><td><code>"raw"</code></td><td>As for <code>Principal</code>. Set <code>"hashed"</code> only when your function hashed the id itself.</td></tr>
-    <tr><td>labels</td><td><code>()</code></td><td>Experimental. As for <code>Principal</code>. Both lists are sent together.</td></tr>
+    <tr><td>labels</td><td><code>()</code></td><td>As for <code>Principal</code>. Both lists are sent together.</td></tr>
         </tbody>
       </table>
       <p>Your dashboard stores the organization with each event, but doesn&#39;t filter by it or show it yet. Two sessions that name different organizations are never joined, and a session that names two organizations is never joined to another. With the Library API, pass the same values to <code>client.session(principal=...)</code>. A block that names only an organization, with no <code>session_id</code>, is never joined to another, so pass your own <code>session_id</code> there.</p>
@@ -607,7 +607,7 @@ def resolve(ctx):
     return Principal(principal_id=digest, form="hashed")</pre>
       <p>A hook that raises, or returns nothing usable, costs that event its person and nothing else: the tool call and the event are unaffected. The two ready-made hooks are short and are the best examples to copy from: <a href="https://github.com/good-timing/baton/blob/main/src/baton/integrations/oauth_hooks.py" style="color:var(--brand)">Python</a>, <a href="https://github.com/good-timing/baton-ts/blob/main/src/integrations/mcp/oauthHooks.ts" style="color:var(--brand)">TypeScript</a>.</p>
       <h3 id="console-settings">Settings from the Console</h3>
-      <p><em>Experimental: may change in a minor release.</em> With <code>settings="console"</code>, the SDK reads the capture settings saved on the Console&#39;s Capture page, so you can change them without a deploy. Each caller gets the settings of the first audience that matches it. An audience can match on the caller&#39;s labels, the app it runs in (such as <code>claude-code</code>), or a share of your callers. With several of these, all must match.</p>
+      <p>With <code>settings="console"</code>, the SDK reads the capture settings saved on the Console&#39;s Capture page, so you can change them without a deploy. Each caller gets the settings of the first audience that matches it. An audience can match on the caller&#39;s labels, the app it runs in (such as <code>claude-code</code>), or a share of your callers. With several of these, all must match.</p>
       <pre>install_baton(mcp, VendorConfig(
     dsn="https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...",
     settings="console",
@@ -788,7 +788,7 @@ withBaton(server, {
   dsn: "https://baton_pk_...@baton.goodtiming.ai/ten_.../srv-...",
   resolvePrincipal: principalFromOAuthEmail,
 });</pre>
-      <p><strong style="color:var(--ink)">Settings from the Console</strong> (experimental) work as in Python, with <code>settings: "console"</code> and <code>settingsRefreshMs</code> (60000 by default, at least 15000). It needs a DSN, and <code>BATON_DSN</code> counts. Labels go in <code>labels</code> on the <code>Principal</code> or <code>Organization</code> your <code>resolvePrincipal</code> returns, and in <code>client.session({ principal })</code>. See <a href="#console-settings" style="color:var(--brand)">Settings from the Console</a>.</p>
+      <p><strong style="color:var(--ink)">Settings from the Console</strong> work as in Python, with <code>settings: "console"</code> and <code>settingsRefreshMs</code> (60000 by default, at least 15000). It needs a DSN, and <code>BATON_DSN</code> counts. Labels go in <code>labels</code> on the <code>Principal</code> or <code>Organization</code> your <code>resolvePrincipal</code> returns, and in <code>client.session({ principal })</code>. See <a href="#console-settings" style="color:var(--brand)">Settings from the Console</a>.</p>
       <p><strong style="color:var(--ink)">A server built per request.</strong> Do not call <code>withBaton</code> per request, because each call builds a new sink. As in <a href="#per-request" style="color:var(--brand)">Python</a>, call <code>createBaton(config)</code> once at startup and <code>baton.wrap(server)</code> for each new server. It takes the same config as <code>withBaton</code>. Call <code>await baton.aclose()</code> when your server stops.</p>
       <pre>import { createBaton } from "@goodtiming/baton-sdk";
 
@@ -863,8 +863,8 @@ defer handle.Close(context.Background())</pre>
           <tr><td>Scrubber</td><td><code>baton.DefaultScrubber</code></td><td>Runs on every captured value, with the same rules as Python. <code>baton.NoScrub</code> turns scrubbing off, or pass your own <code>func(any) any</code>.</td></tr>
           <tr><td>ResolvePrincipal</td><td>—</td><td>A function that says who is behind a call. Unset, no event names anyone.</td></tr>
           <tr><td>Middleware</td><td>—</td><td>Your own receiving middleware, such as an auth check. See Refused calls below.</td></tr>
-          <tr><td>Settings</td><td><code>baton.SettingsLocal</code></td><td>Experimental. <code>baton.SettingsConsole</code> reads capture settings from the Console, and needs a DSN. See <a href="#console-settings" style="color:var(--brand)">Settings from the Console</a>.</td></tr>
-          <tr><td>SettingsRefresh</td><td>60 seconds</td><td>Experimental. How often <code>SettingsConsole</code> reads, as a <code>time.Duration</code>. At least 15 seconds.</td></tr>
+          <tr><td>Settings</td><td><code>baton.SettingsLocal</code></td><td><code>baton.SettingsConsole</code> reads capture settings from the Console, and needs a DSN. See <a href="#console-settings" style="color:var(--brand)">Settings from the Console</a>.</td></tr>
+          <tr><td>SettingsRefresh</td><td>60 seconds</td><td>How often <code>SettingsConsole</code> reads, as a <code>time.Duration</code>. At least 15 seconds.</td></tr>
         </tbody>
       </table>
       <p>The constants are <code>ResultCaptureFull</code> and <code>ResultCaptureOff</code> (<code>"full"</code>, <code>"off"</code>), <code>IntentParamRequired</code> and <code>IntentParamOptional</code> (<code>"required"</code>, <code>"optional"</code>), <code>ReportOn</code> and <code>ReportOff</code> (<code>"on"</code>, <code>"off"</code>), and <code>SettingsLocal</code> and <code>SettingsConsole</code> (<code>"local"</code>, <code>"console"</code>).</p>
@@ -915,7 +915,7 @@ handler := mcp.NewStreamableHTTPHandler(func(*http.Request) *mcp.Server {
 	}
 	return p, nil
 }</pre>
-      <p>A <code>Principal</code> has <code>ID</code>, <code>DisplayName</code>, <code>Hashed</code> and <code>Organization</code>. An <code>Organization</code> has <code>ID</code>, <code>DisplayName</code> and <code>Hashed</code>. Both have <code>Labels</code> (experimental) for <a href="#console-settings" style="color:var(--brand)">Settings from the Console</a>; a <code>Principal</code> with <code>Labels</code> and no <code>ID</code> sends the labels alone. If you only know the company, leave <code>ID</code> empty and set <code>Organization</code>. Set <code>Hashed: true</code> only when your function hashed the id itself. An id longer than 128 characters is cut to 128, and a blank one is not sent. If the hook returns an error, panics or takes longer than 5 seconds, that call is sent without a principal, and the call goes on.</p>
+      <p>A <code>Principal</code> has <code>ID</code>, <code>DisplayName</code>, <code>Hashed</code> and <code>Organization</code>. An <code>Organization</code> has <code>ID</code>, <code>DisplayName</code> and <code>Hashed</code>. Both have <code>Labels</code> for <a href="#console-settings" style="color:var(--brand)">Settings from the Console</a>; a <code>Principal</code> with <code>Labels</code> and no <code>ID</code> sends the labels alone. If you only know the company, leave <code>ID</code> empty and set <code>Organization</code>. Set <code>Hashed: true</code> only when your function hashed the id itself. An id longer than 128 characters is cut to 128, and a blank one is not sent. If the hook returns an error, panics or takes longer than 5 seconds, that call is sent without a principal, and the call goes on.</p>
       <h3 id="go-refused">Refused calls</h3>
       <p>A call your own middleware stops before the tool runs, such as an auth or credits check, is captured with <code>failure_kind</code> <code>"refused"</code> when you give that middleware to Baton instead of adding it yourself:</p>
       <pre>handle, err := baton.Install(server, impl, opts, baton.Config{
@@ -991,8 +991,7 @@ install_baton(mcp, VendorConfig(dsn="https://baton_pk_...@baton.goodtiming.ai/te
       <table class="docs-table">
         <thead><tr><th>Experimental</th><th>What it is</th></tr></thead>
         <tbody>
-          <tr><td>labels, capture</td><td>Two fields on events, including <code>capture.overlay</code>. In Python and TypeScript, also the <code>labels</code> of <code>Principal</code> and <code>Organization</code>, and <code>CaptureObserved</code>. In Go, <code>Principal.Labels</code>, <code>Organization.Labels</code>, <code>Event.Labels</code>, <code>Event.Capture</code> and <code>CaptureObserved</code>.</td></tr>
-          <tr><td>GET /v0/settings</td><td>Reading capture settings from the Console. In Python, <code>VendorConfig(settings=..., settings_refresh_s=...)</code>. In TypeScript, <code>settings</code> and <code>settingsRefreshMs</code>. In Go, <code>Config.Settings</code>, <code>Config.SettingsRefresh</code> and <code>SettingsMode</code> with its values.</td></tr>
+          <tr><td>capture.overlay</td><td>A member of the <code>capture</code> field on events. Reserved; no SDK sends it yet.</td></tr>
           <tr><td>client_report</td><td>The event that counts what an SDK could not deliver. In Python and TypeScript, <code>ClientReportEvent</code> and <code>ClientReportPayload</code>.</td></tr>
           <tr><td>trace_context</td><td>Reserved. Not sent.</td></tr>
           <tr><td>EventSchema</td><td>TypeScript only. The zod schema may change with a zod major; the event types may not.</td></tr>
