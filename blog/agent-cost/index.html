@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta property="og:title" content="MCP builders often ask us about the cost of asking agents why they called a tool. So we measured it.">
+<meta property="og:description" content="Asking the agent why it made each MCP tool call costs about 0.2 s and 40 tokens per call on Sonnet, in Claude Code. How we measured it, and what we cut.">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://goodtiming.ai/baton-share-wide.png">
+<meta property="og:image:width" content="2400">
+<meta property="og:image:height" content="1260">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://goodtiming.ai/baton-share-wide.png">
+<!-- Fathom - beautiful, simple website analytics -->
+<script src="https://cdn.usefathom.com/script.js" data-site="NUDNHGRI" defer></script>
+<!-- / Fathom -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MCP builders often ask us about the cost of asking agents why they called a tool. So we measured it.</title>
+  <meta name="description" content="Asking the agent why it made each MCP tool call costs about 0.2 s and 40 tokens per call on Sonnet, in Claude Code. How we measured it, and what we cut.">
+  <link rel="canonical" href="https://goodtiming.ai/blog/agent-cost/">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230ca678'/%3E%3Crect x='10' y='28' width='44' height='8' rx='4' fill='%230b0c10' transform='rotate(-30 32 32)'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Design tokens lifted from docs.html, so the blog, the docs and the
+         front door read as one system. */
+      --page: #f7f8fa; --card: #fff; --line: #e5e7eb; --line-soft: #f1f3f5;
+      --ink: #111827; --ink-2: #1f2937; --ink-3: #4b5563;
+      --mute: #6b7280; --mute-2: #9ca3af;
+      --blue: #3651d4; --blue-soft: #eef2ff; --blue-edge: #c7d2fe;
+      --brand: #0ca678;           /* LOCKED 9/1/26: emerald, the brand colour */
+      --mark: #bdeeda;            /* LOCKED 9/1/26: the highlight wash, derived from emerald */
+      --brand-ink: #0b7d5c;
+      --brand-wash: #eafaf3;
+      --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--sans); background: var(--page); color: var(--ink); line-height: 1.6; -webkit-font-smoothing: antialiased; padding-top: 72px; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ---------- top nav (verbatim from docs.html) ---------- */
+    body > nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      height: 72px; box-sizing: border-box;
+      padding: 0 max(20px, calc((100% - 1240px) / 2));
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(255,255,255,0.88); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; letter-spacing: -0.01em; line-height: 1.2; color: var(--ink); }
+    .nav-brand-mark { width: 25px; height: 25px; flex-shrink: 0; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230ca678'/%3E%3Crect x='10' y='28' width='44' height='8' rx='4' fill='%230b0c10' transform='rotate(-30 32 32)'/%3E%3C/svg%3E") center/contain no-repeat; }
+    .nav-brand-sub { color: var(--mute-2); font-weight: 400; font-size: 12px; margin-left: 3px; }
+    .nav-right { display: flex; align-items: center; gap: 20px; }
+    .nav-link { color: var(--ink-3); font-size: 13.5px; font-weight: 500; line-height: 1.2; transition: color 0.15s; }
+    .nav-link:hover { color: var(--ink); }
+    .nav-link.active { color: var(--brand); font-weight: 600; }
+    .nav-github { color: var(--mute-2); display: inline-flex; align-items: center; transition: color 0.15s; }
+    .nav-github svg { display: block; }
+    .nav-github:hover { color: var(--ink); }
+    .btn { display: inline-flex; align-items: center; white-space: nowrap; padding: 9px 20px; border-radius: 10px; font-size: 14px; font-weight: 600; line-height: 1.2; cursor: pointer; transition: filter 0.18s; border: 1px solid transparent; color: #fff; background: var(--brand); text-decoration: none; }
+    .btn:hover { filter: brightness(1.06); }
+
+    /* ---------- article ---------- */
+    .post { max-width: 760px; margin: 0 auto; padding: 56px 32px 80px; }
+    .post-kicker { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--brand); margin-bottom: 14px; }
+    .post-kicker a:hover { text-decoration: underline; }
+    .post h1 { font-size: 36px; line-height: 1.18; font-weight: 700; letter-spacing: -0.022em; color: var(--ink); margin-bottom: 16px; }
+    .post-byline { font-size: 14px; color: var(--mute); margin-bottom: 40px; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
+    .post-byline strong { color: var(--ink-2); font-weight: 500; }
+    .post h2 { font-size: 24px; font-weight: 600; letter-spacing: -0.015em; color: var(--ink); margin: 3rem 0 0.9rem; }
+    .post p { color: var(--ink-2); font-size: 17px; line-height: 1.7; margin-bottom: 1.1rem; }
+    .post p a, .post li a, .post figcaption a { color: var(--blue); }
+    .post p a:hover, .post li a:hover { text-decoration: underline; }
+    .post ol, .post ul { margin: 0.25rem 0 1.25rem 1.4rem; }
+    .post li { color: var(--ink-2); font-size: 17px; line-height: 1.65; margin-bottom: 0.3rem; }
+    .post strong { color: var(--ink); font-weight: 600; }
+    .post em { color: var(--ink-2); }
+    code { font-family: var(--mono); font-size: 0.86em; color: var(--ink-2); background: var(--line-soft); padding: 1px 5px; border-radius: 4px; }
+    pre { background: #f6f8fa; border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; font-family: var(--mono); font-size: 12.5px; color: var(--ink-2); overflow-x: auto; margin: 0.75rem 0 1.25rem; line-height: 1.65; }
+    pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+
+    /* What Baton captured, quoted: a left rule in the brand colour and the
+       agent's own words in the body size, one step smaller. */
+    .post blockquote { border-left: 3px solid var(--brand); background: var(--card); border-radius: 0 10px 10px 0; padding: 12px 18px; margin: 0.25rem 0 1.25rem; }
+    .post blockquote p { font-size: 15.5px; color: var(--ink-2); margin-bottom: 0.4rem; }
+    .post blockquote p:last-child { margin-bottom: 0; }
+    .post blockquote code { background: #fdecec; color: #b42318; }
+
+    .post-table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 0.75rem 0 1.5rem; background: var(--card); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+    .post-table th { text-align: left; font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mute); padding: 10px 14px; border-bottom: 1px solid var(--line); background: #fbfbfc; }
+    .post-table td { padding: 9px 14px; border-bottom: 1px solid var(--line-soft); color: var(--ink-2); vertical-align: top; }
+    .post-table tr:last-child td { border-bottom: none; }
+    .table-wrap { overflow-x: auto; }
+
+    /* Figures break out of the text column so console captures show at the
+       product's own type size; the width attribute on each img is its 1x size. */
+    figure { width: min(1080px, 100vw - 32px); margin: 0.75rem 0 1.75rem 50%; transform: translateX(-50%); }
+    figure img { display: block; max-width: 100%; height: auto; margin: 0 auto; border: 1px solid var(--line); border-radius: 10px; background: var(--card); }
+    figcaption { font-size: 13.5px; color: var(--mute); line-height: 1.5; margin: 8px auto 0; max-width: 760px; }
+
+    details { border: 1px solid var(--line); border-radius: 10px; background: var(--card); padding: 12px 16px; margin: 2rem 0 0; }
+    summary { cursor: pointer; font-size: 14.5px; font-weight: 500; color: var(--ink-2); }
+    details p { font-size: 15px; margin-top: 0.75rem; }
+    details pre { margin-bottom: 0.25rem; }
+
+    /* ---------- footer (verbatim from docs.html) ---------- */
+    footer { padding: 36px 32px 48px; border-top: 1px solid var(--line); background: var(--card); }
+    .footer-row { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; color: var(--mute-2); font-size: 12.5px; }
+    .footer-brand { color: var(--mute); }
+    .footer-brand strong { color: var(--ink); font-weight: 600; }
+    .footer-links a { color: var(--mute); margin-left: 18px; }
+    .footer-links a:hover { color: var(--ink); }
+
+    @media (max-width: 760px) {
+      body > nav { height: 60px; padding: 0 16px; }
+      .nav-home { display: none; }
+      .nav-right { gap: 14px; }
+      .nav-brand-sub { display: none; }
+      body { padding-top: 60px; }
+      .post { padding: 32px 16px 56px; }
+      .post h1 { font-size: 28px; }
+      .post p, .post li { font-size: 16px; }
+      .post-table { font-size: 13px; }
+      .post-table th, .post-table td { padding: 8px 10px; }
+      footer { padding: 28px 16px 40px; }
+      .footer-links a { margin-left: 0; margin-right: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-brand">
+    <span class="nav-brand-mark" aria-hidden="true"></span>
+    <span>Baton <span class="nav-brand-sub">by Good Timing</span></span>
+  </a>
+  <div class="nav-right">
+    <a href="/" class="nav-link nav-home">Home</a>
+    <a href="/docs.html" class="nav-link">Docs</a>
+    <a href="/blog/" class="nav-link active">Blog</a>
+    <a href="https://github.com/good-timing" class="nav-github" aria-label="Baton on GitHub" target="_blank" rel="noopener">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.54-3.88-1.54-.52-1.34-1.28-1.69-1.28-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.3-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18.92-.26 1.91-.39 2.89-.39.98 0 1.97.13 2.89.39 2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.76.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.4-5.25 5.69.41.36.78 1.07.78 2.17v3.22c0 .31.21.67.8.56C20.71 21.39 24 17.08 24 12 24 5.65 18.85.5 12.5.5h-.5z"/></svg>
+    </a>
+    <a href="https://baton.goodtiming.ai/" class="btn">Get started</a>
+  </div>
+</nav>
+
+<article class="post">
+  <div class="post-kicker"><a href="/blog/">Research</a></div>
+  <h1>MCP builders often ask us about the cost of asking agents why they called a tool. So we measured it.</h1>
+  <div class="post-byline"><strong>Ujwal Chinthala, Good Timing</strong> &nbsp;&middot;&nbsp; November 18, 2026</div>
+<p>When an agent calls your MCP server, you see the call. You don't see why the agent made it. Several tools, ours included, fix this the same way: they add one extra field to each tool and ask the agent to fill it with what the user is trying to do.</p>
+<p>That field is not free. The agent has to read it and write it. Nobody we could find publishes what it costs. Here is what it costs, what you get for it, and the data behind it. We measured in Claude Code, mostly on a support desk we built for testing: a small ticket system with 7 tools, where the agent does tasks like "comment on every open P1 ticket". The full setup is at the end.</p>
+
+<h2>What we add, and why</h2>
+<p>Baton adds one field, <code>user_goal</code>, to each of your tools. The agent fills it like this:</p>
+<blockquote><p><code>1: read P1 ticket 2; success is full ticket details and comments</code></p></blockquote>
+<p>The number says which user message the call serves. The rest says what the call is for and what a good result looks like. Baton strips the field before your tool runs, so your code never sees it.</p>
+<p>This is how you learn what people were trying to do when a call failed, or when it "worked" and still gave them nothing useful. Errors and latency can't tell you that.</p>
+
+<h2>What it costs</h2>
+<p>The field costs in two places. Only one of them costs time.</p>
+<p><strong>The writing, on every call.</strong> About 40 output tokens and 0.2 s per call on Sonnet. This is the cost the user feels. The agent spends longer writing. It doesn't think longer, and the tools take no longer.</p>
+<p><strong>The tool list, in money only.</strong> Each tool's description grows by about 130 input tokens. Input tokens cost money but almost no time. With tool search on, Claude Code's default, the client loads a description only when the agent needs it.</p>
+
+<h2>The trade</h2>
+<p>That is the price. In return you learn, for every call, what the user was trying to do and what a good result would have been. Nothing else gives you that.</p>
+
+<h2>You choose who pays it</h2>
+<p>You don't have to put the field in front of every caller. You can add Baton only for the customers, test servers or onboarding flows you pick. Everyone else sees your server exactly as before: no field, no 0.2 s. For the callers you pick, you can change what Baton asks of the agent, group by group, without a redeploy.</p>
+
+<h2>What we cut</h2>
+<p>The first version asked for three fields: the goal, the expected result and the overall task. We merged them into one field with a fixed shape: number, goal, "success is …".</p>
+<div class="table-wrap"><table class="post-table">
+<thead>
+<tr><th>version</th><th>the field's own text, per tool</th><th>writing, 5 tasks</th><th>success clause kept</th></tr>
+</thead>
+<tbody>
+<tr><td>three fields</td><td>~305 tokens</td><td>~30 s</td><td>—</td></tr>
+<tr><td>one field</td><td>~120 tokens</td><td>~21 s (−30%)</td><td>200 of 200 calls</td></tr>
+</tbody>
+</table></div>
+<p>Three things we tried that did not help:</p>
+<ul>
+<li><strong>Asking for fewer words.</strong> "At most 8 words" cut the field by only about 21 tokens, about 0.1 s. Other wordings barely moved it. The agent writes about as much as it needs.</li>
+<li><strong>Making the field optional.</strong> Agents fill an optional field anyway, every time we tested. You save a few tokens of description and nothing else.</li>
+<li><strong>Asking for the goal only on the first call of a message.</strong> It saved only about a fifth, and the later calls lost their goal.</li>
+</ul>
+<p>What did work was fewer fields. Time follows the tokens written.</p>
+
+<h2>The cost in detail</h2>
+<p>This is where the cost numbers above come from.</p>
+<p><strong>The writing, on every call.</strong> This is the cost the user feels. The agent writes the field into every call, and writing takes time in proportion to length:</p>
+<div class="table-wrap"><table class="post-table">
+<thead>
+<tr><th>model</th><th>time per token written</th></tr>
+</thead>
+<tbody>
+<tr><td>Haiku 5.5</td><td>~3.6 ms</td></tr>
+<tr><td>Sonnet 5.5</td><td>~4.7 ms</td></tr>
+<tr><td>Opus 5.5</td><td>~6.8 ms</td></tr>
+</tbody>
+</table></div>
+<p>On the support-desk tasks, all 5 tasks together, about 40 calls:</p>
+<div class="table-wrap"><table class="post-table">
+<thead>
+<tr><th>tool search</th><th>arm</th><th>writing time</th><th>output tokens</th><th>first request, input tokens</th><th>input tokens, all 5 tasks</th></tr>
+</thead>
+<tbody>
+<tr><td>on (default)</td><td>no Baton</td><td>14.4 s</td><td>6,310</td><td>5,896</td><td>200,790</td></tr>
+<tr><td>on (default)</td><td>Baton 1.3.0</td><td>23.7 s</td><td>7,942</td><td>6,008</td><td>208,954</td></tr>
+<tr><td>on (default)</td><td><strong>difference</strong></td><td><strong>+9.3 s</strong></td><td><strong>+1,632</strong></td><td><strong>+112</strong></td><td><strong>+8,164</strong></td></tr>
+<tr><td>off</td><td>no Baton</td><td>12.8 s</td><td>5,427</td><td>6,402</td><td>147,066</td></tr>
+<tr><td>off</td><td>Baton 1.3.0</td><td>21.0 s</td><td>7,045</td><td>7,368</td><td>167,217</td></tr>
+<tr><td>off</td><td><strong>difference</strong></td><td><strong>+8.2 s</strong></td><td><strong>+1,618</strong></td><td><strong>+966</strong></td><td><strong>+20,151</strong></td></tr>
+</tbody>
+</table></div>
+<p>With tool search on, the two arms ran in turn. With it off, the no-Baton runs ran an hour after the Baton runs. So we compare only writing time and tokens, which repeat across days, and not wall time. Total input is higher with tool search on, in both arms, because each tool search is an extra request that resends the conversation.</p>
+<p>Either way, that is about <strong>40 tokens and 0.2 s per call</strong> on Sonnet. The agent spends more time writing. It does not think longer, and the tools take no longer.</p>
+<p><strong>The tool list.</strong> Each tool's description now includes the field: roughly 130 input tokens per tool, one short instruction included. With tool search off, the client sends every description on every request. On the 7-tool support desk, Baton then adds about 970 tokens to each request, and that grows in a straight line with the number of tools (we checked up to 281). With tool search on, Claude Code's default, the client loads a description only when the agent searches for it, and Baton adds about 110 tokens to the first request. Over the 5 tasks, Baton added about 8,200 input tokens with tool search on and about 20,200 with it off.</p>
+<p>Input tokens cost almost no time: about 0.02 ms each, and 0.01 ms when cached. Adding 1,636 tokens of unrelated text didn't change how long the agent took to write. So this part costs money, not time.</p>
+
+<h2>How others do it</h2>
+<p>We are not the first to ask the agent why. <a href="https://posthog.com/docs/mcp-analytics/intent">PostHog</a>, <a href="https://docs.agentcat.com/sdk/tool-call-context">AgentCat</a> (was MCPcat) and <a href="https://docs.alpic.ai/user-insights/user-intents">Alpic</a> all add a similar field, on by default. PostHog and AgentCat ask for 15–25 words. None of them publishes what the field costs. Our data says two things about the common advice:</p>
+<ul>
+<li><strong>A word limit doesn't buy much.</strong> A limit keeps the field easy to read, but asking for fewer words barely changed what the agent wrote.</li>
+<li><strong>The tool list isn't the main cost.</strong> Most published tool-cost numbers count tokens in the tool list. For a field like this, the cost the user waits for is the writing on every call.</li>
+</ul>
+
+<h2>How we measured</h2>
+<p>The setup behind every number above, and what the numbers do and don't cover.</p>
+<ul>
+<li><strong>Client:</strong> Claude Code (<code>claude -p</code>), with only our test server connected and its other built-in tools turned off. Claude Code's <a href="https://code.claude.com/docs/en/agent-sdk/tool-search">tool search</a> is on by default. Most of our runs had it off, so every tool's description loaded upfront. We repeated the main comparison with it on. <strong>We did not measure Cursor, ChatGPT, VS Code or any other client.</strong></li>
+<li><strong>Model:</strong> Claude Sonnet 5.5 for most runs. We also timed Opus 5.5 and Haiku 5.5.</li>
+<li><strong>Servers:</strong> two small test servers we wrote. The main one is a support desk: a ticket system with 7 tools for finding, reading and changing tickets. Its tasks take 3 to 17 calls, such as "comment on every open P1 ticket". The other tracks a pantry (4 tools).</li>
+<li><strong>Comparison:</strong> the same tasks, with and without the field, run in turn so slow API minutes hit every arm.</li>
+<li><strong>What we read:</strong> tokens and timings from the client's own stream, per request and per call.</li>
+<li><strong>Size:</strong> 5 to 16 runs per task per arm. We report medians. That is small, so we only trust differences that repeat.</li>
+<li><strong>What repeats:</strong> token counts repeat to within a few tokens. Writing time repeats across days. Whole-task wall time does not: it swings ±50% with API load, so we don't draw conclusions from it.</li>
+</ul>
+<p>Each experiment is written down before it runs, with its pass rule set in advance.</p>
+<p>What we haven't measured yet: other clients and larger real servers. We'll publish those when we have them.</p>
+<p>Next, we'll show how to pick who gets Baton, and what leaves your server for the callers you pick.</p>
+</article>
+
+
+
+<footer>
+  <div class="footer-row">
+    <div class="footer-brand"><strong>Baton</strong> by Good Timing, Inc. &nbsp;&middot;&nbsp; &copy; 2026</div>
+    <div class="footer-links">
+      <a href="/privacy.html">Privacy</a>
+      <a href="/terms.html">Terms</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* One listener for every Get started link, present and future: the press that
+   leaves this site for the console is the last thing we can count here, and
+   the console's own funnel picks the person up on the other side. */
+document.addEventListener('click', function (e) {
+  var a = e.target.closest('a[href*="baton.goodtiming.ai"]');
+  if (a && window.fathom) { fathom.trackEvent('get started'); }
+});
+
+/* Tell the console where this reader came from. The console only ever sees the
+   hop from this page, so every reader of the post would arrive as "came from
+   goodtiming.ai". This puts ONE of two things on the Get started links so the
+   console can tell them apart: ?utm_source=<word> when the link the reader
+   clicked carried a utm_source (a word we typed into a link we posted), else
+   ?ref=<host> with the site the browser says they came from. No renaming, no
+   lookup table. Nothing here identifies a person. */
+(function () {
+  var param = '', val = '';
+  try { val = new URL(location.href).searchParams.get('utm_source') || ''; } catch (e) {}
+  if (val) { param = 'utm_source'; }
+  else {
+    var h = '';
+    try { h = document.referrer ? new URL(document.referrer).hostname.toLowerCase() : ''; } catch (e) {}
+    h = h.replace(/^www\./, '');
+    if (h && h !== location.hostname && !/(^|\.)goodtiming\.ai$/.test(h)) { param = 'ref'; val = h; }
+  }
+  val = val.toLowerCase().replace(/[^a-z0-9._-]/g, '').slice(0, 64);
+  if (!param || !val) return;
+  var links = document.querySelectorAll('a[href*="baton.goodtiming.ai"]');
+  for (var i = 0; i < links.length; i++) {
+    try {
+      var u = new URL(links[i].href);
+      if (!u.searchParams.get('utm_source') && !u.searchParams.get('ref')) { u.searchParams.set(param, val); links[i].href = u.toString(); }
+    } catch (e) {}
+  }
+})();
+</script>
+</body>
+</html>
